@@ -8,7 +8,7 @@ public class Player : GameObject
     private Sprite player;
     private int[] frameCountPerAnimation;
     private float time = 0;
-    private float movementSpeed = 30;
+    private float movementLength = 300;
     private const int PLAYER_TILING_X = 9;
     private const int PLAYER_TILING_Y = 5;
     private RenderWindow renderWindow;
@@ -35,7 +35,7 @@ public class Player : GameObject
 
         frameCountPerAnimation = new int[5];
         frameCountPerAnimation[(int)AnimationType.Idle] = 6; //0
-        frameCountPerAnimation[(int)AnimationType.Move] = 4; //1 || 8 is max, but only need half
+        frameCountPerAnimation[(int)AnimationType.Move] = 4; //1 | 8 is max, but only need half
         frameCountPerAnimation[(int)AnimationType.Death] = 9; //3
 
         player = new Sprite(AssetManager.Instance.Textures["player"]);
@@ -48,7 +48,7 @@ public class Player : GameObject
         );
 
         player.Origin = new Vector2f(player.Position.X + player.GetGlobalBounds().Width / 2, player.Position.Y + player.GetGlobalBounds().Height);
-        player.Position = new Vector2f(renderWindow.Size.X / 2, renderWindow.Size.Y / 2);
+        player.Position = new Vector2f(0, 0);
         player.Scale *= PLAYER_SCALING;
     }
 
@@ -72,7 +72,7 @@ public class Player : GameObject
         }
         else if(InputManager.Instance.GetKeyDown(Keyboard.Key.A) && moveTime > MOVE_TIME)
         {
-            currentAnimation = AnimationType.Move; // MIRROR MOVEMENT
+            currentAnimation = AnimationType.Move;
             isMoving = true;
             moveTime = 0;
             currDirection = Direction.Left;
@@ -98,16 +98,16 @@ public class Player : GameObject
             switch(currDirection)
             {
                 case Direction.Right:
-                    player.Position += new Vector2f(10, 0) * deltaTime * movementSpeed;
+                    player.Position += new Vector2f(1, 0) * deltaTime * movementLength;
                 break;
                 case Direction.Left:
-                    player.Position -= new Vector2f(10, 0) * deltaTime * movementSpeed;
+                    player.Position -= new Vector2f(1, 0) * deltaTime * movementLength;
                 break;
                 case Direction.Down:
-                    player.Position += new Vector2f(0, 10) * deltaTime * movementSpeed;
+                    player.Position += new Vector2f(0, 1) * deltaTime * movementLength;
                 break;
                 case Direction.Up:
-                    player.Position -= new Vector2f(0, 10) * deltaTime * movementSpeed;
+                    player.Position -= new Vector2f(0, 1) * deltaTime * movementLength;
                 break;
             }
 

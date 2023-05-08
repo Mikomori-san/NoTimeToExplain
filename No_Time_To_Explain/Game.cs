@@ -18,7 +18,7 @@ public class Game
         string title = "Assignment 3 Kevin Raffetseder";
         window = new RenderWindow(mode, title);
 
-        view = new View(new Vector2f(mode.Width/2, mode.Height/2), new Vector2f(mode.Width, mode.Height));
+        view = new View(new Vector2f(), (Vector2f)window.Size);
         window.SetView(view);
 
         window.Closed += OnWindowClosed;
