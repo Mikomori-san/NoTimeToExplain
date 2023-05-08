@@ -4,6 +4,7 @@ using SFML.Window;
 
 public class Player : GameObject
 {
+    private const float MOVE_TIME = 0.25f;
     private Sprite player;
     private int[] frameCountPerAnimation;
     private float time = 0;
@@ -13,10 +14,14 @@ public class Player : GameObject
     private RenderWindow renderWindow;
     private int animationFrame;
     private float animationTime = 0;
-    private float animationSpeed = 10;
+    private float animationSpeed = 5;
     private AnimationType currentAnimation = AnimationType.Idle;
     private int spriteXOffset;
     private int spriteYOffset;
+    private bool isMoving;
+    private float moveTime = MOVE_TIME + 1;
+    private Direction currDirection;
+    private const float PLAYER_SCALING = 4f;
 
     public override void Draw(RenderWindow window)
     {
@@ -25,21 +30,26 @@ public class Player : GameObject
 
     public override void Initialize()
     {
+        currDirection = Direction.Right;
+        isMoving = false;
+
         frameCountPerAnimation = new int[3];
         frameCountPerAnimation[(int)AnimationType.Idle] = 6;
         frameCountPerAnimation[(int)AnimationType.Move] = 8;
         frameCountPerAnimation[(int)AnimationType.Death] = 9;
 
         player = new Sprite(AssetManager.Instance.Textures["player"]);
+        
         player.TextureRect = new IntRect(
             0,
             0,
             (int)(player.Texture.Size.X / PLAYER_TILING_X),
             (int)(player.Texture.Size.Y / PLAYER_TILING_Y)
         );
+
         player.Origin = new Vector2f(player.Position.X + player.GetGlobalBounds().Width / 2, player.Position.Y + player.GetGlobalBounds().Height);
         player.Position = new Vector2f(renderWindow.Size.X / 2, renderWindow.Size.Y / 2);
-        player.Scale *= 2f;
+        player.Scale *= PLAYER_SCALING;
     }
 
     public override void Update(float deltaTime)
@@ -51,42 +61,61 @@ public class Player : GameObject
 
     private void Input_AnimationHandling(float deltaTime)
     {
-        if (InputManager.Instance.GetKeyPressed(Keyboard.Key.D))
+        moveTime += deltaTime;
+        if(InputManager.Instance.GetKeyDown(Keyboard.Key.D) && moveTime > MOVE_TIME)
         {
             currentAnimation = AnimationType.Move;
-            //MOVEMENT
+            isMoving = true;
+            moveTime = 0;
+            currDirection = Direction.Right;
+            player.Scale = new Vector2f(PLAYER_SCALING, PLAYER_SCALING);
         }
-        else if(InputManager.Instance.GetKeyPressed(Keyboard.Key.A))
+        else if(InputManager.Instance.GetKeyDown(Keyboard.Key.A) && moveTime > MOVE_TIME)
         {
             currentAnimation = AnimationType.Move; // MIRROR MOVEMENT
-            //MOVEMENT
+            isMoving = true;
+            moveTime = 0;
+            currDirection = Direction.Left;
+            player.Scale = new Vector2f(-PLAYER_SCALING, PLAYER_SCALING);
         }
-        else if(InputManager.Instance.GetKeyPressed(Keyboard.Key.W))
+        else if(InputManager.Instance.GetKeyDown(Keyboard.Key.W) && moveTime > MOVE_TIME)
         {
             currentAnimation = AnimationType.Move;
-            //MOVEMENT
+            isMoving = true;
+            moveTime = 0;
+            currDirection = Direction.Up;
         }
-        else if(InputManager.Instance.GetKeyPressed(Keyboard.Key.S))
+        else if(InputManager.Instance.GetKeyDown(Keyboard.Key.S) && moveTime > MOVE_TIME)
         {
             currentAnimation = AnimationType.Move;
-            //MOVEMENT
+            isMoving = true;
+            moveTime = 0;
+            currDirection = Direction.Down;
         }
 
-        if(InputManager.Instance.GetKeyUp(Keyboard.Key.D))
+        if(isMoving)
         {
-            currentAnimation = AnimationType.Idle;
-        }
-        else if(InputManager.Instance.GetKeyUp(Keyboard.Key.A))
-        {
-            currentAnimation = AnimationType.Idle;
-        }
-        else if(InputManager.Instance.GetKeyUp(Keyboard.Key.W))
-        {
-            currentAnimation = AnimationType.Idle;
-        }
-        else if(InputManager.Instance.GetKeyUp(Keyboard.Key.S))
-        {
-            currentAnimation = AnimationType.Idle;
+            switch(currDirection)
+            {
+                case Direction.Right:
+                    player.Position += new Vector2f(10, 0) * deltaTime * movementSpeed;
+                break;
+                case Direction.Left:
+                    player.Position -= new Vector2f(10, 0) * deltaTime * movementSpeed;
+                break;
+                case Direction.Down:
+                    player.Position += new Vector2f(0, 10) * deltaTime * movementSpeed;
+                break;
+                case Direction.Up:
+                    player.Position -= new Vector2f(0, 10) * deltaTime * movementSpeed;
+                break;
+            }
+
+            if(moveTime > MOVE_TIME)
+            {
+                isMoving = false;
+                currentAnimation = AnimationType.Idle;
+            }
         }
 
         animationFrame = (int)(animationTime % frameCountPerAnimation[(int)currentAnimation]);
@@ -99,7 +128,7 @@ public class Player : GameObject
             spriteYOffset,
             player.TextureRect.Width,
             player.TextureRect.Height
-        );   
+        );  
     }
     public Player(RenderWindow renderWindow)
     {
