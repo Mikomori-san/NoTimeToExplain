@@ -64,8 +64,6 @@ public class Game
         InputManager.Instance.Update(deltaTime);
     }
 
-
-
     private void Draw()
     {
         window.Clear(Color.Blue);

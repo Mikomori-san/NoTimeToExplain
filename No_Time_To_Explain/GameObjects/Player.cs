@@ -10,7 +10,7 @@ public class Player : GameObject
     private float time = 0;
     private float movementSpeed = 30;
     private const int PLAYER_TILING_X = 9;
-    private const int PLAYER_TILING_Y = 3;
+    private const int PLAYER_TILING_Y = 5;
     private RenderWindow renderWindow;
     private int animationFrame;
     private float animationTime = 0;
@@ -33,10 +33,10 @@ public class Player : GameObject
         currDirection = Direction.Right;
         isMoving = false;
 
-        frameCountPerAnimation = new int[3];
-        frameCountPerAnimation[(int)AnimationType.Idle] = 6;
-        frameCountPerAnimation[(int)AnimationType.Move] = 8;
-        frameCountPerAnimation[(int)AnimationType.Death] = 9;
+        frameCountPerAnimation = new int[5];
+        frameCountPerAnimation[(int)AnimationType.Idle] = 6; //0
+        frameCountPerAnimation[(int)AnimationType.Move] = 4; //1 || 8 is max, but only need half
+        frameCountPerAnimation[(int)AnimationType.Death] = 9; //3
 
         player = new Sprite(AssetManager.Instance.Textures["player"]);
         
