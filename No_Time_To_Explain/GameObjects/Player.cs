@@ -8,7 +8,7 @@ public class Player : GameObject
     private Sprite player;
     private int[] frameCountPerAnimation;
     private float time = 0;
-    private float movementLength = 300;
+    private float movementLength = 191.5f;
     private const int PLAYER_TILING_X = 9;
     private const int PLAYER_TILING_Y = 5;
     private RenderWindow renderWindow;
@@ -19,9 +19,9 @@ public class Player : GameObject
     private int spriteXOffset;
     private int spriteYOffset;
     private bool isMoving;
-    private float moveTime = MOVE_TIME + 1;
+    private float generalTime = MOVE_TIME + 1; //Has to be greater than MOVE_TIME, because we want to be able to move as soon as we load in
     private Direction currDirection;
-    private const float PLAYER_SCALING = 4f;
+    private const float PLAYER_SCALING = 2f;
 
     public override void Draw(RenderWindow window)
     {
@@ -35,7 +35,7 @@ public class Player : GameObject
 
         frameCountPerAnimation = new int[5];
         frameCountPerAnimation[(int)AnimationType.Idle] = 6; //0
-        frameCountPerAnimation[(int)AnimationType.Move] = 4; //1 | 8 is max, but only need half
+        frameCountPerAnimation[(int)AnimationType.Move] = 4; //1 | 8 is max, but only need half -> 1 Hop
         frameCountPerAnimation[(int)AnimationType.Death] = 9; //3
 
         player = new Sprite(AssetManager.Instance.Textures["player"]);
@@ -47,8 +47,8 @@ public class Player : GameObject
             (int)(player.Texture.Size.Y / PLAYER_TILING_Y)
         );
 
-        player.Origin = new Vector2f(player.Position.X + player.GetGlobalBounds().Width / 2, player.Position.Y + player.GetGlobalBounds().Height);
-        player.Position = new Vector2f(0, 0);
+        player.Origin = new Vector2f(player.GetGlobalBounds().Left + player.GetGlobalBounds().Width / 2, player.GetGlobalBounds().Top + player.GetGlobalBounds().Height / 2);
+        player.Position = new Vector2f(-renderWindow.Size.X / 2 + player.GetGlobalBounds().Left+player.GetGlobalBounds().Width/2 + 20, -renderWindow.Size.Y / 2 + player.GetGlobalBounds().Top+player.GetGlobalBounds().Height/2 + 52);
         player.Scale *= PLAYER_SCALING;
     }
 
@@ -61,35 +61,35 @@ public class Player : GameObject
 
     private void Input_AnimationHandling(float deltaTime)
     {
-        moveTime += deltaTime;
-        if(InputManager.Instance.GetKeyDown(Keyboard.Key.D) && moveTime > MOVE_TIME)
+        generalTime += deltaTime;
+        if(InputManager.Instance.GetKeyDown(Keyboard.Key.D) && generalTime > MOVE_TIME)
         {
             currentAnimation = AnimationType.Move;
             isMoving = true;
-            moveTime = 0;
+            generalTime = 0;
             currDirection = Direction.Right;
             player.Scale = new Vector2f(PLAYER_SCALING, PLAYER_SCALING);
         }
-        else if(InputManager.Instance.GetKeyDown(Keyboard.Key.A) && moveTime > MOVE_TIME)
+        else if(InputManager.Instance.GetKeyDown(Keyboard.Key.A) && generalTime > MOVE_TIME)
         {
             currentAnimation = AnimationType.Move;
             isMoving = true;
-            moveTime = 0;
+            generalTime = 0;
             currDirection = Direction.Left;
             player.Scale = new Vector2f(-PLAYER_SCALING, PLAYER_SCALING);
         }
-        else if(InputManager.Instance.GetKeyDown(Keyboard.Key.W) && moveTime > MOVE_TIME)
+        else if(InputManager.Instance.GetKeyDown(Keyboard.Key.W) && generalTime > MOVE_TIME)
         {
             currentAnimation = AnimationType.Move;
             isMoving = true;
-            moveTime = 0;
+            generalTime = 0;
             currDirection = Direction.Up;
         }
-        else if(InputManager.Instance.GetKeyDown(Keyboard.Key.S) && moveTime > MOVE_TIME)
+        else if(InputManager.Instance.GetKeyDown(Keyboard.Key.S) && generalTime > MOVE_TIME)
         {
             currentAnimation = AnimationType.Move;
             isMoving = true;
-            moveTime = 0;
+            generalTime = 0;
             currDirection = Direction.Down;
         }
 
@@ -111,7 +111,7 @@ public class Player : GameObject
                 break;
             }
 
-            if(moveTime > MOVE_TIME)
+            if(generalTime > MOVE_TIME)
             {
                 isMoving = false;
                 currentAnimation = AnimationType.Idle;
