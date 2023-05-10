@@ -1,4 +1,4 @@
-public enum AnimationType
+public enum PlayerAnimationType
 {
     Idle = 0,
     Move = 1,

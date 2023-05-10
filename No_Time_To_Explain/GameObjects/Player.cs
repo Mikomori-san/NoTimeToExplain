@@ -15,7 +15,7 @@ public class Player : GameObject
     private int animationFrame;
     private float animationTime = 0;
     private float animationSpeed = 5;
-    private AnimationType currentAnimation = AnimationType.Idle;
+    private PlayerAnimationType currentAnimation = PlayerAnimationType.Idle;
     private int spriteXOffset;
     private int spriteYOffset;
     private bool isMoving;
@@ -34,9 +34,9 @@ public class Player : GameObject
         isMoving = false;
 
         frameCountPerAnimation = new int[5];
-        frameCountPerAnimation[(int)AnimationType.Idle] = 6; //0
-        frameCountPerAnimation[(int)AnimationType.Move] = 4; //1 | 8 is max, but only need half -> 1 Hop
-        frameCountPerAnimation[(int)AnimationType.Death] = 9; //3
+        frameCountPerAnimation[(int)PlayerAnimationType.Idle] = 6; //0
+        frameCountPerAnimation[(int)PlayerAnimationType.Move] = 4; //1 | 8 is max, but only need half -> 1 Hop
+        frameCountPerAnimation[(int)PlayerAnimationType.Death] = 9; //3
 
         player = new Sprite(AssetManager.Instance.Textures["player"]);
         
@@ -64,7 +64,7 @@ public class Player : GameObject
         generalTime += deltaTime;
         if(InputManager.Instance.GetKeyDown(Keyboard.Key.D) && generalTime > MOVE_TIME)
         {
-            currentAnimation = AnimationType.Move;
+            currentAnimation = PlayerAnimationType.Move;
             isMoving = true;
             generalTime = 0;
             currDirection = Direction.Right;
@@ -72,7 +72,7 @@ public class Player : GameObject
         }
         else if(InputManager.Instance.GetKeyDown(Keyboard.Key.A) && generalTime > MOVE_TIME)
         {
-            currentAnimation = AnimationType.Move;
+            currentAnimation = PlayerAnimationType.Move;
             isMoving = true;
             generalTime = 0;
             currDirection = Direction.Left;
@@ -80,14 +80,14 @@ public class Player : GameObject
         }
         else if(InputManager.Instance.GetKeyDown(Keyboard.Key.W) && generalTime > MOVE_TIME)
         {
-            currentAnimation = AnimationType.Move;
+            currentAnimation = PlayerAnimationType.Move;
             isMoving = true;
             generalTime = 0;
             currDirection = Direction.Up;
         }
         else if(InputManager.Instance.GetKeyDown(Keyboard.Key.S) && generalTime > MOVE_TIME)
         {
-            currentAnimation = AnimationType.Move;
+            currentAnimation = PlayerAnimationType.Move;
             isMoving = true;
             generalTime = 0;
             currDirection = Direction.Down;
@@ -114,7 +114,7 @@ public class Player : GameObject
             if(generalTime > MOVE_TIME)
             {
                 isMoving = false;
-                currentAnimation = AnimationType.Idle;
+                currentAnimation = PlayerAnimationType.Idle;
             }
         }
 

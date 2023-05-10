@@ -11,6 +11,7 @@ public class Game
     private VideoMode mode;
     private float gameTime = 0;
     private Player player;
+    private LavaGolem lavaGolem1;
     private Room room1;
     private Hud hud;
     private const uint ORIGINAL_WIDTH = 1280;
@@ -63,6 +64,7 @@ public class Game
     {
         gameTime += deltaTime;
         player.Update(deltaTime);
+        lavaGolem1.Update(deltaTime);
         hud.Update(deltaTime);
         InputManager.Instance.Update(deltaTime);
     }
@@ -73,6 +75,7 @@ public class Game
         
         room1.Draw(window);
         player.Draw(window);
+        lavaGolem1.Draw(window);
         hud.Draw(window);
         window.Display();
     }
@@ -87,10 +90,14 @@ public class Game
         InputManager.Instance.Initialize(window);
         AssetManager.Instance.LoadTexture("player", "Player/player.png");
         AssetManager.Instance.LoadTexture("map", "Tiles/Tileset.png");
+        AssetManager.Instance.LoadTexture("lavaGolem", "Enemy/LavaGolem/LavaGolemSpriteSheet.png");
         AssetManager.Instance.LoadFont("hud", "BrunoAce-Regular.ttf");
 
         player = new Player(window);
         player.Initialize();
+
+        lavaGolem1 = new LavaGolem();
+        lavaGolem1.Initialize();
 
         hud = new Hud(window);
         hud.Initialize();
