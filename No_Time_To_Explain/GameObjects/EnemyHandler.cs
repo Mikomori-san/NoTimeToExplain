@@ -3,31 +3,39 @@ using SFML.System;
 
 public class EnemyHandler : GameObject
 {
-    public List<LavaGolem> lavaGolems;
+    private List<Enemy> enemies;
+
+    public EnemyHandler(List<Enemy> enemies)
+    {
+        this.enemies = enemies;
+    }
+
     public override void Draw(RenderWindow window)
     {
-        foreach(var lavaGolem in lavaGolems)
+        foreach(var enemy in enemies)
         {
-            lavaGolem.Draw(window);
+            enemy.Draw(window);
         }
     }
 
     public override void Initialize()
     {
-        lavaGolems = new List<LavaGolem>();
-        LavaGolem lavaGolem1 = new LavaGolem(new Vector2f(10, -10));
-        lavaGolems.Add(lavaGolem1);
-        foreach(var lavaGolem in lavaGolems)
+        foreach(var enemy in enemies)
         {
-            lavaGolem.Initialize();
+            enemy.Initialize();
         }
     }
 
     public override void Update(float deltaTime)
     {
-        foreach(var lavaGolem in lavaGolems)
+        foreach(var enemy in enemies)
         {
-            lavaGolem.Update(deltaTime);
+            enemy.Update(deltaTime);
+        }
+        
+        if(!enemies.Last().hasTurn)
+        {
+            TurnHandler.Instance.PlayerTurn();
         }
         
     }

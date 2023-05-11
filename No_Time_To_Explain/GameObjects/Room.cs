@@ -7,6 +7,18 @@ public class Room
     private List<Sprite> tiles;
     private List<int[]> map;
     private int tileSize;
+    private List<Enemy> enemies;
+    public List<Enemy> Enemies
+    {
+        get
+        {
+            return enemies;
+        }
+        set
+        {
+            enemies = value;
+        }
+    }
 
     public Room(string pathToRoomFile, int tileSize)
     {

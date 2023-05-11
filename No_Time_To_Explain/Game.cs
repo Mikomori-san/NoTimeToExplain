@@ -17,6 +17,7 @@ public class Game
     private EnemyHandler enemyHandler;
     private const uint ORIGINAL_WIDTH = 1280;
     private const uint ORIGINAL_HEIGHT = 720;
+    private Room currentRoom;
 
     public Game()
     {
@@ -93,17 +94,25 @@ public class Game
         AssetManager.Instance.LoadTexture("map", "Tiles/Tileset.png");
         AssetManager.Instance.LoadTexture("lavaGolem", "Enemy/LavaGolem/LavaGolemSpriteSheet.png");
         AssetManager.Instance.LoadFont("hud", "BrunoAce-Regular.ttf");
-
+        
         player = new Player(window);
         player.Initialize();
-
-        enemyHandler = new EnemyHandler();
-        enemyHandler.Initialize();
 
         hud = new Hud(window);
         hud.Initialize();
 
         room1 = new Room("./Assets/Rooms/Room1.txt", 48);
+        room1.Enemies = new List<Enemy>();
+        
+        for(int i = 1; i <= 5; i++)
+        {
+            room1.Enemies.Add(new LavaGolem(new Vector2f(10, i * -10), EnemyType.LavaGolem, "lavaGolem"));
+        }
+        
+        currentRoom = room1; 
+
+        enemyHandler = new EnemyHandler(currentRoom.Enemies); 
+        enemyHandler.Initialize();                                          
     }
 
 }

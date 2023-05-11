@@ -1,4 +1,4 @@
-public enum LavaGolemAnimationType
+public enum EnemyAnimationType
 {
     Idle = 0,
     Move = 1,
