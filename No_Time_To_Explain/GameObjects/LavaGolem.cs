@@ -60,7 +60,6 @@ public class LavaGolem : GameObject
         {
             if(!alreadyIdle)
             {
-                generalTime = 0;
                 SwitchDirection();
                 currentAnimation = LavaGolemAnimationType.Idle;
                 if(currDirection == Direction.Left)
@@ -73,9 +72,12 @@ public class LavaGolem : GameObject
                 }
                 alreadyIdle = true;
             }
+            generalTime = 0;
+            //if already idle then do nothing
         }
         else
         {
+            //if it's the enemy turn, move
             if(generalTime < 0.25f)
             {
                 generalTime += deltaTime;
@@ -91,6 +93,7 @@ public class LavaGolem : GameObject
             }
             else
             {
+                //if movement is done, set the turn to player again and be able to get idled next frame
                 TurnHandler.Instance.PlayerTurn();
                 alreadyIdle = false;
             }
