@@ -8,7 +8,7 @@ public class Player : GameObject
     private Sprite player;
     private int[] frameCountPerAnimation;
     private float time = 0;
-    private float movementLength = 191.5f;
+    private float movementLength = 191f;
     private const int PLAYER_TILING_X = 9;
     private const int PLAYER_TILING_Y = 5;
     private RenderWindow renderWindow;
@@ -62,35 +62,38 @@ public class Player : GameObject
     private void Input_AnimationHandling(float deltaTime)
     {
         generalTime += deltaTime;
-        if(InputManager.Instance.GetKeyDown(Keyboard.Key.D) && generalTime > MOVE_TIME)
+        if(TurnHandler.Instance.IsPlayerTurn())
         {
-            currentAnimation = PlayerAnimationType.Move;
-            isMoving = true;
-            generalTime = 0;
-            currDirection = Direction.Right;
-            player.Scale = new Vector2f(PLAYER_SCALING, PLAYER_SCALING);
-        }
-        else if(InputManager.Instance.GetKeyDown(Keyboard.Key.A) && generalTime > MOVE_TIME)
-        {
-            currentAnimation = PlayerAnimationType.Move;
-            isMoving = true;
-            generalTime = 0;
-            currDirection = Direction.Left;
-            player.Scale = new Vector2f(-PLAYER_SCALING, PLAYER_SCALING);
-        }
-        else if(InputManager.Instance.GetKeyDown(Keyboard.Key.W) && generalTime > MOVE_TIME)
-        {
-            currentAnimation = PlayerAnimationType.Move;
-            isMoving = true;
-            generalTime = 0;
-            currDirection = Direction.Up;
-        }
-        else if(InputManager.Instance.GetKeyDown(Keyboard.Key.S) && generalTime > MOVE_TIME)
-        {
-            currentAnimation = PlayerAnimationType.Move;
-            isMoving = true;
-            generalTime = 0;
-            currDirection = Direction.Down;
+            if(InputManager.Instance.GetKeyDown(Keyboard.Key.D) && generalTime > MOVE_TIME)
+            {
+                currentAnimation = PlayerAnimationType.Move;
+                isMoving = true;
+                generalTime = 0;
+                currDirection = Direction.Right;
+                player.Scale = new Vector2f(PLAYER_SCALING, PLAYER_SCALING);
+            }
+            else if(InputManager.Instance.GetKeyDown(Keyboard.Key.A) && generalTime > MOVE_TIME)
+            {
+                currentAnimation = PlayerAnimationType.Move;
+                isMoving = true;
+                generalTime = 0;
+                currDirection = Direction.Left;
+                player.Scale = new Vector2f(-PLAYER_SCALING, PLAYER_SCALING);
+            }
+            else if(InputManager.Instance.GetKeyDown(Keyboard.Key.W) && generalTime > MOVE_TIME)
+            {
+                currentAnimation = PlayerAnimationType.Move;
+                isMoving = true;
+                generalTime = 0;
+                currDirection = Direction.Up;
+            }
+            else if(InputManager.Instance.GetKeyDown(Keyboard.Key.S) && generalTime > MOVE_TIME)
+            {
+                currentAnimation = PlayerAnimationType.Move;
+                isMoving = true;
+                generalTime = 0;
+                currDirection = Direction.Down;
+            }
         }
 
         if(isMoving)
@@ -115,6 +118,7 @@ public class Player : GameObject
             {
                 isMoving = false;
                 currentAnimation = PlayerAnimationType.Idle;
+                TurnHandler.Instance.EnemyTurn();
             }
         }
 

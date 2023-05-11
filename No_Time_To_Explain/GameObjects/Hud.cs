@@ -30,7 +30,9 @@ public class Hud : GameObject
     public override void Update(float deltaTime)
     {
         remainingTime += deltaTime;
-        time.DisplayedString = $"Time's ticking: {MAX_TIME - (int)remainingTime}";
+        
+        if(MAX_TIME - (int)remainingTime >= 0)
+            time.DisplayedString = $"Time's ticking: {MAX_TIME - (int)remainingTime}";
     }
 
     public void UpdateWindow(RenderWindow window)

@@ -14,13 +14,14 @@ public class Game
     private LavaGolem lavaGolem1;
     private Room room1;
     private Hud hud;
+    private EnemyHandler enemyHandler;
     private const uint ORIGINAL_WIDTH = 1280;
     private const uint ORIGINAL_HEIGHT = 720;
 
     public Game()
     {
         mode = new VideoMode(ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
-        string title = "Assignment 3 Kevin Raffetseder";
+        string title = "No Time To Explain";
         window = new RenderWindow(mode, title);
 
         view = new View(new Vector2f(), (Vector2f)window.Size);
@@ -64,7 +65,7 @@ public class Game
     {
         gameTime += deltaTime;
         player.Update(deltaTime);
-        lavaGolem1.Update(deltaTime);
+        enemyHandler.Update(deltaTime);
         hud.Update(deltaTime);
         InputManager.Instance.Update(deltaTime);
     }
@@ -75,7 +76,7 @@ public class Game
         
         room1.Draw(window);
         player.Draw(window);
-        lavaGolem1.Draw(window);
+        enemyHandler.Draw(window);
         hud.Draw(window);
         window.Display();
     }
@@ -96,8 +97,8 @@ public class Game
         player = new Player(window);
         player.Initialize();
 
-        lavaGolem1 = new LavaGolem();
-        lavaGolem1.Initialize();
+        enemyHandler = new EnemyHandler();
+        enemyHandler.Initialize();
 
         hud = new Hud(window);
         hud.Initialize();

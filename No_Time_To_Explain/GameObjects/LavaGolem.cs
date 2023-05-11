@@ -16,10 +16,12 @@ public class LavaGolem : GameObject
     private const float LAVAGOLEM_SCALING = 1.5f;
     private float generalTime = 0;
     private float movementLength = 191.5f;
+    private Vector2f pos;
+    private bool alreadyIdle = true;
 
-    public LavaGolem()
+    public LavaGolem(Vector2f position)
     {
-
+        pos = position;
     }
 
     public override void Draw(RenderWindow window)
@@ -42,7 +44,7 @@ public class LavaGolem : GameObject
         );
 
         lavaGolem.Origin = new Vector2f(lavaGolem.GetGlobalBounds().Left + lavaGolem.GetGlobalBounds().Width / 2, lavaGolem.GetGlobalBounds().Top + lavaGolem.GetGlobalBounds().Height / 2);
-        lavaGolem.Position = new Vector2f(8, 0);
+        lavaGolem.Position = pos;
         lavaGolem.Scale *= LAVAGOLEM_SCALING;
     }
 
@@ -54,25 +56,29 @@ public class LavaGolem : GameObject
 
     private void Input_AnimationHandling(float deltaTime)
     {
-        generalTime += deltaTime;
-        if(generalTime > 1.25f)
+        if(TurnHandler.Instance.IsPlayerTurn())
         {
-            generalTime = 0;
-            SwitchDirection();
-            currentAnimation = LavaGolemAnimationType.Idle;
-            if(currDirection == Direction.Left)
+            if(!alreadyIdle)
             {
-                lavaGolem.Scale = new Vector2f(-LAVAGOLEM_SCALING, LAVAGOLEM_SCALING);
-            }
-            else
-            {
-                lavaGolem.Scale = new Vector2f(LAVAGOLEM_SCALING, LAVAGOLEM_SCALING);
+                generalTime = 0;
+                SwitchDirection();
+                currentAnimation = LavaGolemAnimationType.Idle;
+                if(currDirection == Direction.Left)
+                {
+                    lavaGolem.Scale = new Vector2f(-LAVAGOLEM_SCALING, LAVAGOLEM_SCALING);
+                }
+                else
+                {
+                    lavaGolem.Scale = new Vector2f(LAVAGOLEM_SCALING, LAVAGOLEM_SCALING);
+                }
+                alreadyIdle = true;
             }
         }
         else
         {
-            if(generalTime >= 1)
+            if(generalTime < 0.25f)
             {
+                generalTime += deltaTime;
                 currentAnimation = LavaGolemAnimationType.Move;
                 if(currDirection == Direction.Right)
                 {
@@ -82,6 +88,11 @@ public class LavaGolem : GameObject
                 {
                     lavaGolem.Position -= new Vector2f(1, 0) * movementLength * deltaTime;
                 }   
+            }
+            else
+            {
+                TurnHandler.Instance.PlayerTurn();
+                alreadyIdle = false;
             }
             
         }
