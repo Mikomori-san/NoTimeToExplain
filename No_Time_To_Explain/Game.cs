@@ -125,20 +125,4 @@ public class Game
 
         //backgroundMusic.Play();
     }
-
-    internal static Vector2i ConvertToIndex(RenderWindow window, Vector2f position, Sprite sprite)
-    {
-        return new Vector2i((int)sprite.Position.X / TILE_SIZE + ((int)window.Size.X/48) / 2 - 1, (int)sprite.Position.Y / TILE_SIZE + ((int)window.Size.Y/48) / 2 - 1);
-    }
-
-    internal static bool IsObstacle(Vector2i position, List<int[]> map)
-    {
-        int val = map[position.Y][position.X];
-        if(val >= 5)
-        {
-            return true;
-        }
-                                                                                    
-        return false;                                                               
-    }
 }

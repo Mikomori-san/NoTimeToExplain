@@ -102,7 +102,7 @@ public class Enemy : GameObject
         {
             //if it's the enemy turn, move
             EnemyMovement(deltaTime);
-            tileIndex = Game.ConvertToIndex(window, sprite.Position, sprite);
+            tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
             //EnemyAttack();
         }
 

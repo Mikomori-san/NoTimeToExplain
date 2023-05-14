@@ -66,16 +66,14 @@ public class Player : GameObject
     generalTime += deltaTime;
     if (TurnHandler.Instance.IsPlayerTurn())
     {
-        tileIndex = Game.ConvertToIndex(renderWindow, player.Position, player);
-        //tileIndex = new Vector2i(tileIndex.Y, tileIndex.X);
+        tileIndex = Utils.ConvertToIndex(renderWindow, player.Position, player);
         Console.WriteLine("Current Index:" + tileIndex);
-        Console.WriteLine(player.Position);
 
         if (InputManager.Instance.GetKeyDown(Keyboard.Key.D) && generalTime > MOVE_TIME)
         {
             if(tileIndex.X + 1 <= currentRoom.Map[tileIndex.Y].Length)
             {
-                if (Game.IsObstacle(tileIndex + new Vector2i(1, 0), currentRoom.Map))
+                if (Utils.IsObstacle(tileIndex + new Vector2i(1, 0), currentRoom.Map))
                 {
                     Console.WriteLine("Is Obstacle: Yes");
                     Movement_AnimationHandling(deltaTime);
@@ -96,13 +94,14 @@ public class Player : GameObject
         {
             if(tileIndex.X - 1 >= 0)
             {
-                if (Game.IsObstacle(tileIndex - new Vector2i(1, 0), currentRoom.Map))
+                if (Utils.IsObstacle(tileIndex - new Vector2i(1, 0), currentRoom.Map))
                 {
                     Console.WriteLine("Is Obstacle: Yes");
                     Movement_AnimationHandling(deltaTime);
                 }
                 else
                 {
+                    Console.WriteLine("Is Obstalce: No");
                     currentAnimation = PlayerAnimationType.Move;
                     isMoving = true;
                     generalTime = 0;
@@ -116,13 +115,14 @@ public class Player : GameObject
         {
             if(tileIndex.Y - 1 >= 0)
             {
-                if (Game.IsObstacle(tileIndex - new Vector2i(0, 1), currentRoom.Map))
+                if (Utils.IsObstacle(tileIndex - new Vector2i(0, 1), currentRoom.Map))
                 {
                     Console.WriteLine("Is Obstacle: Yes");
                     Movement_AnimationHandling(deltaTime);
                 }
                 else
                 {
+                    Console.WriteLine("Is Obstalce: No");
                     currentAnimation = PlayerAnimationType.Move;
                     isMoving = true;
                     generalTime = 0;
@@ -135,7 +135,7 @@ public class Player : GameObject
         {
             if(tileIndex.Y + 1 <= currentRoom.Map.Count)
             {
-                if (Game.IsObstacle(tileIndex + new Vector2i(0, 1), currentRoom.Map))
+                if (Utils.IsObstacle(tileIndex + new Vector2i(0, 1), currentRoom.Map))
                 {
                     Console.WriteLine("Is Obstacle: Yes");
                     Movement_AnimationHandling(deltaTime);
