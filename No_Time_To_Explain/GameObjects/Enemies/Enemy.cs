@@ -22,12 +22,22 @@ public class Enemy : GameObject
     protected EnemyType enemyType;
     protected string spriteName;
     public bool hasTurn = false;
+    public Vector2i tileIndex;
+    public RenderWindow window;
 
-    public Enemy(Vector2f position, EnemyType enemyType, string spriteName)
+    public Enemy(Vector2f position, EnemyType enemyType, string spriteName, RenderWindow window)
     {
+        this.window = window;
         this.enemyType = enemyType;
         this.spriteName = spriteName;
         pos = position;
+    }
+
+    public Enemy(Vector2f position, EnemyType enemyType, string spriteName)
+    {
+        Position = position;
+        this.enemyType = enemyType;
+        this.spriteName = spriteName;
     }
 
     public override void Draw(RenderWindow window)
@@ -38,7 +48,6 @@ public class Enemy : GameObject
     public override void Initialize()
     {
         sprite = new Sprite(AssetManager.Instance.Textures[spriteName]);
-        sprite.Position = new Vector2f(0, 0);
         
         currDirection = Direction.Right;
 
@@ -57,6 +66,9 @@ public class Enemy : GameObject
         sprite.Origin = new Vector2f(sprite.GetGlobalBounds().Left + sprite.GetGlobalBounds().Width / 2, sprite.GetGlobalBounds().Top + sprite.GetGlobalBounds().Height / 2);
         sprite.Position = pos;
         sprite.Scale *= ENEMY_SCALING;
+
+        tileIndex = new Vector2i((int)sprite.Position.X / Game.TILE_SIZE, (int)sprite.Position.Y / Game.TILE_SIZE);
+
     }
 
     public override void Update(float deltaTime)
@@ -90,7 +102,8 @@ public class Enemy : GameObject
         {
             //if it's the enemy turn, move
             EnemyMovement(deltaTime);
-            EnemyAttack();
+            tileIndex = Game.ConvertToIndex(window, sprite.Position, sprite);
+            //EnemyAttack();
         }
 
         animationFrame = (int)(animationTime % frameCountPerAnimation[(int)currentAnimation]);

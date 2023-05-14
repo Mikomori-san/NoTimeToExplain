@@ -8,7 +8,6 @@ public class Hud : GameObject
     private Text time;
     private const int MAX_TIME = 120;
     private float remainingTime = 0;
-
     public Hud(RenderWindow renderWindow)
     {
         this.renderWindow = renderWindow;
@@ -38,6 +37,7 @@ public class Hud : GameObject
     public void UpdateWindow(RenderWindow window)
     {
         renderWindow = window;
+        //time.Position = new Vector2f(renderWindow.Size.X / 2 - (time.GetGlobalBounds().Left + time.GetGlobalBounds().Width + 10), -renderWindow.Size.Y / 2 + 10);
     }
 
     public int RemainingTime()

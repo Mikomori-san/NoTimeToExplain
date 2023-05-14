@@ -20,6 +20,14 @@ public class Room
         }
     }
 
+    public List<int[]> Map
+    {
+        get
+        {
+            return map;
+        }
+    }
+
     public Room(string pathToRoomFile, int tileSize)
     {
         tileset = new Texture(AssetManager.Instance.Textures["map"]);

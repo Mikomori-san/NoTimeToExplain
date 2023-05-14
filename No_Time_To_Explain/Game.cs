@@ -11,13 +11,15 @@ public class Game
     private VideoMode mode;
     private float gameTime = 0;
     private Player player;
-    private LavaGolem lavaGolem1;
     private Room room1;
     private Hud hud;
     private EnemyHandler enemyHandler;
     private const uint ORIGINAL_WIDTH = 1280;
     private const uint ORIGINAL_HEIGHT = 720;
     private Room currentRoom;
+    private Music? backgroundMusic;
+    private Vector2f ScalingFactor;
+    public const int TILE_SIZE = 48;
 
     public Game()
     {
@@ -93,26 +95,50 @@ public class Game
         AssetManager.Instance.LoadTexture("player", "Player/player.png");
         AssetManager.Instance.LoadTexture("map", "Tiles/Tileset.png");
         AssetManager.Instance.LoadTexture("lavaGolem", "Enemy/LavaGolem/LavaGolemSpriteSheet.png");
+        AssetManager.Instance.LoadTexture("stoneGolem", "Enemy/StoneGolem/StoneGolemSpriteSheet.png");
+        AssetManager.Instance.LoadTexture("brokenStoneGolem", "Enemy/BrokenStoneGolem/BrokenStoneGolemSpriteSheet.png");
+        AssetManager.Instance.LoadTexture("baseStoneGolem", "Enemy/BaseStoneGolem/BaseStoneGolemSpriteSheet.png");
         AssetManager.Instance.LoadFont("hud", "BrunoAce-Regular.ttf");
+        AssetManager.Instance.LoadMusic("background", "backgroundMusic1.ogg");
         
-        player = new Player(window);
-        player.Initialize();
+        backgroundMusic = AssetManager.Instance.Music["background"];
 
         hud = new Hud(window);
         hud.Initialize();
 
-        room1 = new Room("./Assets/Rooms/Room1.txt", 48);
+        room1 = new Room("./Assets/Rooms/Room1.txt", TILE_SIZE);
         room1.Enemies = new List<Enemy>();
         
-        for(int i = 1; i <= 5; i++)
-        {
-            room1.Enemies.Add(new LavaGolem(new Vector2f(10, i * -10), EnemyType.LavaGolem, "lavaGolem"));
-        }
+        room1.Enemies.Add(new LavaGolem(new Vector2f(10, 0), EnemyType.LavaGolem, "lavaGolem", window));
+        room1.Enemies.Add(new StoneGolem(new Vector2f(10, 48), EnemyType.StoneGolem, "stoneGolem", window));
+        room1.Enemies.Add(new BrokenStoneGolem(new Vector2f(10, 78), EnemyType.BrokenStoneGolem, "brokenStoneGolem", window));
+        room1.Enemies.Add(new BaseStoneGolem(new Vector2f(10, 126), EnemyType.BaseStoneGolem, "baseStoneGolem", window));
         
         currentRoom = room1; 
 
+        player = new Player(window);
+        player.Initialize();
+        player.SetCurrentRoom(room1);
+
         enemyHandler = new EnemyHandler(currentRoom.Enemies); 
-        enemyHandler.Initialize();                                          
+        enemyHandler.Initialize();                            
+
+        //backgroundMusic.Play();
     }
 
+    internal static Vector2i ConvertToIndex(RenderWindow window, Vector2f position, Sprite sprite)
+    {
+        return new Vector2i((int)sprite.Position.X / TILE_SIZE + ((int)window.Size.X/48) / 2 - 1, (int)sprite.Position.Y / TILE_SIZE + ((int)window.Size.Y/48) / 2 - 1);
+    }
+
+    internal static bool IsObstacle(Vector2i position, List<int[]> map)
+    {
+        int val = map[position.Y][position.X];
+        if(val >= 5)
+        {
+            return true;
+        }
+                                                                                    
+        return false;                                                               
+    }
 }
