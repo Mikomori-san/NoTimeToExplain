@@ -49,7 +49,7 @@ public class Player : GameObject
         );
 
         player.Origin = new Vector2f(player.GetGlobalBounds().Left + player.GetGlobalBounds().Width / 2, player.GetGlobalBounds().Top + player.GetGlobalBounds().Height / 2);
-        player.Position = new Vector2f(0, 0);
+        player.Position = new Vector2f(-renderWindow.Size.X / 2 + 24, -renderWindow.Size.Y / 2 + 72);
         player.Scale *= PLAYER_SCALING;
         tileIndex = new Vector2i((int)player.Position.X / Game.TILE_SIZE, (int)player.Position.Y / Game.TILE_SIZE);
     }

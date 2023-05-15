@@ -57,12 +57,13 @@ public static class Utils
 
     internal static Vector2i ConvertToIndex(RenderWindow window, Vector2f position, Sprite sprite)
     {
-        return new Vector2i((int)sprite.Position.X / Game.TILE_SIZE + ((int)window.Size.X/48) / 2 - 1, (int)sprite.Position.Y / Game.TILE_SIZE + ((int)window.Size.Y/48) / 2 - 1);
+        return new Vector2i((int)(sprite.Position.X / Game.TILE_SIZE + ((int)window.Size.X/Game.TILE_SIZE) / 2 - 1), (int)(sprite.Position.Y / Game.TILE_SIZE + ((int)window.Size.Y/Game.TILE_SIZE) / 2 - 1));
     }
 
     internal static bool IsObstacle(Vector2i position, List<int[]> map)
     {
         int val = map[position.Y][position.X];
+        Console.WriteLine("Value of tile: " + val);
         if(val >= 5)
         {
             return true;
