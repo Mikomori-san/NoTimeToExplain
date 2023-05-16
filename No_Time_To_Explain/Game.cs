@@ -29,6 +29,7 @@ public class Game
 
         view = new View(new Vector2f(), (Vector2f)window.Size);
         window.SetView(view);
+        window.SetFramerateLimit(144);
 
         window.Closed += OnWindowClosed;
         window.Resized += OnResizeWindow;

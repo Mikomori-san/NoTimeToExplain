@@ -57,8 +57,8 @@ public static class Utils
 
     internal static Vector2i ConvertToIndex(RenderWindow window, Vector2f position, Sprite sprite)
     {
-        int a = (int)(sprite.Position.X / Game.TILE_SIZE + window.Size.X/Game.TILE_SIZE / 2);
-        int b = (int)(sprite.Position.Y / Game.TILE_SIZE + window.Size.Y/Game.TILE_SIZE / 2);
+        int a = (int)Math.Floor(sprite.Position.X / Game.TILE_SIZE + window.Size.X/Game.TILE_SIZE / 2);
+        int b = (int)Math.Floor(sprite.Position.Y / Game.TILE_SIZE + window.Size.Y/Game.TILE_SIZE / 2);
         return new Vector2i(a, b);
     }
 

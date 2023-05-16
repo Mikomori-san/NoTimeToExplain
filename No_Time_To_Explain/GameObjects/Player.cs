@@ -49,7 +49,7 @@ public class Player : GameObject
         );
 
         player.Origin = new Vector2f(player.GetGlobalBounds().Left + player.GetGlobalBounds().Width / 2, player.GetGlobalBounds().Top + player.GetGlobalBounds().Height / 2);
-        player.Position = new Vector2f(-renderWindow.Size.X / 2 + 24, -renderWindow.Size.Y / 2 + 24);
+        player.Position = new Vector2f(-renderWindow.Size.X / 2 + 24, -renderWindow.Size.Y / 2 + 72);
         player.Scale *= PLAYER_SCALING;
         tileIndex = Utils.ConvertToIndex(renderWindow, player.Position, player);
     }
@@ -62,98 +62,97 @@ public class Player : GameObject
     }
 
     private void Input_Handling(float deltaTime)
-{
-    generalTime += deltaTime;
-    if (TurnHandler.Instance.IsPlayerTurn())
     {
+        generalTime += deltaTime;
         Console.WriteLine("Current Position:" + player.Position);
-        
+            
         Console.WriteLine("Current Index:" + tileIndex);
-
-        if (InputManager.Instance.GetKeyDown(Keyboard.Key.D) && generalTime > MOVE_TIME)
+        if (TurnHandler.Instance.IsPlayerTurn())
         {
-            if(tileIndex.X + 1 <= currentRoom.Map[tileIndex.Y].Length)
+            if (InputManager.Instance.GetKeyDown(Keyboard.Key.D) && generalTime > MOVE_TIME)
             {
-                if (Utils.IsObstacle(tileIndex + new Vector2i(1, 0), currentRoom.Map))
+                if(tileIndex.X + 1 <= currentRoom.Map[tileIndex.Y].Length)
                 {
-                    Console.WriteLine("Is Obstacle: Yes");
-                    Movement_AnimationHandling(deltaTime);
+                    if (Utils.IsObstacle(tileIndex + new Vector2i(1, 0), currentRoom.Map))
+                    {
+                        Console.WriteLine("Is Obstacle: Yes");
+                        Movement_AnimationHandling(deltaTime);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Is Obstalce: No");
+                        currentAnimation = PlayerAnimationType.Move;
+                        isMoving = true;
+                        generalTime = 0;
+                        currDirection = Direction.Right;
+                        player.Scale = new Vector2f(PLAYER_SCALING, PLAYER_SCALING);
+                    }
                 }
-                else
+                
+            }
+            else if (InputManager.Instance.GetKeyDown(Keyboard.Key.A) && generalTime > MOVE_TIME)
+            {
+                if(tileIndex.X - 1 >= 0)
                 {
-                    Console.WriteLine("Is Obstalce: No");
-                    currentAnimation = PlayerAnimationType.Move;
-                    isMoving = true;
-                    generalTime = 0;
-                    currDirection = Direction.Right;
-                    player.Scale = new Vector2f(PLAYER_SCALING, PLAYER_SCALING);
+                    if (Utils.IsObstacle(tileIndex - new Vector2i(1, 0), currentRoom.Map))
+                    {
+                        Console.WriteLine("Is Obstacle: Yes");
+                        Movement_AnimationHandling(deltaTime);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Is Obstalce: No");
+                        currentAnimation = PlayerAnimationType.Move;
+                        isMoving = true;
+                        generalTime = 0;
+                        currDirection = Direction.Left;
+                        player.Scale = new Vector2f(-PLAYER_SCALING, PLAYER_SCALING);
+                    }
+                }
+                
+            }
+            else if (InputManager.Instance.GetKeyDown(Keyboard.Key.W) && generalTime > MOVE_TIME)
+            {
+                if(tileIndex.Y - 1 >= 0)
+                {
+                    if (Utils.IsObstacle(tileIndex - new Vector2i(0, 1), currentRoom.Map))
+                    {
+                        Console.WriteLine("Is Obstacle: Yes");
+                        Movement_AnimationHandling(deltaTime);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Is Obstalce: No");
+                        currentAnimation = PlayerAnimationType.Move;
+                        isMoving = true;
+                        generalTime = 0;
+                        currDirection = Direction.Up;
+                    }
+                }
+                
+            }
+            else if (InputManager.Instance.GetKeyDown(Keyboard.Key.S) && generalTime > MOVE_TIME)
+            {
+                if(tileIndex.Y + 1 <= currentRoom.Map.Count)
+                {
+                    if (Utils.IsObstacle(tileIndex + new Vector2i(0, 1), currentRoom.Map))
+                    {
+                        Console.WriteLine("Is Obstacle: Yes");
+                        Movement_AnimationHandling(deltaTime);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Is Obstalce: No");
+                        currentAnimation = PlayerAnimationType.Move;
+                        isMoving = true;
+                        generalTime = 0;
+                        currDirection = Direction.Down;
+                    }
                 }
             }
-            
+            Movement_AnimationHandling(deltaTime);
         }
-        else if (InputManager.Instance.GetKeyDown(Keyboard.Key.A) && generalTime > MOVE_TIME)
-        {
-            if(tileIndex.X - 1 >= 0)
-            {
-                if (Utils.IsObstacle(tileIndex - new Vector2i(1, 0), currentRoom.Map))
-                {
-                    Console.WriteLine("Is Obstacle: Yes");
-                    Movement_AnimationHandling(deltaTime);
-                }
-                else
-                {
-                    Console.WriteLine("Is Obstalce: No");
-                    currentAnimation = PlayerAnimationType.Move;
-                    isMoving = true;
-                    generalTime = 0;
-                    currDirection = Direction.Left;
-                    player.Scale = new Vector2f(-PLAYER_SCALING, PLAYER_SCALING);
-                }
-            }
-            
-        }
-        else if (InputManager.Instance.GetKeyDown(Keyboard.Key.W) && generalTime > MOVE_TIME)
-        {
-            if(tileIndex.Y - 1 >= 0)
-            {
-                if (Utils.IsObstacle(tileIndex - new Vector2i(0, 1), currentRoom.Map))
-                {
-                    Console.WriteLine("Is Obstacle: Yes");
-                    Movement_AnimationHandling(deltaTime);
-                }
-                else
-                {
-                    Console.WriteLine("Is Obstalce: No");
-                    currentAnimation = PlayerAnimationType.Move;
-                    isMoving = true;
-                    generalTime = 0;
-                    currDirection = Direction.Up;
-                }
-            }
-            
-        }
-        else if (InputManager.Instance.GetKeyDown(Keyboard.Key.S) && generalTime > MOVE_TIME)
-        {
-            if(tileIndex.Y + 1 <= currentRoom.Map.Count)
-            {
-                if (Utils.IsObstacle(tileIndex + new Vector2i(0, 1), currentRoom.Map))
-                {
-                    Console.WriteLine("Is Obstacle: Yes");
-                    Movement_AnimationHandling(deltaTime);
-                }
-                else
-                {
-                    Console.WriteLine("Is Obstalce: No");
-                    currentAnimation = PlayerAnimationType.Move;
-                    isMoving = true;
-                    generalTime = 0;
-                    currDirection = Direction.Down;
-                }
-            }
-        }
-        Movement_AnimationHandling(deltaTime);
     }
-}
 
 
     private void Movement_AnimationHandling(float deltaTime)
