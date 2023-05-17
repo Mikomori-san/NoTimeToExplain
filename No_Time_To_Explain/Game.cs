@@ -20,6 +20,7 @@ public class Game
     private Music? backgroundMusic;
     private Vector2f ScalingFactor;
     public const int TILE_SIZE = 48;
+    private float aspectRatio = 1;
 
     public Game()
     {
@@ -37,9 +38,19 @@ public class Game
 
     private void OnResizeWindow(object? sender, SizeEventArgs e)
     {
-        view.Size = new Vector2f(e.Width, e.Height);
-        window.SetView(view);
-        hud.UpdateWindow(window);
+        aspectRatio = (float)ORIGINAL_WIDTH / ORIGINAL_HEIGHT;
+
+        int newWidth = (int)(e.Height * aspectRatio);
+        int newHeight = (int)e.Height;
+
+        if (newWidth > e.Width)
+        {
+            newWidth = (int)e.Width;
+            newHeight = (int)(newWidth / aspectRatio);
+        }
+
+        window.Size = new Vector2u((uint)newWidth, (uint)newHeight);
+
     }
 
     private void OnWindowClosed(object? sender, EventArgs e)

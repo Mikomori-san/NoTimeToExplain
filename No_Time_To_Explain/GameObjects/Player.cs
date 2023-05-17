@@ -7,7 +7,7 @@ public class Player : GameObject
     private const float MOVE_TIME = 0.25f;
     private Sprite player;
     private int[] frameCountPerAnimation;
-    private float movementLength = 191f;
+    private float movementLength = 185f;
     private const int PLAYER_TILING_X = 9;
     private const int PLAYER_TILING_Y = 5;
     private RenderWindow renderWindow;
@@ -23,6 +23,7 @@ public class Player : GameObject
     private const float PLAYER_SCALING = 2f;
     public Vector2i tileIndex;
     private Room currentRoom;
+    private Vector2f targetPos;
 
     public override void Draw(RenderWindow window)
     {
@@ -36,7 +37,7 @@ public class Player : GameObject
 
         frameCountPerAnimation = new int[5];
         frameCountPerAnimation[(int)PlayerAnimationType.Idle] = 6; //0
-        frameCountPerAnimation[(int)PlayerAnimationType.Move] = 4; //1 | 8 is max, but only need half -> 1 Hop
+        frameCountPerAnimation[(int)PlayerAnimationType.Move] = 4; //1
         frameCountPerAnimation[(int)PlayerAnimationType.Death] = 9; //3
 
         player = new Sprite(AssetManager.Instance.Textures["player"]);

@@ -55,7 +55,7 @@ public class Room
                 if(tileIndex != -1)
                 {
                     Sprite tile = tiles[tileIndex];
-                    tile.Position = new Vector2f(-window.Size.X / 2 + x * tileSize, -window.Size.Y / 2 + y * tileSize);
+                    tile.Position = new Vector2f(-window.GetView().Size.X / 2 + x * tileSize, -window.GetView().Size.Y / 2 + y * tileSize);
                     window.Draw(tile);
                 }
             }
