@@ -4,10 +4,14 @@ using SFML.System;
 public class EnemyHandler : GameObject
 {
     private List<Enemy> enemies;
+    private List<Sprite> enemySpawn;
+    private int tileSize;
 
-    public EnemyHandler(List<Enemy> enemies)
+    public EnemyHandler(List<Enemy> enemies, List<Sprite> enemySpawn, int tileSize)
     {
+        this.enemySpawn = enemySpawn;
         this.enemies = enemies;
+        this.tileSize = tileSize;
     }
 
     public override void Draw(RenderWindow window)
@@ -20,9 +24,12 @@ public class EnemyHandler : GameObject
 
     public override void Initialize()
     {
-        foreach(var enemy in enemies)
+        for(int i = 0; i < enemies.Count; i++)
         {
-            enemy.Initialize();
+            enemies[i].SpriteInitializing(enemySpawn[i].Position + new Vector2f(tileSize / 2, 3*tileSize / 4));
+            Console.WriteLine("EnemySpawn " + i + " " + enemySpawn[i].Position);
+            Console.WriteLine("Enemy" + i + " " + enemies[i].Position);
+            enemies[i].Initialize();
         }
     }
 

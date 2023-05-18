@@ -66,7 +66,7 @@ public static class Utils
     {
         int val = map[position.Y][position.X];
         Console.WriteLine("Value of tile: " + val);
-        if(val >= 5 && val != Room.SPAWN_TILE_INDEX)
+        if(val >= 7)
         {
             return true;
         }

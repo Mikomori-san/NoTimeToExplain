@@ -123,10 +123,10 @@ public class Game
         room1 = new Room("./Assets/Rooms/Room1.txt", TILE_SIZE, window);
         room1.Enemies = new List<Enemy>();
         
-        room1.Enemies.Add(new LavaGolem(new Vector2f(10, 0), EnemyType.LavaGolem, "lavaGolem", window));
-        room1.Enemies.Add(new StoneGolem(new Vector2f(10, 48), EnemyType.StoneGolem, "stoneGolem", window));
-        room1.Enemies.Add(new BrokenStoneGolem(new Vector2f(10, 78), EnemyType.BrokenStoneGolem, "brokenStoneGolem", window));
-        room1.Enemies.Add(new BaseStoneGolem(new Vector2f(10, 126), EnemyType.BaseStoneGolem, "baseStoneGolem", window));
+        room1.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window));
+        room1.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window));
+        room1.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window));
+        room1.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window));
         
         currentRoom = room1; 
 
@@ -134,7 +134,7 @@ public class Game
         player.SetCurrentRoom(room1);
         player.Initialize();
 
-        enemyHandler = new EnemyHandler(currentRoom.Enemies); 
+        enemyHandler = new EnemyHandler(currentRoom.Enemies, currentRoom.EnemySpawnTiles, currentRoom.TileSize); 
         enemyHandler.Initialize();                            
 
         backgroundMusic.Play();

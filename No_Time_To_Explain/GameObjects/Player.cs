@@ -70,9 +70,9 @@ public class Player : GameObject
     private void Input_Handling(float deltaTime)
     {
         generalTime += deltaTime;
-        Console.WriteLine("Current Position:" + player.Position);
+        //Console.WriteLine("Current Position:" + player.Position);
             
-        Console.WriteLine("Current Index:" + tileIndex);
+        //Console.WriteLine("Current Index:" + tileIndex);
         if (TurnHandler.Instance.IsPlayerTurn())
         {
             if (InputManager.Instance.GetKeyDown(Keyboard.Key.D) && generalTime > MOVE_TIME)

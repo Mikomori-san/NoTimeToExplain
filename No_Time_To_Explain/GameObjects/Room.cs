@@ -8,9 +8,18 @@ public class Room
     private List<int[]> map;
     private int tileSize;
     private Sprite spawnTile;
+    private List<Sprite> enemySpawnTiles = new();
     private List<Enemy> enemies;
-    public const int SPAWN_TILE_INDEX = 12;
+    public const int SPAWN_TILE_INDEX = 05;
+    public const int ENEMY_SPAWN_TILE_INDEX = 06;
 
+    public List<Sprite> EnemySpawnTiles
+    {
+        get
+        {
+            return enemySpawnTiles;
+        }
+    }
     public int TileSize
     {
         get
@@ -94,6 +103,7 @@ public class Room
 
     private void FindSpawnTile(RenderWindow window)
     {
+        
         for(int y = 0; y < map.Count; y++)
         {
             for(int x = 0; x < map[y].Length; x++)
@@ -103,7 +113,13 @@ public class Room
                 {
                     spawnTile = tiles[tileIndex];
                     spawnTile.Position = new Vector2f(-window.GetView().Size.X / 2 + x * tileSize, -window.GetView().Size.Y / 2 + y * tileSize);
-                    return;
+                }
+                if(tileIndex == ENEMY_SPAWN_TILE_INDEX)
+                {
+                    Sprite enemySpawnTile = new Sprite(tiles[tileIndex]);
+                    enemySpawnTile.Position = new Vector2f(-window.GetView().Size.X / 2 + x * tileSize, -window.GetView().Size.Y / 2 + y * tileSize);
+                    Console.WriteLine("Tile Pos: " + enemySpawnTile.Position);
+                    enemySpawnTiles.Add(enemySpawnTile);
                 }              
             }
         }

@@ -17,7 +17,6 @@ public class Enemy : GameObject
     protected const float ENEMY_SCALING = 1.5f;
     protected float generalTime = 0;
     protected float movementLength = 191.5f;
-    protected Vector2f pos;
     protected bool alreadyIdle = true;
     protected EnemyType enemyType;
     protected string spriteName;
@@ -25,17 +24,9 @@ public class Enemy : GameObject
     public Vector2i tileIndex;
     public RenderWindow window;
 
-    public Enemy(Vector2f position, EnemyType enemyType, string spriteName, RenderWindow window)
+    public Enemy(EnemyType enemyType, string spriteName, RenderWindow window)
     {
         this.window = window;
-        this.enemyType = enemyType;
-        this.spriteName = spriteName;
-        pos = position;
-    }
-
-    public Enemy(Vector2f position, EnemyType enemyType, string spriteName)
-    {
-        Position = position;
         this.enemyType = enemyType;
         this.spriteName = spriteName;
     }
@@ -47,27 +38,12 @@ public class Enemy : GameObject
 
     public override void Initialize()
     {
-        sprite = new Sprite(AssetManager.Instance.Textures[spriteName]);
-        
+        tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
         currDirection = Direction.Right;
-
         frameCountPerAnimation = new int[3];
         frameCountPerAnimation[(int)EnemyAnimationType.Idle] = 4; 
         frameCountPerAnimation[(int)EnemyAnimationType.Move] = 6; 
         frameCountPerAnimation[(int)EnemyAnimationType.Death] = 6;
-
-        sprite.TextureRect = new IntRect(
-            0,
-            0,
-            (int)(sprite.Texture.Size.X / ENEMY_TILING_X),
-            (int)(sprite.Texture.Size.Y / ENEMY_TILING_Y)
-        );
-
-        sprite.Origin = new Vector2f(sprite.GetGlobalBounds().Left + sprite.GetGlobalBounds().Width / 2, sprite.GetGlobalBounds().Top + sprite.GetGlobalBounds().Height / 2);
-        sprite.Position = pos;
-        sprite.Scale *= ENEMY_SCALING;
-
-        tileIndex = new Vector2i((int)sprite.Position.X / Game.TILE_SIZE, (int)sprite.Position.Y / Game.TILE_SIZE);
 
     }
 
@@ -79,6 +55,7 @@ public class Enemy : GameObject
 
     protected void Input_AnimationHandling(float deltaTime)
     {
+        
         if(TurnHandler.Instance.IsPlayerTurn())
         {
             if(!alreadyIdle)
@@ -96,6 +73,7 @@ public class Enemy : GameObject
                 alreadyIdle = true;
             }
             generalTime = 0;
+            //Console.WriteLine("Enemy tile index: " + tileIndex);
             //if already idle then do nothing
         }
         else
@@ -103,6 +81,7 @@ public class Enemy : GameObject
             //if it's the enemy turn, move
             EnemyMovement(deltaTime);
             tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
+            //Console.WriteLine("Enemy tile index: " + tileIndex);
             //EnemyAttack();
         }
 
@@ -158,5 +137,21 @@ public class Enemy : GameObject
         {
             currDirection = Direction.Right;
         }
+    }
+
+    public void SpriteInitializing(Vector2f position)
+    {
+        sprite = new Sprite(AssetManager.Instance.Textures[spriteName]);
+        
+        sprite.TextureRect = new IntRect(
+            0,
+            0,
+            (int)(sprite.Texture.Size.X / ENEMY_TILING_X),
+            (int)(sprite.Texture.Size.Y / ENEMY_TILING_Y)
+        );
+
+        sprite.Origin = new Vector2f(sprite.GetGlobalBounds().Left + sprite.GetGlobalBounds().Width / 2 + 2, sprite.GetGlobalBounds().Top + sprite.GetGlobalBounds().Height + 5);
+        sprite.Position = position;
+        sprite.Scale *= ENEMY_SCALING;
     }
 }
