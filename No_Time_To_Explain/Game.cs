@@ -14,8 +14,8 @@ public class Game
     private Room room1;
     private Hud hud;
     private EnemyHandler enemyHandler;
-    private const uint ORIGINAL_WIDTH = 1280;
-    private const uint ORIGINAL_HEIGHT = 720;
+    private const uint ORIGINAL_WIDTH = 1280; //1920
+    private const uint ORIGINAL_HEIGHT = 720; //1080
     private Room currentRoom;
     private Music? backgroundMusic;
     private Vector2f ScalingFactor;
@@ -26,7 +26,8 @@ public class Game
     {
         mode = new VideoMode(ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
         string title = "No Time To Explain";
-        window = new RenderWindow(mode, title);
+        window = new RenderWindow(mode, title); //Styles.Fullscreen
+        
 
         view = new View(new Vector2f(), (Vector2f)window.Size);
         window.SetView(view);
@@ -112,13 +113,14 @@ public class Game
         AssetManager.Instance.LoadTexture("baseStoneGolem", "Enemy/BaseStoneGolem/BaseStoneGolemSpriteSheet.png");
         AssetManager.Instance.LoadFont("hud", "BrunoAce-Regular.ttf");
         AssetManager.Instance.LoadMusic("background", "backgroundMusic1.ogg");
+        AssetManager.Instance.LoadSound("obstacleHit", "ObstacleHit.wav");
         
         backgroundMusic = AssetManager.Instance.Music["background"];
-
+        backgroundMusic.Volume *= 0.1f;
         hud = new Hud(window);
         hud.Initialize();
 
-        room1 = new Room("./Assets/Rooms/Room1.txt", TILE_SIZE);
+        room1 = new Room("./Assets/Rooms/Room1.txt", TILE_SIZE, window);
         room1.Enemies = new List<Enemy>();
         
         room1.Enemies.Add(new LavaGolem(new Vector2f(10, 0), EnemyType.LavaGolem, "lavaGolem", window));
@@ -129,12 +131,12 @@ public class Game
         currentRoom = room1; 
 
         player = new Player(window);
-        player.Initialize();
         player.SetCurrentRoom(room1);
+        player.Initialize();
 
         enemyHandler = new EnemyHandler(currentRoom.Enemies); 
         enemyHandler.Initialize();                            
 
-        //backgroundMusic.Play();
+        backgroundMusic.Play();
     }
 }

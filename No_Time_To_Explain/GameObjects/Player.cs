@@ -1,3 +1,4 @@
+using SFML.Audio;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -24,6 +25,7 @@ public class Player : GameObject
     public Vector2i tileIndex;
     private Room currentRoom;
     private Vector2f targetPos;
+    private Sound obstacleHit;
 
     public override void Draw(RenderWindow window)
     {
@@ -34,7 +36,10 @@ public class Player : GameObject
     {
         currDirection = Direction.Right;
         isMoving = false;
-
+        
+        obstacleHit = new Sound(AssetManager.Instance.Sounds["obstacleHit"]);
+        obstacleHit.Pitch = 2.5f;
+        obstacleHit.Volume = 5;
         frameCountPerAnimation = new int[5];
         frameCountPerAnimation[(int)PlayerAnimationType.Idle] = 6; //0
         frameCountPerAnimation[(int)PlayerAnimationType.Move] = 4; //1
@@ -49,8 +54,8 @@ public class Player : GameObject
             (int)(player.Texture.Size.Y / PLAYER_TILING_Y)
         );
 
-        player.Origin = new Vector2f(player.GetGlobalBounds().Left + player.GetGlobalBounds().Width / 2, player.GetGlobalBounds().Top + player.GetGlobalBounds().Height / 2);
-        player.Position = new Vector2f(-renderWindow.Size.X / 2 + 24, -renderWindow.Size.Y / 2 + 72);
+        player.Origin = new Vector2f(player.GetGlobalBounds().Left + player.GetGlobalBounds().Width / 2 + 3, player.GetGlobalBounds().Top + player.GetGlobalBounds().Height - 4);
+        player.Position = currentRoom.SpawnTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
         player.Scale *= PLAYER_SCALING;
         tileIndex = Utils.ConvertToIndex(renderWindow, player.Position, player);
     }
@@ -72,10 +77,11 @@ public class Player : GameObject
         {
             if (InputManager.Instance.GetKeyDown(Keyboard.Key.D) && generalTime > MOVE_TIME)
             {
-                if(tileIndex.X + 1 <= currentRoom.Map[tileIndex.Y].Length)
+                if(tileIndex.X + 1 < currentRoom.Map[tileIndex.Y].Length)
                 {
                     if (Utils.IsObstacle(tileIndex + new Vector2i(1, 0), currentRoom.Map))
                     {
+                        obstacleHit.Play();
                         Console.WriteLine("Is Obstacle: Yes");
                         Movement_AnimationHandling(deltaTime);
                     }
@@ -89,6 +95,10 @@ public class Player : GameObject
                         player.Scale = new Vector2f(PLAYER_SCALING, PLAYER_SCALING);
                     }
                 }
+                else
+                {
+                    obstacleHit.Play();
+                }
                 
             }
             else if (InputManager.Instance.GetKeyDown(Keyboard.Key.A) && generalTime > MOVE_TIME)
@@ -97,6 +107,7 @@ public class Player : GameObject
                 {
                     if (Utils.IsObstacle(tileIndex - new Vector2i(1, 0), currentRoom.Map))
                     {
+                        obstacleHit.Play();
                         Console.WriteLine("Is Obstacle: Yes");
                         Movement_AnimationHandling(deltaTime);
                     }
@@ -110,6 +121,10 @@ public class Player : GameObject
                         player.Scale = new Vector2f(-PLAYER_SCALING, PLAYER_SCALING);
                     }
                 }
+                else
+                {
+                    obstacleHit.Play();
+                }
                 
             }
             else if (InputManager.Instance.GetKeyDown(Keyboard.Key.W) && generalTime > MOVE_TIME)
@@ -118,6 +133,7 @@ public class Player : GameObject
                 {
                     if (Utils.IsObstacle(tileIndex - new Vector2i(0, 1), currentRoom.Map))
                     {
+                        obstacleHit.Play();
                         Console.WriteLine("Is Obstacle: Yes");
                         Movement_AnimationHandling(deltaTime);
                     }
@@ -130,14 +146,19 @@ public class Player : GameObject
                         currDirection = Direction.Up;
                     }
                 }
+                else
+                {
+                    obstacleHit.Play();
+                }
                 
             }
             else if (InputManager.Instance.GetKeyDown(Keyboard.Key.S) && generalTime > MOVE_TIME)
             {
-                if(tileIndex.Y + 1 <= currentRoom.Map.Count)
+                if(tileIndex.Y + 1 < currentRoom.Map.Count)
                 {
                     if (Utils.IsObstacle(tileIndex + new Vector2i(0, 1), currentRoom.Map))
                     {
+                        obstacleHit.Play();
                         Console.WriteLine("Is Obstacle: Yes");
                         Movement_AnimationHandling(deltaTime);
                     }
@@ -149,6 +170,10 @@ public class Player : GameObject
                         generalTime = 0;
                         currDirection = Direction.Down;
                     }
+                }
+                else
+                {
+                    obstacleHit.Play();
                 }
             }
             Movement_AnimationHandling(deltaTime);
