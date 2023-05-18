@@ -138,5 +138,6 @@ public class Game
         enemyHandler.Initialize();                            
 
         backgroundMusic.Play();
+        backgroundMusic.Loop = true;
     }
 }

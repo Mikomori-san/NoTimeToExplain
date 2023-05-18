@@ -227,11 +227,6 @@ public class Player : GameObject
         this.renderWindow = renderWindow;
     }
 
-    public void UpdateWindow(RenderWindow window, float scalingFactorX, float scalingFactorY)
-    {
-        renderWindow = window;
-    }
-
     public void SetCurrentRoom(Room room)
     {
         currentRoom = room;

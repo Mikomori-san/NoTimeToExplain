@@ -46,9 +46,4 @@ public class EnemyHandler : GameObject
         }
         
     }
-
-    public List<Enemy> GetEnemies()
-    {
-        return enemies;
-    }
 }
