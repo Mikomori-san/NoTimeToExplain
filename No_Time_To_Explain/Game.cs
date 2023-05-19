@@ -19,6 +19,7 @@ public class Game
     private Room currentRoom;
     private Music? backgroundMusic;
     private Vector2f ScalingFactor;
+    private KillHandler killHandler;
     public const int TILE_SIZE = 48;
     private float aspectRatio = 1;
 
@@ -83,6 +84,7 @@ public class Game
         player.Update(deltaTime);
         enemyHandler.Update(deltaTime);
         hud.Update(deltaTime);
+        killHandler.SearchForCollisions();
         InputManager.Instance.Update(deltaTime);
     }
 
@@ -130,12 +132,15 @@ public class Game
         
         currentRoom = room1; 
 
-        player = new Player(window);
+        player = new Player(window, hud);
         player.SetCurrentRoom(room1);
         player.Initialize();
 
         enemyHandler = new EnemyHandler(currentRoom.Enemies, currentRoom.EnemySpawnTiles, currentRoom.TileSize); 
         enemyHandler.Initialize();                            
+
+
+        killHandler = new KillHandler(player, currentRoom.Enemies, hud);
 
         backgroundMusic.Play();
         backgroundMusic.Loop = true;

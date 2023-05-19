@@ -23,6 +23,10 @@ public class Enemy : GameObject
     public bool hasTurn = false;
     public Vector2i tileIndex;
     public RenderWindow window;
+    protected Vector2f SpawnPosition;
+    public bool soulHarvested = false;
+    protected float soulHarvestCooldownTimer = 0;
+    protected const float SOUL_HARVEST_COOLDOWN = 0.5f;
 
     public Enemy(EnemyType enemyType, string spriteName, RenderWindow window)
     {
@@ -50,6 +54,11 @@ public class Enemy : GameObject
     public override void Update(float deltaTime)
     {
         animationTime += deltaTime * animationSpeed;
+        soulHarvestCooldownTimer += deltaTime;
+        if(soulHarvestCooldownTimer >= SOUL_HARVEST_COOLDOWN)
+        {
+            soulHarvested = false;
+        }
         Input_AnimationHandling(deltaTime);
     }
 
@@ -73,7 +82,6 @@ public class Enemy : GameObject
                 alreadyIdle = true;
             }
             generalTime = 0;
-            //Console.WriteLine("Enemy tile index: " + tileIndex);
             //if already idle then do nothing
         }
         else
@@ -81,7 +89,7 @@ public class Enemy : GameObject
             //if it's the enemy turn, move
             EnemyMovement(deltaTime);
             tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
-            //Console.WriteLine("Enemy tile index: " + tileIndex);
+            
             //EnemyAttack();
         }
 
@@ -141,6 +149,7 @@ public class Enemy : GameObject
 
     public void SpriteInitializing(Vector2f position)
     {
+        SpawnPosition = position;
         sprite = new Sprite(AssetManager.Instance.Textures[spriteName]);
         
         sprite.TextureRect = new IntRect(
@@ -151,7 +160,14 @@ public class Enemy : GameObject
         );
 
         sprite.Origin = new Vector2f(sprite.GetGlobalBounds().Left + sprite.GetGlobalBounds().Width / 2 + 2, sprite.GetGlobalBounds().Top + sprite.GetGlobalBounds().Height + 5);
-        sprite.Position = position;
+        sprite.Position = SpawnPosition;
         sprite.Scale *= ENEMY_SCALING;
+    }
+
+    public void RespawnEnemy()
+    {
+        sprite.Position = SpawnPosition;
+        soulHarvested = true;
+        soulHarvestCooldownTimer = 0;
     }
 }

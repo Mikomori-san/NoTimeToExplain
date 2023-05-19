@@ -24,8 +24,16 @@ public class Player : GameObject
     private const float PLAYER_SCALING = 2f;
     public Vector2i tileIndex;
     private Room currentRoom;
-    private Vector2f targetPos;
     private Sound obstacleHit;
+    private Hud hud;
+
+    public Sprite PlayerSprite
+    {
+        get
+        {
+            return player;
+        }
+    }
 
     public override void Draw(RenderWindow window)
     {
@@ -180,7 +188,6 @@ public class Player : GameObject
         }
     }
 
-
     private void Movement_AnimationHandling(float deltaTime)
     {
         if(isMoving)
@@ -200,11 +207,13 @@ public class Player : GameObject
                     player.Position -= new Vector2f(0, 1) * deltaTime * movementLength;
                 break;
             }
+            
+            tileIndex = Utils.ConvertToIndex(renderWindow, player.Position, player);
+            
             if(generalTime > MOVE_TIME)
             {
                 isMoving = false;
                 currentAnimation = PlayerAnimationType.Idle;
-                tileIndex = Utils.ConvertToIndex(renderWindow, player.Position, player);
                 TurnHandler.Instance.EnemyTurn();
             }
         }
@@ -222,13 +231,20 @@ public class Player : GameObject
         );  
     }
 
-    public Player(RenderWindow renderWindow)
+    public Player(RenderWindow renderWindow, Hud hud)
     {
         this.renderWindow = renderWindow;
+        this.hud = hud;
     }
 
     public void SetCurrentRoom(Room room)
     {
         currentRoom = room;
+    }
+
+    public void RespawnPlayer()
+    {
+        player.Position = currentRoom.SpawnTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
+        tileIndex = Utils.ConvertToIndex(renderWindow, player.Position, player);
     }
 }

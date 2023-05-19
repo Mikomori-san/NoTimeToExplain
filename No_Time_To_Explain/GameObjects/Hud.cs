@@ -6,8 +6,18 @@ public class Hud : GameObject
     private RenderWindow renderWindow;
     private Font font;
     private Text time;
+    private Text souls;
     private const int MAX_TIME = 120;
     private float remainingTime = 0;
+    private int currentSouls = 0;
+
+    public int CurrentSouls
+    {
+        get
+        {
+            return currentSouls;
+        }
+    }
     public Hud(RenderWindow renderWindow)
     {
         this.renderWindow = renderWindow;
@@ -16,6 +26,7 @@ public class Hud : GameObject
     public override void Draw(RenderWindow window)
     {
         window.Draw(time);
+        window.Draw(souls);
     }
 
     public override void Initialize()
@@ -24,6 +35,9 @@ public class Hud : GameObject
         time = new Text($"Time's ticking: {MAX_TIME - (int)remainingTime}", font, 12);
         time.FillColor = Color.White;
         time.Position = new Vector2f(renderWindow.Size.X / 2 - (time.GetGlobalBounds().Left + time.GetGlobalBounds().Width + 10), -renderWindow.Size.Y / 2 + 10);
+        souls = new Text($"Souls harvested: {currentSouls}", font, 12);
+        souls.FillColor = Color.White;
+        souls.Position = new Vector2f(-renderWindow.Size.X / 2 + 10, -renderWindow.Size.Y / 2 + 10);
     }
 
     public override void Update(float deltaTime)
@@ -34,15 +48,15 @@ public class Hud : GameObject
             time.DisplayedString = $"Time's ticking: {MAX_TIME - (int)remainingTime}";
     }
 
-    public void UpdateWindow(RenderWindow window)
-    {
-        renderWindow = window;
-        //time.Position = new Vector2f(renderWindow.Size.X / 2 - (time.GetGlobalBounds().Left + time.GetGlobalBounds().Width + 10), -renderWindow.Size.Y / 2 + 10);
-    }
-
     public int RemainingTime()
     {
         return MAX_TIME - (int)remainingTime;
+    }
+
+    public void AddSoul()
+    {
+        currentSouls++;
+        souls.DisplayedString = $"Souls harvested: {currentSouls}";
     }
 
 }
