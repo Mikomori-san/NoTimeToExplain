@@ -27,8 +27,6 @@ public class EnemyHandler : GameObject
         for(int i = 0; i < enemies.Count; i++)
         {
             enemies[i].SpriteInitializing(enemySpawn[i].Position + new Vector2f(tileSize / 2, 3*tileSize / 4));
-            Console.WriteLine("EnemySpawn " + i + " " + enemySpawn[i].Position);
-            Console.WriteLine("Enemy" + i + " " + enemies[i].Position);
             enemies[i].Initialize();
         }
     }

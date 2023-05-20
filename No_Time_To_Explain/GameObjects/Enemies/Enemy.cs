@@ -27,12 +27,19 @@ public class Enemy : GameObject
     public bool soulHarvested = false;
     protected float soulHarvestCooldownTimer = 0;
     protected const float SOUL_HARVEST_COOLDOWN = 0.5f;
+    protected Vector2i playerIndex;
+    protected Room currentRoom;
+    protected int tilesToGoal = 0;
+    protected BreadthFirstSearch bds;
+    protected bool pathFound = false;
 
-    public Enemy(EnemyType enemyType, string spriteName, RenderWindow window)
+    public Enemy(EnemyType enemyType, string spriteName, RenderWindow window, Vector2i playerIndex, Room currentRoom)
     {
         this.window = window;
         this.enemyType = enemyType;
         this.spriteName = spriteName;
+        this.playerIndex = playerIndex;
+        this.currentRoom = currentRoom;
     }
 
     public override void Draw(RenderWindow window)
@@ -86,6 +93,10 @@ public class Enemy : GameObject
         }
         else
         {
+            if(!pathFound && playerIndex != tileIndex)
+            {
+                BFSPathfinding(); 
+            }
             //if it's the enemy turn, move
             EnemyMovement(deltaTime);
             tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
@@ -117,14 +128,23 @@ public class Enemy : GameObject
         {
             generalTime += deltaTime;
             currentAnimation = EnemyAnimationType.Move;
+            
             if(currDirection == Direction.Right)
             {
                 sprite.Position += new Vector2f(1, 0) * movementLength * deltaTime;
             }
-            else
+            else if(currDirection == Direction.Left)
             {
                 sprite.Position -= new Vector2f(1, 0) * movementLength * deltaTime;
-            }  
+            } 
+            else if(currDirection == Direction.Down)
+            {
+                sprite.Position += new Vector2f(0, 1) * movementLength * deltaTime;
+            } else if(currDirection == Direction.Up)
+            {
+                sprite.Position -= new Vector2f(0, 1) * movementLength * deltaTime;
+            }
+            
             hasTurn = true; 
         }
         else
@@ -132,6 +152,7 @@ public class Enemy : GameObject
             //if movement is done, set the turn to player again and be able to get idled next frame
             hasTurn = false;
             alreadyIdle = false;
+            pathFound = false;
         }
     }
 
@@ -167,7 +188,37 @@ public class Enemy : GameObject
     public void RespawnEnemy()
     {
         sprite.Position = SpawnPosition;
+        tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
         soulHarvested = true;
         soulHarvestCooldownTimer = 0;
+
+    }
+
+    protected void BFSPathfinding()
+    {
+        bds = new BreadthFirstSearch(currentRoom.Map[0].Length, currentRoom.Map.Count, currentRoom.Map);
+        List<Vector2i> tilesInWay = bds.FindPath(tileIndex, playerIndex);
+        if(tilesInWay[0].X > tileIndex.X)
+        {
+            currDirection = Direction.Right;
+        }
+        else if(tilesInWay[0].X < tileIndex.X)
+        {
+            currDirection = Direction.Left;
+        }
+        else if(tilesInWay[0].Y > tileIndex.Y)
+        {
+            currDirection = Direction.Down;
+        }
+        else if(tilesInWay[0].Y < tileIndex.Y)
+        {
+            currDirection = Direction.Up;
+        }
+        pathFound = true;
+    }
+
+    public void UpdatePlayerIndex(Vector2i playerIndex)
+    {
+        this.playerIndex = playerIndex;
     }
 }

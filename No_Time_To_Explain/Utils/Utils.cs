@@ -3,6 +3,7 @@ using SFML.System;
 
 public static class Utils
 {
+    public const int OBSTACLE_TILE_INDEX = 7;
     public static float SqrMagnitude(this Vector2f input)
     {
         return (input.X * input.X + input.Y * input.Y);
@@ -62,11 +63,19 @@ public static class Utils
         return new Vector2i(a, b);
     }
 
+    internal static Vector2f ConvertToPosition(RenderWindow window, Vector2i tileIndex)
+    {
+        float x = (tileIndex.X - window.GetView().Size.X / Game.TILE_SIZE / 2) * Game.TILE_SIZE;
+        float y = (tileIndex.Y - window.GetView().Size.Y / Game.TILE_SIZE / 2) * Game.TILE_SIZE;
+        return new Vector2f(x + 24, y + 24);
+    }
+
+
     internal static bool IsObstacle(Vector2i position, List<int[]> map)
     {
         int val = map[position.Y][position.X];
         Console.WriteLine("Value of tile: " + val);
-        if(val >= 7)
+        if(val >= OBSTACLE_TILE_INDEX)
         {
             return true;
         }

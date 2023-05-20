@@ -123,18 +123,17 @@ public class Game
         hud.Initialize();
 
         room1 = new Room("./Assets/Rooms/Room1.txt", TILE_SIZE, window);
+        currentRoom = room1;
         room1.Enemies = new List<Enemy>();
-        
-        room1.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window));
-        room1.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window));
-        room1.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window));
-        room1.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window));
-        
-        currentRoom = room1; 
 
         player = new Player(window, hud);
         player.SetCurrentRoom(room1);
         player.Initialize();
+
+        room1.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.tileIndex, currentRoom));
+        room1.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window, player.tileIndex, currentRoom));
+        room1.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window, player.tileIndex, currentRoom));
+        room1.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.tileIndex, currentRoom)); 
 
         enemyHandler = new EnemyHandler(currentRoom.Enemies, currentRoom.EnemySpawnTiles, currentRoom.TileSize); 
         enemyHandler.Initialize();                            

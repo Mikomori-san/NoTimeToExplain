@@ -3,7 +3,7 @@ using SFML.System;
 
 public class StoneGolem : Enemy
 {
-    public StoneGolem(EnemyType enemyType, string spriteName, RenderWindow window) : base(enemyType, spriteName, window)
+    public StoneGolem(EnemyType enemyType, string spriteName, RenderWindow window, Vector2i playerIndex, Room currentRoom) : base(enemyType, spriteName, window, playerIndex, currentRoom)
     {
 
     }

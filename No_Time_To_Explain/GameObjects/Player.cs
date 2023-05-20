@@ -215,6 +215,10 @@ public class Player : GameObject
                 isMoving = false;
                 currentAnimation = PlayerAnimationType.Idle;
                 TurnHandler.Instance.EnemyTurn();
+                foreach(var enemy in currentRoom.Enemies)
+                {
+                    enemy.UpdatePlayerIndex(tileIndex);
+                }
             }
         }
 
