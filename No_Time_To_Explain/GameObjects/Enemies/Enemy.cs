@@ -3,7 +3,7 @@ using SFML.System;
 
 public class Enemy : GameObject
 {
-    protected Sprite? sprite;
+    protected Sprite sprite;
     protected const int ENEMY_TILING_X = 6;
     protected const int ENEMY_TILING_Y = 3;
     protected int[] frameCountPerAnimation;
@@ -32,6 +32,8 @@ public class Enemy : GameObject
     protected int tilesToGoal = 0;
     protected BreadthFirstSearch bds;
     protected bool pathFound = false;
+    protected Vector2i? blockedEnemyTileIndex = null;
+    protected bool posUpdated = false;
 
     public Enemy(EnemyType enemyType, string spriteName, RenderWindow window, Vector2i playerIndex, Room currentRoom)
     {
@@ -76,19 +78,11 @@ public class Enemy : GameObject
         {
             if(!alreadyIdle)
             {
-                SwitchDirection();
                 currentAnimation = EnemyAnimationType.Idle;
-                if(currDirection == Direction.Left)
-                {
-                    sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
-                }
-                else
-                {
-                    sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);
-                }
                 alreadyIdle = true;
             }
             generalTime = 0;
+            posUpdated = false;
             //if already idle then do nothing
         }
         else
@@ -97,9 +91,30 @@ public class Enemy : GameObject
             {
                 BFSPathfinding(); 
             }
+            //Update the tile to the next tile
+            if(!posUpdated)
+            {
+                tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
+                switch(currDirection)
+                {
+                    case Direction.Right:
+                        tileIndex += new Vector2i(1, 0);
+                        break;
+                    case Direction.Left:
+                        tileIndex -= new Vector2i(1, 0);
+                        break;
+                    case Direction.Down:
+                        tileIndex += new Vector2i(0, 1);
+                        break;
+                    case Direction.Up:
+                        tileIndex -= new Vector2i(0, 1);
+                        break;
+                }
+                posUpdated = true;
+            }
+
             //if it's the enemy turn, move
             EnemyMovement(deltaTime);
-            tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
             
             //EnemyAttack();
         }
@@ -131,18 +146,26 @@ public class Enemy : GameObject
             
             if(currDirection == Direction.Right)
             {
+                sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);
                 sprite.Position += new Vector2f(1, 0) * movementLength * deltaTime;
             }
             else if(currDirection == Direction.Left)
             {
+                sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
                 sprite.Position -= new Vector2f(1, 0) * movementLength * deltaTime;
             } 
             else if(currDirection == Direction.Down)
             {
                 sprite.Position += new Vector2f(0, 1) * movementLength * deltaTime;
-            } else if(currDirection == Direction.Up)
+            } 
+            else if(currDirection == Direction.Up)
             {
                 sprite.Position -= new Vector2f(0, 1) * movementLength * deltaTime;
+            } 
+            else if(currDirection == Direction.None)
+            {
+                //Do nothing
+                currentAnimation = EnemyAnimationType.Idle;
             }
             
             hasTurn = true; 
@@ -155,19 +178,6 @@ public class Enemy : GameObject
             pathFound = false;
         }
     }
-
-    protected void SwitchDirection()
-    {
-        if(currDirection == Direction.Right)
-        {
-            currDirection = Direction.Left;
-        }
-        else
-        {
-            currDirection = Direction.Right;
-        }
-    }
-
     public void SpriteInitializing(Vector2f position)
     {
         SpawnPosition = position;
@@ -196,23 +206,69 @@ public class Enemy : GameObject
 
     protected void BFSPathfinding()
     {
-        bds = new BreadthFirstSearch(currentRoom.Map[0].Length, currentRoom.Map.Count, currentRoom.Map);
+        bds = new BreadthFirstSearch(currentRoom.Map[0].Length, currentRoom.Map.Count, currentRoom, blockedEnemyTileIndex);
         List<Vector2i> tilesInWay = bds.FindPath(tileIndex, playerIndex);
-        if(tilesInWay[0].X > tileIndex.X)
+        if(tilesInWay.Count == 0)
         {
-            currDirection = Direction.Right;
+            currDirection = Direction.None;
         }
-        else if(tilesInWay[0].X < tileIndex.X)
+        else
         {
-            currDirection = Direction.Left;
+            if(tilesInWay[0].X > tileIndex.X)
+            {
+                currDirection = Direction.Right;
+            }
+            else if(tilesInWay[0].X < tileIndex.X)
+            {
+                currDirection = Direction.Left;
+            }
+            else if(tilesInWay[0].Y > tileIndex.Y)
+            {
+                currDirection = Direction.Down;
+            }
+            else if(tilesInWay[0].Y < tileIndex.Y)
+            {
+                currDirection = Direction.Up;
+            }
         }
-        else if(tilesInWay[0].Y > tileIndex.Y)
+
+        foreach(var enemy in currentRoom.Enemies)
         {
-            currDirection = Direction.Down;
-        }
-        else if(tilesInWay[0].Y < tileIndex.Y)
-        {
-            currDirection = Direction.Up;
+            switch(currDirection)
+            {
+                case Direction.Right:
+                    if(enemy.tileIndex == tileIndex + new Vector2i(1, 0))
+                    {
+                        blockedEnemyTileIndex = enemy.tileIndex;
+                        BFSPathfinding();
+                        blockedEnemyTileIndex = null;
+                    }
+                    break;
+                case Direction.Left:
+                    if(enemy.tileIndex == tileIndex - new Vector2i(1, 0))
+                    {
+                        blockedEnemyTileIndex = enemy.tileIndex;
+                        BFSPathfinding();
+                        blockedEnemyTileIndex = null;
+                    }
+                    break;
+                case Direction.Down:
+                    if(enemy.tileIndex == tileIndex + new Vector2i(0, 1))
+                    {
+                        blockedEnemyTileIndex = enemy.tileIndex;
+                        BFSPathfinding();
+                        blockedEnemyTileIndex = null;
+                    }
+                    break;
+                case Direction.Up:
+                    if(enemy.tileIndex == tileIndex - new Vector2i(0, 1))
+                    {
+                        blockedEnemyTileIndex = enemy.tileIndex;
+                        BFSPathfinding();
+                        blockedEnemyTileIndex = null;
+                    }
+                    break;
+            }
         }
         pathFound = true;
     }

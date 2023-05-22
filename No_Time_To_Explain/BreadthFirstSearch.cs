@@ -7,12 +7,16 @@ public class BreadthFirstSearch
     private int width;
     private int height;
     private List<int[]> tiles;
+    private Room currentRoom;
+    private Vector2i? blockedEnemyTileIndex; 
 
-    public BreadthFirstSearch(int width, int height, List<int[]> map)
+    public BreadthFirstSearch(int width, int height, Room currentRoom, Vector2i? blockedEnemyTileIndex)
     {
         this.width = width;
         this.height = height;
-        tiles = map;
+        this.currentRoom = currentRoom;
+        tiles = currentRoom.Map;
+        this.blockedEnemyTileIndex = blockedEnemyTileIndex;
     }
 
     public List<Vector2i> FindPath(Vector2i startPos, Vector2i targetPos)
@@ -83,7 +87,17 @@ public class BreadthFirstSearch
     {
         if (x >= 0 && x < width && y >= 0 && y < height && tiles[y][x] < Utils.OBSTACLE_TILE_INDEX)
         {
-            neighbors.Add(new Vector2i(x, y));
+            if(blockedEnemyTileIndex != null)
+            {
+                if(new Vector2i(x, y) != blockedEnemyTileIndex)
+                {
+                    neighbors.Add(new Vector2i(x, y));
+                }
+            } 
+            else
+            {
+                neighbors.Add(new Vector2i(x, y));
+            }
         }
     }
 }

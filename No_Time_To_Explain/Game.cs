@@ -14,20 +14,21 @@ public class Game
     private Room room1;
     private Hud hud;
     private EnemyHandler enemyHandler;
-    private const uint ORIGINAL_WIDTH = 1280; //1920
-    private const uint ORIGINAL_HEIGHT = 720; //1080
+    private const uint ORIGINAL_WIDTH = 1920; //1280 
+    private const uint ORIGINAL_HEIGHT = 1080; //720
     private Room currentRoom;
     private Music? backgroundMusic;
     private Vector2f ScalingFactor;
     private KillHandler killHandler;
     public const int TILE_SIZE = 48;
     private float aspectRatio = 1;
+    private Sprite backgroundSprite;
 
     public Game()
     {
         mode = new VideoMode(ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
         string title = "No Time To Explain";
-        window = new RenderWindow(mode, title); //Styles.Fullscreen
+        window = new RenderWindow(mode, title, Styles.Fullscreen); //Styles.Fullscreen
         
 
         view = new View(new Vector2f(), (Vector2f)window.Size);
@@ -90,8 +91,8 @@ public class Game
 
     private void Draw()
     {
-        window.Clear(Color.Blue);
-        
+        window.Clear();
+        window.Draw(backgroundSprite);
         room1.Draw(window);
         player.Draw(window);
         enemyHandler.Draw(window);
@@ -113,10 +114,15 @@ public class Game
         AssetManager.Instance.LoadTexture("stoneGolem", "Enemy/StoneGolem/StoneGolemSpriteSheet.png");
         AssetManager.Instance.LoadTexture("brokenStoneGolem", "Enemy/BrokenStoneGolem/BrokenStoneGolemSpriteSheet.png");
         AssetManager.Instance.LoadTexture("baseStoneGolem", "Enemy/BaseStoneGolem/BaseStoneGolemSpriteSheet.png");
+        AssetManager.Instance.LoadTexture("background", "background.png");
         AssetManager.Instance.LoadFont("hud", "BrunoAce-Regular.ttf");
         AssetManager.Instance.LoadMusic("background", "backgroundMusic1.ogg");
         AssetManager.Instance.LoadSound("obstacleHit", "ObstacleHit.wav");
         
+        backgroundSprite = new Sprite(AssetManager.Instance.Textures["background"]);
+        backgroundSprite.Position = new Vector2f(-window.GetView().Size.X / 2, -window.GetView().Size.Y / 2);
+        backgroundSprite.Scale *= 3;
+
         backgroundMusic = AssetManager.Instance.Music["background"];
         backgroundMusic.Volume *= 0.1f;
         hud = new Hud(window);
@@ -137,6 +143,7 @@ public class Game
 
         enemyHandler = new EnemyHandler(currentRoom.Enemies, currentRoom.EnemySpawnTiles, currentRoom.TileSize); 
         enemyHandler.Initialize();                            
+
 
 
         killHandler = new KillHandler(player, currentRoom.Enemies, hud);
