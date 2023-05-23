@@ -34,7 +34,7 @@ public class Enemy : GameObject
     protected bool pathFound = false;
     protected Vector2i? blockedEnemyTileIndex = null;
     protected bool posUpdated = false;
-    protected const int MAX_TILES_SEARCHED = 50;
+    protected const int MAX_TILES_SEARCHED = 40;
     protected List<Vector2i> attackPattern = new();
     protected Vector2i? lockedAttackTile = null;
     protected bool readiedAttack = false;
@@ -365,7 +365,6 @@ public class Enemy : GameObject
                     break;
             }
         }
-
         if(tilesInWay.Count > 0)
         {
             goalTile = tilesInWay[0];
@@ -374,7 +373,6 @@ public class Enemy : GameObject
         {
             goalTile = tileIndex;
         }
-        
         pathFound = true;
     }
 
