@@ -9,34 +9,42 @@ public class BreadthFirstSearch
     private List<int[]> tiles;
     private Room currentRoom;
     private Vector2i? blockedEnemyTileIndex; 
+    private int maxDepth;
 
-    public BreadthFirstSearch(int width, int height, Room currentRoom, Vector2i? blockedEnemyTileIndex)
+    public BreadthFirstSearch(int width, int height, Room currentRoom, Vector2i? blockedEnemyTileIndex, int maxDepth)
     {
         this.width = width;
         this.height = height;
         this.currentRoom = currentRoom;
         tiles = currentRoom.Map;
         this.blockedEnemyTileIndex = blockedEnemyTileIndex;
+        this.maxDepth = maxDepth;
     }
 
     public List<Vector2i> FindPath(Vector2i startPos, Vector2i targetPos)
     {
         bool[,] visited = new bool[width, height];
-
         Vector2i[,] parent = new Vector2i[width, height];
-
+        int[,] depth = new int[width, height];
         Queue<Vector2i> queue = new Queue<Vector2i>();
 
         queue.Enqueue(startPos);
         visited[startPos.X, startPos.Y] = true;
+        depth[startPos.X, startPos.Y] = 0;
 
         while (queue.Count > 0)
         {
             Vector2i currentPos = queue.Dequeue();
+            int currentDepth = depth[currentPos.X, currentPos.Y];
 
             if (currentPos == targetPos)
             {
                 return ReconstructPath(parent, startPos, targetPos);
+            }
+
+            if (currentDepth >= maxDepth)
+            {
+                continue; 
             }
 
             List<Vector2i> neighbors = GetNeighbors(currentPos);
@@ -47,14 +55,15 @@ public class BreadthFirstSearch
                 {
                     queue.Enqueue(neighbor);
                     visited[neighbor.X, neighbor.Y] = true;
-
+                    depth[neighbor.X, neighbor.Y] = currentDepth + 1;
                     parent[neighbor.X, neighbor.Y] = currentPos;
                 }
             }
         }
 
-        return new List<Vector2i>();
+        return new List<Vector2i>(); 
     }
+
 
     private List<Vector2i> ReconstructPath(Vector2i[,] parent, Vector2i start, Vector2i target)
     {

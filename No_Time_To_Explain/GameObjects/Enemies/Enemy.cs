@@ -34,6 +34,7 @@ public class Enemy : GameObject
     protected bool pathFound = false;
     protected Vector2i? blockedEnemyTileIndex = null;
     protected bool posUpdated = false;
+    protected const int MAX_TILES_SEARCHED = 40;
 
     public Enemy(EnemyType enemyType, string spriteName, RenderWindow window, Vector2i playerIndex, Room currentRoom)
     {
@@ -206,7 +207,7 @@ public class Enemy : GameObject
 
     protected void BFSPathfinding()
     {
-        bds = new BreadthFirstSearch(currentRoom.Map[0].Length, currentRoom.Map.Count, currentRoom, blockedEnemyTileIndex);
+        bds = new BreadthFirstSearch(currentRoom.Map[0].Length, currentRoom.Map.Count, currentRoom, blockedEnemyTileIndex, MAX_TILES_SEARCHED);
         List<Vector2i> tilesInWay = bds.FindPath(tileIndex, playerIndex);
         if(tilesInWay.Count == 0)
         {
