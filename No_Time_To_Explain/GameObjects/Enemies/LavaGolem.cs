@@ -10,6 +10,6 @@ public class LavaGolem : Enemy
 
     protected override void EnemyAttack()
     {
-        Console.WriteLine("Two");
+        
     }
 }
