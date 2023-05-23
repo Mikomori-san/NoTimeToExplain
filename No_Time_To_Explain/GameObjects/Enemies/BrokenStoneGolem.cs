@@ -8,5 +8,20 @@ public class BrokenStoneGolem : Enemy
 
     }
 
+    protected override List<Vector2i> GetAttackTiles()
+    {
+        List<Vector2i> surroundingTiles = new List<Vector2i>();
+
+        surroundingTiles.Add(new Vector2i(tileIndex.X, tileIndex.Y - 1));
+        surroundingTiles.Add(new Vector2i(tileIndex.X, tileIndex.Y + 1));
+        surroundingTiles.Add(new Vector2i(tileIndex.X - 1, tileIndex.Y));
+        surroundingTiles.Add(new Vector2i(tileIndex.X + 1, tileIndex.Y));
+        surroundingTiles.Add(new Vector2i(tileIndex.X + 1, tileIndex.Y + 1));
+        surroundingTiles.Add(new Vector2i(tileIndex.X - 1, tileIndex.Y + 1));
+        surroundingTiles.Add(new Vector2i(tileIndex.X - 1, tileIndex.Y - 1));
+        surroundingTiles.Add(new Vector2i(tileIndex.X + 1, tileIndex.Y - 1));
+
+        return surroundingTiles;
+    }
 
 }

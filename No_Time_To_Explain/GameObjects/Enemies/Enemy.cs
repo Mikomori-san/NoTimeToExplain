@@ -35,6 +35,12 @@ public class Enemy : GameObject
     protected Vector2i? blockedEnemyTileIndex = null;
     protected bool posUpdated = false;
     protected const int MAX_TILES_SEARCHED = 40;
+    protected List<Vector2i> attackPattern = new();
+    protected Vector2i? lockedAttackTile = null;
+    protected bool readiedAttack = false;
+    protected bool isAttacking = false;
+    protected bool endOfTurnLock = false;
+    protected bool checkForPlayer = true;
 
     public Enemy(EnemyType enemyType, string spriteName, RenderWindow window, Vector2i playerIndex, Room currentRoom)
     {
@@ -54,10 +60,11 @@ public class Enemy : GameObject
     {
         tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
         currDirection = Direction.Right;
-        frameCountPerAnimation = new int[3];
+        frameCountPerAnimation = new int[4];
         frameCountPerAnimation[(int)EnemyAnimationType.Idle] = 4; 
         frameCountPerAnimation[(int)EnemyAnimationType.Move] = 6; 
         frameCountPerAnimation[(int)EnemyAnimationType.Death] = 6;
+        frameCountPerAnimation[(int)EnemyAnimationType.AttackReady] = 4;
 
     }
 
@@ -77,6 +84,7 @@ public class Enemy : GameObject
         
         if(TurnHandler.Instance.IsPlayerTurn())
         {
+            endOfTurnLock = false;
             if(!alreadyIdle)
             {
                 currentAnimation = EnemyAnimationType.Idle;
@@ -84,16 +92,22 @@ public class Enemy : GameObject
             }
             generalTime = 0;
             posUpdated = false;
-            //if already idle then do nothing
+            checkForPlayer = true;
         }
-        else
+        else if(!endOfTurnLock)
         {
-            if(!pathFound && playerIndex != tileIndex)
+            if(!isAttacking && checkForPlayer)
             {
-                BFSPathfinding(); 
+                CheckPlayerInAttackRange(); //Check if player is in Attack Range 1 time, then wait until its enemy turn again to check again
+                checkForPlayer = false;
             }
-            //Update the tile to the next tile
-            if(!posUpdated)
+
+            if(!pathFound && playerIndex != tileIndex && !readiedAttack && !isAttacking)
+            {
+                BFSPathfinding();
+            }
+
+            if(!posUpdated && !readiedAttack)
             {
                 tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
                 switch(currDirection)
@@ -110,14 +124,31 @@ public class Enemy : GameObject
                     case Direction.Up:
                         tileIndex -= new Vector2i(0, 1);
                         break;
+                    case Direction.RightDown:
+                        tileIndex += new Vector2i(1, 1);
+                        break;
+                    case Direction.RightUp:
+                        tileIndex += new Vector2i(1, -1);
+                        break;
+                    case Direction.LeftUp:
+                        tileIndex += new Vector2i(-1, -1);
+                        break;
+                    case Direction.LeftDown:
+                        tileIndex += new Vector2i(-1, 1);
+                        break;
                 }
                 posUpdated = true;
             }
 
             //if it's the enemy turn, move
-            EnemyMovement(deltaTime);
-            
-            //EnemyAttack();
+            if(!readiedAttack)
+            {
+                EnemyMovement(deltaTime);
+            }
+            else if(isAttacking)
+            {
+                DirectionMovement(deltaTime);
+            }
         }
 
         animationFrame = (int)(animationTime % frameCountPerAnimation[(int)currentAnimation]);
@@ -133,9 +164,100 @@ public class Enemy : GameObject
         );
     }
 
-    protected virtual void EnemyAttack()
+    protected void CheckPlayerInAttackRange()
     {
-        Console.WriteLine("One");
+        attackPattern = GetAttackTiles();
+
+        foreach (var tile in attackPattern)
+        {
+            if (playerIndex == tile)
+            {
+                if (readiedAttack)
+                {
+                    Attack(tile);
+                    return;
+                }
+                else
+                {
+                    ReadyAttack(tile);
+                    endOfTurnLock = true;
+                    return;
+                }
+            }
+        }
+
+        if (readiedAttack)
+        {
+            Attack(null);
+        }
+        
+    }
+
+
+
+    private void Attack(Vector2i? tile)
+    {
+        Vector2i? pos = new();
+
+        if(tile == null)
+        {
+            pos = lockedAttackTile;
+        }
+        else
+        {
+            pos = tile;
+        }
+        posUpdated = false;
+        isAttacking = true;
+        readiedAttack = false;
+
+        if(pos.Value.X > tileIndex.X && pos.Value.Y > tileIndex.Y)
+        {
+            currDirection = Direction.RightDown;
+        }
+        else if(pos.Value.X < tileIndex.X && pos.Value.Y > tileIndex.Y)
+        {
+            currDirection = Direction.LeftDown;
+        }
+        else if(pos.Value.X > tileIndex.X && pos.Value.Y < tileIndex.Y)
+        {
+            currDirection = Direction.RightUp;
+        }
+        else if(pos.Value.X < tileIndex.X && pos.Value.Y < tileIndex.Y)
+        {
+            currDirection = Direction.LeftUp;
+        }
+        else if(pos.Value.X > tileIndex.X)
+        {
+            currDirection = Direction.Right;
+        }
+        else if(pos.Value.X < tileIndex.X)
+        {
+            currDirection = Direction.Left;
+        }
+        else if(pos.Value.Y > tileIndex.Y)
+        {
+            currDirection = Direction.Down;
+        }
+        else if(pos.Value.Y < tileIndex.Y)
+        {
+            currDirection = Direction.Up;
+        }
+    }
+
+    protected virtual List<Vector2i> GetAttackTiles()
+    {
+        return new List<Vector2i>();
+    }
+
+    protected void ReadyAttack(Vector2i markedTile)
+    {
+        lockedAttackTile = markedTile;
+        currentAnimation = EnemyAnimationType.AttackReady;
+        currDirection = Direction.None;
+        posUpdated = true;
+        pathFound = true;
+        readiedAttack = true;
     }
 
     protected void EnemyMovement(float deltaTime)
@@ -144,30 +266,7 @@ public class Enemy : GameObject
         {
             generalTime += deltaTime;
             currentAnimation = EnemyAnimationType.Move;
-            
-            if(currDirection == Direction.Right)
-            {
-                sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);
-                sprite.Position += new Vector2f(1, 0) * movementLength * deltaTime;
-            }
-            else if(currDirection == Direction.Left)
-            {
-                sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
-                sprite.Position -= new Vector2f(1, 0) * movementLength * deltaTime;
-            } 
-            else if(currDirection == Direction.Down)
-            {
-                sprite.Position += new Vector2f(0, 1) * movementLength * deltaTime;
-            } 
-            else if(currDirection == Direction.Up)
-            {
-                sprite.Position -= new Vector2f(0, 1) * movementLength * deltaTime;
-            } 
-            else if(currDirection == Direction.None)
-            {
-                //Do nothing
-                currentAnimation = EnemyAnimationType.Idle;
-            }
+            DirectionMovement(deltaTime);
             
             hasTurn = true; 
         }
@@ -177,8 +276,61 @@ public class Enemy : GameObject
             hasTurn = false;
             alreadyIdle = false;
             pathFound = false;
+            isAttacking = false;
+            readiedAttack = false;
+            lockedAttackTile = null;
         }
     }
+
+    private void DirectionMovement(float deltaTime)
+    {
+        switch(currDirection)
+            {
+                case Direction.Right:
+                    sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);
+                    sprite.Position += new Vector2f(1, 0) * movementLength * deltaTime;
+                    break;
+
+                case Direction.Left:
+                    sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
+                    sprite.Position -= new Vector2f(1, 0) * movementLength * deltaTime;
+                    break;
+
+                case Direction.Down:
+                    sprite.Position += new Vector2f(0, 1) * movementLength * deltaTime;
+                    break;
+
+                case Direction.Up:
+                    sprite.Position -= new Vector2f(0, 1) * movementLength * deltaTime;
+                    break;
+
+                case Direction.None:
+                    //Do nothing
+                    currentAnimation = EnemyAnimationType.Idle;
+                    break;
+
+                case Direction.RightDown:
+                    sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);
+                    sprite.Position += new Vector2f(1, 1) * movementLength * deltaTime;
+                    break;
+
+                case Direction.RightUp:
+                    sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);
+                    sprite.Position += new Vector2f(1, -1) * movementLength * deltaTime;
+                    break;
+
+                case Direction.LeftDown:
+                    sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
+                    sprite.Position += new Vector2f(-1, 1) * movementLength * deltaTime;
+                    break;
+
+                case Direction.LeftUp:
+                    sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
+                    sprite.Position += new Vector2f(-1, -1) * movementLength * deltaTime;
+                    break;
+            }
+    }
+
     public void SpriteInitializing(Vector2f position)
     {
         SpawnPosition = position;

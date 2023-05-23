@@ -8,8 +8,4 @@ public class LavaGolem : Enemy
         
     }
 
-    protected override void EnemyAttack()
-    {
-        
-    }
 }
