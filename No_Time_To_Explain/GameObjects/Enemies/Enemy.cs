@@ -34,13 +34,14 @@ public class Enemy : GameObject
     protected bool pathFound = false;
     protected Vector2i? blockedEnemyTileIndex = null;
     protected bool posUpdated = false;
-    protected const int MAX_TILES_SEARCHED = 40;
+    protected const int MAX_TILES_SEARCHED = 50;
     protected List<Vector2i> attackPattern = new();
     protected Vector2i? lockedAttackTile = null;
     protected bool readiedAttack = false;
     protected bool isAttacking = false;
     protected bool endOfTurnLock = false;
     protected bool checkForPlayer = true;
+    protected Vector2i goalTile = new();
 
     public Enemy(EnemyType enemyType, string spriteName, RenderWindow window, Vector2i playerIndex, Room currentRoom)
     {
@@ -99,6 +100,7 @@ public class Enemy : GameObject
             if(!isAttacking && checkForPlayer)
             {
                 CheckPlayerInAttackRange(); //Check if player is in Attack Range 1 time, then wait until its enemy turn again to check again
+                
                 checkForPlayer = false;
             }
 
@@ -109,34 +111,7 @@ public class Enemy : GameObject
 
             if(!posUpdated && !readiedAttack)
             {
-                tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
-                switch(currDirection)
-                {
-                    case Direction.Right:
-                        tileIndex += new Vector2i(1, 0);
-                        break;
-                    case Direction.Left:
-                        tileIndex -= new Vector2i(1, 0);
-                        break;
-                    case Direction.Down:
-                        tileIndex += new Vector2i(0, 1);
-                        break;
-                    case Direction.Up:
-                        tileIndex -= new Vector2i(0, 1);
-                        break;
-                    case Direction.RightDown:
-                        tileIndex += new Vector2i(1, 1);
-                        break;
-                    case Direction.RightUp:
-                        tileIndex += new Vector2i(1, -1);
-                        break;
-                    case Direction.LeftUp:
-                        tileIndex += new Vector2i(-1, -1);
-                        break;
-                    case Direction.LeftDown:
-                        tileIndex += new Vector2i(-1, 1);
-                        break;
-                }
+                tileIndex = goalTile;
                 posUpdated = true;
             }
 
@@ -190,7 +165,6 @@ public class Enemy : GameObject
         {
             Attack(null);
         }
-        
     }
 
 
@@ -211,38 +185,15 @@ public class Enemy : GameObject
         isAttacking = true;
         readiedAttack = false;
 
-        if(pos.Value.X > tileIndex.X && pos.Value.Y > tileIndex.Y)
-        {
-            currDirection = Direction.RightDown;
-        }
-        else if(pos.Value.X < tileIndex.X && pos.Value.Y > tileIndex.Y)
-        {
-            currDirection = Direction.LeftDown;
-        }
-        else if(pos.Value.X > tileIndex.X && pos.Value.Y < tileIndex.Y)
-        {
-            currDirection = Direction.RightUp;
-        }
-        else if(pos.Value.X < tileIndex.X && pos.Value.Y < tileIndex.Y)
-        {
-            currDirection = Direction.LeftUp;
-        }
-        else if(pos.Value.X > tileIndex.X)
+        if(pos.Value.X > tileIndex.X)
         {
             currDirection = Direction.Right;
         }
-        else if(pos.Value.X < tileIndex.X)
+        else
         {
             currDirection = Direction.Left;
         }
-        else if(pos.Value.Y > tileIndex.Y)
-        {
-            currDirection = Direction.Down;
-        }
-        else if(pos.Value.Y < tileIndex.Y)
-        {
-            currDirection = Direction.Up;
-        }
+        goalTile = new Vector2i(pos.Value.X, pos.Value.Y);
     }
 
     protected virtual List<Vector2i> GetAttackTiles()
@@ -284,52 +235,42 @@ public class Enemy : GameObject
 
     private void DirectionMovement(float deltaTime)
     {
-        switch(currDirection)
-            {
-                case Direction.Right:
-                    sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);
-                    sprite.Position += new Vector2f(1, 0) * movementLength * deltaTime;
-                    break;
+        float t = generalTime / 0.25f; // Calculate interpolation parameter
 
-                case Direction.Left:
-                    sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
-                    sprite.Position -= new Vector2f(1, 0) * movementLength * deltaTime;
-                    break;
+        switch (currDirection)
+        {
+            case Direction.Right:
+                sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);      
+                break;
 
-                case Direction.Down:
-                    sprite.Position += new Vector2f(0, 1) * movementLength * deltaTime;
-                    break;
+            case Direction.Left:
+                sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
+                break;
 
-                case Direction.Up:
-                    sprite.Position -= new Vector2f(0, 1) * movementLength * deltaTime;
-                    break;
+            case Direction.None:
+                // Do nothing
+                currentAnimation = EnemyAnimationType.Idle;
+                break;
 
-                case Direction.None:
-                    //Do nothing
-                    currentAnimation = EnemyAnimationType.Idle;
-                    break;
+            case Direction.RightDown:
+                sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);
+                break;
 
-                case Direction.RightDown:
-                    sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);
-                    sprite.Position += new Vector2f(1, 1) * movementLength * deltaTime;
-                    break;
+            case Direction.RightUp:
+                sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);
+                break;
 
-                case Direction.RightUp:
-                    sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);
-                    sprite.Position += new Vector2f(1, -1) * movementLength * deltaTime;
-                    break;
+            case Direction.LeftDown:
+                sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
+                break;
 
-                case Direction.LeftDown:
-                    sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
-                    sprite.Position += new Vector2f(-1, 1) * movementLength * deltaTime;
-                    break;
-
-                case Direction.LeftUp:
-                    sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
-                    sprite.Position += new Vector2f(-1, -1) * movementLength * deltaTime;
-                    break;
-            }
+            case Direction.LeftUp:
+                sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
+                break;
+        }
+        sprite.Position = Utils.Lerp(sprite.Position, Utils.ConvertToPosition(window, goalTile), t);
     }
+
 
     public void SpriteInitializing(Vector2f position)
     {
@@ -354,7 +295,8 @@ public class Enemy : GameObject
         tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
         soulHarvested = true;
         soulHarvestCooldownTimer = 0;
-
+        readiedAttack = false;
+        goalTile = tileIndex;
     }
 
     protected void BFSPathfinding()
@@ -423,6 +365,16 @@ public class Enemy : GameObject
                     break;
             }
         }
+
+        if(tilesInWay.Count > 0)
+        {
+            goalTile = tilesInWay[0];
+        }
+        else
+        {
+            goalTile = tileIndex;
+        }
+        
         pathFound = true;
     }
 

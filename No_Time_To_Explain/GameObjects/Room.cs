@@ -52,7 +52,18 @@ public class Room
             return spawnTile;
         }
     }
+    public List<Sprite> Tiles
+    {
+        get
+        {
+            return tiles;
+        }
 
+        set
+        {
+            tiles = value;
+        }
+    }
     public Room(string pathToRoomFile, int tileSize, RenderWindow window)
     {
         tileset = new Texture(AssetManager.Instance.Textures["map"]);

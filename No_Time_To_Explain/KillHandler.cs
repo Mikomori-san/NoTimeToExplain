@@ -21,6 +21,10 @@ public class KillHandler
                 {
                     hud.AddSoul();
                     enemy.RespawnEnemy();
+                    if(enemy.tileIndex == player.tileIndex)
+                    {
+                        player.RespawnPlayer();
+                    }
                 }
             } 
         } 
