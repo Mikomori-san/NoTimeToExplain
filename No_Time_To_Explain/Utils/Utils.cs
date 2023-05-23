@@ -67,7 +67,7 @@ public static class Utils
     {
         float x = (tileIndex.X - window.GetView().Size.X / Game.TILE_SIZE / 2) * Game.TILE_SIZE;
         float y = (tileIndex.Y - window.GetView().Size.Y / Game.TILE_SIZE / 2) * Game.TILE_SIZE;
-        return new Vector2f(x + 24, y + 24);
+        return new Vector2f(x + 24, y + 34);
     }
 
 
