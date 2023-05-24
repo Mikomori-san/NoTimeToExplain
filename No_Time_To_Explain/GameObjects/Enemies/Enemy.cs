@@ -5,7 +5,7 @@ public class Enemy : GameObject
 {
     protected Sprite sprite;
     protected const int ENEMY_TILING_X = 6;
-    protected const int ENEMY_TILING_Y = 3;
+    protected const int ENEMY_TILING_Y = 4;
     protected int[] frameCountPerAnimation;
     protected int animationFrame;
     protected float animationTime = 0;
@@ -37,11 +37,18 @@ public class Enemy : GameObject
     protected const int MAX_TILES_SEARCHED = 40;
     protected List<Vector2i> attackPattern = new();
     protected Vector2i? lockedAttackTile = null;
-    protected bool readiedAttack = false;
+    public bool readiedAttack = false;
     protected bool isAttacking = false;
     protected bool endOfTurnLock = false;
     protected bool checkForPlayer = true;
     protected Vector2i goalTile = new();
+    public List<Vector2i> AttackPatternTiles
+    {
+        get
+        {
+            return attackPattern;
+        }
+    }
 
     public Enemy(EnemyType enemyType, string spriteName, RenderWindow window, Vector2i playerIndex, Room currentRoom)
     {
@@ -107,6 +114,44 @@ public class Enemy : GameObject
             if(!pathFound && playerIndex != tileIndex && !readiedAttack && !isAttacking)
             {
                 BFSPathfinding();
+                foreach(var enemy in currentRoom.Enemies)
+                {
+                    switch(currDirection)
+                    {
+                        case Direction.Right:
+                            if(enemy.tileIndex == tileIndex + new Vector2i(1, 0))
+                            {
+                                blockedEnemyTileIndex = enemy.tileIndex;
+                                BFSPathfinding();
+                                blockedEnemyTileIndex = null;
+                            }
+                            break;
+                        case Direction.Left:
+                            if(enemy.tileIndex == tileIndex - new Vector2i(1, 0))
+                            {
+                                blockedEnemyTileIndex = enemy.tileIndex;
+                                BFSPathfinding();
+                                blockedEnemyTileIndex = null;
+                            }
+                            break;
+                        case Direction.Down:
+                            if(enemy.tileIndex == tileIndex + new Vector2i(0, 1))
+                            {
+                                blockedEnemyTileIndex = enemy.tileIndex;
+                                BFSPathfinding();
+                                blockedEnemyTileIndex = null;
+                            }
+                            break;
+                        case Direction.Up:
+                            if(enemy.tileIndex == tileIndex - new Vector2i(0, 1))
+                            {
+                                blockedEnemyTileIndex = enemy.tileIndex;
+                                BFSPathfinding();
+                                blockedEnemyTileIndex = null;
+                            }
+                            break;
+                    }
+                }
             }
 
             if(!posUpdated && !readiedAttack)
@@ -115,7 +160,6 @@ public class Enemy : GameObject
                 posUpdated = true;
             }
 
-            //if it's the enemy turn, move
             if(!readiedAttack)
             {
                 EnemyMovement(deltaTime);
@@ -327,44 +371,6 @@ public class Enemy : GameObject
             }
         }
 
-        foreach(var enemy in currentRoom.Enemies)
-        {
-            switch(currDirection)
-            {
-                case Direction.Right:
-                    if(enemy.tileIndex == tileIndex + new Vector2i(1, 0))
-                    {
-                        blockedEnemyTileIndex = enemy.tileIndex;
-                        BFSPathfinding();
-                        blockedEnemyTileIndex = null;
-                    }
-                    break;
-                case Direction.Left:
-                    if(enemy.tileIndex == tileIndex - new Vector2i(1, 0))
-                    {
-                        blockedEnemyTileIndex = enemy.tileIndex;
-                        BFSPathfinding();
-                        blockedEnemyTileIndex = null;
-                    }
-                    break;
-                case Direction.Down:
-                    if(enemy.tileIndex == tileIndex + new Vector2i(0, 1))
-                    {
-                        blockedEnemyTileIndex = enemy.tileIndex;
-                        BFSPathfinding();
-                        blockedEnemyTileIndex = null;
-                    }
-                    break;
-                case Direction.Up:
-                    if(enemy.tileIndex == tileIndex - new Vector2i(0, 1))
-                    {
-                        blockedEnemyTileIndex = enemy.tileIndex;
-                        BFSPathfinding();
-                        blockedEnemyTileIndex = null;
-                    }
-                    break;
-            }
-        }
         if(tilesInWay.Count > 0)
         {
             goalTile = tilesInWay[0];
@@ -374,6 +380,7 @@ public class Enemy : GameObject
             goalTile = tileIndex;
         }
         pathFound = true;
+
     }
 
     public void UpdatePlayerIndex(Vector2i playerIndex)

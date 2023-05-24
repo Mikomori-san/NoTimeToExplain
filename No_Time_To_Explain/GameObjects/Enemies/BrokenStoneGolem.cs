@@ -23,7 +23,6 @@ public class BrokenStoneGolem : Enemy
             surroundingTiles.Add(new Vector2i(tileIndex.X + i, tileIndex.Y - i));
         }
         
-
         return surroundingTiles;
     }
 

@@ -12,6 +12,8 @@ public class Room
     private List<Enemy> enemies;
     public const int SPAWN_TILE_INDEX = 05;
     public const int ENEMY_SPAWN_TILE_INDEX = 06;
+    private Sprite tile;
+    private Color originalColor;
 
     public List<Sprite> EnemySpawnTiles
     {
@@ -90,11 +92,34 @@ public class Room
             for(int x = 0; x < map[y].Length; x++)
             {
                 int tileIndex = map[y][x];
+                tile = tiles[tileIndex];
+                originalColor = tile.Color;
+
+                ColorEnemyPatterns(x, y);
+
                 if(tileIndex != -1)
                 {
-                    Sprite tile = tiles[tileIndex];
                     tile.Position = new Vector2f(-window.GetView().Size.X / 2 + x * tileSize, -window.GetView().Size.Y / 2 + y * tileSize);
-                    window.Draw(tile);                 
+                    window.Draw(tile); 
+                    tile.Color = originalColor;
+                }        
+            }
+        }
+    }
+
+    private void ColorEnemyPatterns(int x, int y)
+    {
+        foreach(var enemy in enemies)
+        {
+            if(enemy.readiedAttack)
+            {
+                foreach(var attackTileIndex in enemy.AttackPatternTiles)
+                {
+                    if(new Vector2i(x, y) == attackTileIndex)
+                    {
+                        tile.Color = Color.Red;
+                        return;
+                    }                
                 }
             }
         }

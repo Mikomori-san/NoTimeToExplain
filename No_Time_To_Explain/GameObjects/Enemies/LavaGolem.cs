@@ -8,4 +8,18 @@ public class LavaGolem : Enemy
         
     }
 
+    protected override List<Vector2i> GetAttackTiles()
+    {
+        List<Vector2i> surroundingTiles = new List<Vector2i>();
+        for(int i = 0; i < 5; i++)
+        {
+            surroundingTiles.Add(new Vector2i(tileIndex.X, tileIndex.Y - i));
+            surroundingTiles.Add(new Vector2i(tileIndex.X, tileIndex.Y + i));
+            surroundingTiles.Add(new Vector2i(tileIndex.X + i, tileIndex.Y));
+            surroundingTiles.Add(new Vector2i(tileIndex.X - i, tileIndex.Y));
+        }
+
+        return surroundingTiles;
+    }
+
 }
