@@ -116,8 +116,9 @@ public class Game
         AssetManager.Instance.LoadTexture("baseStoneGolem", "Enemy/BaseStoneGolem/BaseStoneGolemSpriteSheet.png");
         AssetManager.Instance.LoadTexture("background", "background.png");
         AssetManager.Instance.LoadFont("hud", "BrunoAce-Regular.ttf");
-        AssetManager.Instance.LoadMusic("background", "backgroundMusic1.ogg");
+        AssetManager.Instance.LoadMusic("background", "Afterlife.ogg");
         AssetManager.Instance.LoadSound("obstacleHit", "ObstacleHit.wav");
+        AssetManager.Instance.LoadSound("woosh", "woosh.wav");
         
         backgroundSprite = new Sprite(AssetManager.Instance.Textures["background"]);
         backgroundSprite.Position = new Vector2f(-window.GetView().Size.X / 2, -window.GetView().Size.Y / 2);

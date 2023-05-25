@@ -25,6 +25,7 @@ public class Player : GameObject
     public Vector2i tileIndex;
     private Room currentRoom;
     private Sound obstacleHit;
+    private Sound woosh;
     private Hud hud;
 
     public Sprite PlayerSprite
@@ -48,6 +49,10 @@ public class Player : GameObject
         obstacleHit = new Sound(AssetManager.Instance.Sounds["obstacleHit"]);
         obstacleHit.Pitch = 2.5f;
         obstacleHit.Volume = 5;
+
+        woosh = new Sound(AssetManager.Instance.Sounds["woosh"]);
+        woosh.Volume = 10;
+
         frameCountPerAnimation = new int[5];
         frameCountPerAnimation[(int)PlayerAnimationType.Idle] = 6; //0
         frameCountPerAnimation[(int)PlayerAnimationType.Move] = 4; //1
@@ -91,10 +96,11 @@ public class Player : GameObject
                     {
                         obstacleHit.Play();
                         Console.WriteLine("Is Obstacle: Yes");
-                        Movement_AnimationHandling(deltaTime);
+                        AnimationHandling();
                     }
                     else
                     {
+                        woosh.Play();
                         Console.WriteLine("Is Obstalce: No");
                         currentAnimation = PlayerAnimationType.Move;
                         isMoving = true;
@@ -117,10 +123,11 @@ public class Player : GameObject
                     {
                         obstacleHit.Play();
                         Console.WriteLine("Is Obstacle: Yes");
-                        Movement_AnimationHandling(deltaTime);
+                        AnimationHandling();
                     }
                     else
                     {
+                        woosh.Play();
                         Console.WriteLine("Is Obstalce: No");
                         currentAnimation = PlayerAnimationType.Move;
                         isMoving = true;
@@ -143,10 +150,11 @@ public class Player : GameObject
                     {
                         obstacleHit.Play();
                         Console.WriteLine("Is Obstacle: Yes");
-                        Movement_AnimationHandling(deltaTime);
+                        AnimationHandling();
                     }
                     else
                     {
+                        woosh.Play();
                         Console.WriteLine("Is Obstalce: No");
                         currentAnimation = PlayerAnimationType.Move;
                         isMoving = true;
@@ -168,10 +176,11 @@ public class Player : GameObject
                     {
                         obstacleHit.Play();
                         Console.WriteLine("Is Obstacle: Yes");
-                        Movement_AnimationHandling(deltaTime);
+                        AnimationHandling();
                     }
                     else
                     {
+                        woosh.Play();
                         Console.WriteLine("Is Obstalce: No");
                         currentAnimation = PlayerAnimationType.Move;
                         isMoving = true;
@@ -184,11 +193,11 @@ public class Player : GameObject
                     obstacleHit.Play();
                 }
             }
-            Movement_AnimationHandling(deltaTime);
+            MovementHandling(deltaTime);
         }
     }
 
-    private void Movement_AnimationHandling(float deltaTime)
+    private void MovementHandling(float deltaTime)
     {
         if(isMoving)
         {
@@ -214,14 +223,19 @@ public class Player : GameObject
             {
                 isMoving = false;
                 currentAnimation = PlayerAnimationType.Idle;
-                TurnHandler.Instance.EnemyTurn();
                 foreach(var enemy in currentRoom.Enemies)
                 {
                     enemy.UpdatePlayerIndex(tileIndex);
                 }
+                TurnHandler.Instance.EnemyTurn();
             }
         }
 
+        AnimationHandling();
+    }
+
+    private void AnimationHandling()
+    {
         animationFrame = (int)(animationTime % frameCountPerAnimation[(int)currentAnimation]);
         
         spriteXOffset = animationFrame * player.TextureRect.Width;

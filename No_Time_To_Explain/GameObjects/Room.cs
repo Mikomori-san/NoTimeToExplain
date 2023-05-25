@@ -14,7 +14,6 @@ public class Room
     public const int ENEMY_SPAWN_TILE_INDEX = 06;
     private Sprite tile;
     private Color originalColor;
-
     public List<Sprite> EnemySpawnTiles
     {
         get
@@ -54,18 +53,7 @@ public class Room
             return spawnTile;
         }
     }
-    public List<Sprite> Tiles
-    {
-        get
-        {
-            return tiles;
-        }
-
-        set
-        {
-            tiles = value;
-        }
-    }
+    
     public Room(string pathToRoomFile, int tileSize, RenderWindow window)
     {
         tileset = new Texture(AssetManager.Instance.Textures["map"]);
@@ -111,7 +99,7 @@ public class Room
     {
         foreach(var enemy in enemies)
         {
-            if(enemy.readiedAttack)
+            if(enemy.readiedAttack || enemy.IsHighlighted)
             {
                 foreach(var attackTileIndex in enemy.AttackPatternTiles)
                 {

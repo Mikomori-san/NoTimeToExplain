@@ -1,5 +1,6 @@
 using SFML.Graphics;
 using SFML.System;
+using SFML.Window;
 
 public class Enemy : GameObject
 {
@@ -26,7 +27,7 @@ public class Enemy : GameObject
     protected Vector2f SpawnPosition;
     public bool soulHarvested = false;
     protected float soulHarvestCooldownTimer = 0;
-    protected const float SOUL_HARVEST_COOLDOWN = 0.5f;
+    protected const float SOUL_HARVEST_COOLDOWN = 5f;
     protected Vector2i playerIndex;
     protected Room currentRoom;
     protected int tilesToGoal = 0;
@@ -39,9 +40,13 @@ public class Enemy : GameObject
     protected Vector2i? lockedAttackTile = null;
     public bool readiedAttack = false;
     protected bool isAttacking = false;
-    protected bool endOfTurnLock = false;
+    protected bool endOfTurnLock = true;
     protected bool checkForPlayer = true;
     protected Vector2i goalTile = new();
+    public bool IsHighlighted = false;
+    private bool blockedMovement = false;
+    private Color originalColor;
+    private const float MOVEMENT_TIME = 0.25f;
     public List<Vector2i> AttackPatternTiles
     {
         get
@@ -66,6 +71,9 @@ public class Enemy : GameObject
 
     public override void Initialize()
     {
+        window.MouseButtonPressed += OnMouseButtonPressed;
+
+
         tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
         currDirection = Direction.Right;
         frameCountPerAnimation = new int[4];
@@ -73,7 +81,6 @@ public class Enemy : GameObject
         frameCountPerAnimation[(int)EnemyAnimationType.Move] = 6; 
         frameCountPerAnimation[(int)EnemyAnimationType.Death] = 6;
         frameCountPerAnimation[(int)EnemyAnimationType.AttackReady] = 4;
-
     }
 
     public override void Update(float deltaTime)
@@ -82,9 +89,20 @@ public class Enemy : GameObject
         soulHarvestCooldownTimer += deltaTime;
         if(soulHarvestCooldownTimer >= SOUL_HARVEST_COOLDOWN)
         {
-            soulHarvested = false;
+                soulHarvested = false;
         }
+        
+        if(soulHarvested)
+        {
+            sprite.Color = new Color(255, 255, 255, 128);
+        }
+        else
+        {
+            sprite.Color = originalColor;
+        }
+
         Input_AnimationHandling(deltaTime);
+
     }
 
     protected void Input_AnimationHandling(float deltaTime)
@@ -92,7 +110,12 @@ public class Enemy : GameObject
         
         if(TurnHandler.Instance.IsPlayerTurn())
         {
-            endOfTurnLock = false;
+            if(endOfTurnLock)
+            {
+                attackPattern = GetAttackTiles();
+                endOfTurnLock = false;
+            }
+
             if(!alreadyIdle)
             {
                 currentAnimation = EnemyAnimationType.Idle;
@@ -102,74 +125,86 @@ public class Enemy : GameObject
             posUpdated = false;
             checkForPlayer = true;
         }
-        else if(!endOfTurnLock)
+        else if(!endOfTurnLock) //f.e. if enemy is readying an attack, he should not move
         {
-            if(!isAttacking && checkForPlayer)
+            if(!blockedMovement) //if enemy just respawned, he should not be able to move immediatly again
             {
-                CheckPlayerInAttackRange(); //Check if player is in Attack Range 1 time, then wait until its enemy turn again to check again
-                
-                checkForPlayer = false;
-            }
-
-            if(!pathFound && playerIndex != tileIndex && !readiedAttack && !isAttacking)
-            {
-                BFSPathfinding();
-                foreach(var enemy in currentRoom.Enemies)
+                if(!isAttacking && checkForPlayer)
                 {
-                    switch(currDirection)
+                    CheckPlayerInAttackRange(); //Check if player is in Attack Range 1 time, then wait until its enemy turn again to check again
+                    
+                    checkForPlayer = false;
+                }
+
+                if(!pathFound && playerIndex != tileIndex && !readiedAttack && !isAttacking)
+                {
+                    BFSPathfinding();
+                    foreach(var enemy in currentRoom.Enemies)
                     {
-                        case Direction.Right:
-                            if(enemy.tileIndex == tileIndex + new Vector2i(1, 0))
-                            {
-                                blockedEnemyTileIndex = enemy.tileIndex;
-                                BFSPathfinding();
-                                blockedEnemyTileIndex = null;
-                            }
-                            break;
-                        case Direction.Left:
-                            if(enemy.tileIndex == tileIndex - new Vector2i(1, 0))
-                            {
-                                blockedEnemyTileIndex = enemy.tileIndex;
-                                BFSPathfinding();
-                                blockedEnemyTileIndex = null;
-                            }
-                            break;
-                        case Direction.Down:
-                            if(enemy.tileIndex == tileIndex + new Vector2i(0, 1))
-                            {
-                                blockedEnemyTileIndex = enemy.tileIndex;
-                                BFSPathfinding();
-                                blockedEnemyTileIndex = null;
-                            }
-                            break;
-                        case Direction.Up:
-                            if(enemy.tileIndex == tileIndex - new Vector2i(0, 1))
-                            {
-                                blockedEnemyTileIndex = enemy.tileIndex;
-                                BFSPathfinding();
-                                blockedEnemyTileIndex = null;
-                            }
-                            break;
+                        switch(currDirection)
+                        {
+                            case Direction.Right:
+                                if(enemy.tileIndex == tileIndex + new Vector2i(1, 0))
+                                {
+                                    blockedEnemyTileIndex = enemy.tileIndex;
+                                    BFSPathfinding();
+                                    blockedEnemyTileIndex = null;
+                                }
+                                break;
+                            case Direction.Left:
+                                if(enemy.tileIndex == tileIndex - new Vector2i(1, 0))
+                                {
+                                    blockedEnemyTileIndex = enemy.tileIndex;
+                                    BFSPathfinding();
+                                    blockedEnemyTileIndex = null;
+                                }
+                                break;
+                            case Direction.Down:
+                                if(enemy.tileIndex == tileIndex + new Vector2i(0, 1))
+                                {
+                                    blockedEnemyTileIndex = enemy.tileIndex;
+                                    BFSPathfinding();
+                                    blockedEnemyTileIndex = null;
+                                }
+                                break;
+                            case Direction.Up:
+                                if(enemy.tileIndex == tileIndex - new Vector2i(0, 1))
+                                {
+                                    blockedEnemyTileIndex = enemy.tileIndex;
+                                    BFSPathfinding();
+                                    blockedEnemyTileIndex = null;
+                                }
+                                break;
+                        }
                     }
                 }
+
+                if(!posUpdated && !readiedAttack)
+                {
+                    tileIndex = goalTile;
+                    posUpdated = true;
+                }
+
+                if(!readiedAttack)
+                {
+                    EnemyMovement(deltaTime);
+                }
+                else if(isAttacking)
+                {
+                    DirectionMovement(deltaTime);
+                }
+            }
+            else
+            {
+                FinishedFunction();
             }
 
-            if(!posUpdated && !readiedAttack)
-            {
-                tileIndex = goalTile;
-                posUpdated = true;
-            }
+        }    
+        AnimationHandling();
+    }
 
-            if(!readiedAttack)
-            {
-                EnemyMovement(deltaTime);
-            }
-            else if(isAttacking)
-            {
-                DirectionMovement(deltaTime);
-            }
-        }
-
+    private void AnimationHandling()
+    {
         animationFrame = (int)(animationTime % frameCountPerAnimation[(int)currentAnimation]);
 
         spriteXOffset = animationFrame * sprite.TextureRect.Width;
@@ -185,6 +220,7 @@ public class Enemy : GameObject
 
     protected void CheckPlayerInAttackRange()
     {
+
         attackPattern = GetAttackTiles();
 
         foreach (var tile in attackPattern)
@@ -257,7 +293,7 @@ public class Enemy : GameObject
 
     protected void EnemyMovement(float deltaTime)
     {
-        if(generalTime < 0.25f)
+        if(generalTime < MOVEMENT_TIME)
         {
             generalTime += deltaTime;
             currentAnimation = EnemyAnimationType.Move;
@@ -268,19 +304,25 @@ public class Enemy : GameObject
         else
         {
             //if movement is done, set the turn to player again and be able to get idled next frame
-            hasTurn = false;
-            alreadyIdle = false;
-            pathFound = false;
-            isAttacking = false;
-            readiedAttack = false;
-            lockedAttackTile = null;
+            FinishedFunction();
         }
+    }
+
+    private void FinishedFunction()
+    {
+        hasTurn = false;
+        alreadyIdle = false;
+        pathFound = false;
+        isAttacking = false;
+        readiedAttack = false;
+        lockedAttackTile = null;
+        endOfTurnLock = true;
+        blockedMovement = false;
+        attackPattern = GetAttackTiles();
     }
 
     private void DirectionMovement(float deltaTime)
     {
-        float t = generalTime / 0.25f; // Calculate interpolation parameter
-
         switch (currDirection)
         {
             case Direction.Right:
@@ -312,6 +354,8 @@ public class Enemy : GameObject
                 sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
                 break;
         }
+
+        float t = generalTime / MOVEMENT_TIME;
         sprite.Position = Utils.Lerp(sprite.Position, Utils.ConvertToPosition(window, goalTile), t);
     }
 
@@ -331,6 +375,7 @@ public class Enemy : GameObject
         sprite.Origin = new Vector2f(sprite.GetGlobalBounds().Left + sprite.GetGlobalBounds().Width / 2 + 2, sprite.GetGlobalBounds().Top + sprite.GetGlobalBounds().Height + 5);
         sprite.Position = SpawnPosition;
         sprite.Scale *= ENEMY_SCALING;
+        originalColor = sprite.Color;
     }
 
     public void RespawnEnemy()
@@ -341,6 +386,8 @@ public class Enemy : GameObject
         soulHarvestCooldownTimer = 0;
         readiedAttack = false;
         goalTile = tileIndex;
+        endOfTurnLock = true;
+        blockedMovement = true;
     }
 
     protected void BFSPathfinding()
@@ -386,5 +433,23 @@ public class Enemy : GameObject
     public void UpdatePlayerIndex(Vector2i playerIndex)
     {
         this.playerIndex = playerIndex;
+    }
+
+    private void OnMouseButtonPressed(object sender, MouseButtonEventArgs e)
+    {
+        if (e.Button == Mouse.Button.Left)
+        {
+            Vector2i mousePosition = (Vector2i)window.MapPixelToCoords(Mouse.GetPosition(window));
+            FloatRect spriteBounds = sprite.GetGlobalBounds();
+
+            if (spriteBounds.Contains(mousePosition.X, mousePosition.Y))
+            {
+                IsHighlighted = true;
+            }
+            else
+            {
+                IsHighlighted = false;
+            }
+        }
     }
 }
