@@ -86,6 +86,7 @@ public class Enemy : GameObject
     public override void Update(float deltaTime)
     {
         animationTime += deltaTime * animationSpeed;
+        generalTime += deltaTime;
         soulHarvestCooldownTimer += deltaTime;
         if(soulHarvestCooldownTimer >= SOUL_HARVEST_COOLDOWN)
         {
@@ -261,6 +262,7 @@ public class Enemy : GameObject
         {
             pos = tile;
         }
+        
         posUpdated = false;
         isAttacking = true;
         readiedAttack = false;
@@ -295,7 +297,6 @@ public class Enemy : GameObject
     {
         if(generalTime < MOVEMENT_TIME)
         {
-            generalTime += deltaTime;
             currentAnimation = EnemyAnimationType.Move;
             DirectionMovement(deltaTime);
             
@@ -319,6 +320,7 @@ public class Enemy : GameObject
         endOfTurnLock = true;
         blockedMovement = false;
         attackPattern = GetAttackTiles();
+        checkForPlayer = true;
     }
 
     private void DirectionMovement(float deltaTime)

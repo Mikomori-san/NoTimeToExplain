@@ -38,10 +38,14 @@ public class EnemyHandler : GameObject
             enemy.Update(deltaTime);
         }
         
-        if(!enemies.Last().hasTurn)
+        foreach(var enemy in enemies)
         {
-            TurnHandler.Instance.PlayerTurn();
+            if(enemy.hasTurn) //if all enemies are done, set the player's turn -- if only 1 enemy still has turn, don't set the Player's turn yet
+            {
+                return;
+            }
         }
+        TurnHandler.Instance.PlayerTurn();
         
     }
 }
