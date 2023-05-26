@@ -6,7 +6,7 @@ public static class Program
 {
     private static void Main()
     {
-        Game game = new Game();
-        game.Run();
+        Titlescreen ts = new Titlescreen();
+        ts.Run();
     }
 }
