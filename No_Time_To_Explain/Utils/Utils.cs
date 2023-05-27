@@ -3,7 +3,7 @@ using SFML.System;
 
 public static class Utils
 {
-    public const int OBSTACLE_TILE_INDEX = 7;
+    public const int OBSTACLE_TILE_INDEX = 8;
     public static float SqrMagnitude(this Vector2f input)
     {
         return (input.X * input.X + input.Y * input.Y);

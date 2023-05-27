@@ -9,11 +9,15 @@ public class Room
     private int tileSize;
     private Sprite spawnTile;
     private List<Sprite> enemySpawnTiles = new();
+    private Sprite teleporterTile;
     private List<Enemy> enemies;
     public const int SPAWN_TILE_INDEX = 05;
     public const int ENEMY_SPAWN_TILE_INDEX = 06;
+    public const int TELEPORTER_TILE_INDEX = 07;
     private Sprite tile;
     private Color originalColor;
+    public bool hasTeleporter;
+    public bool hasSpawnTile;
     public List<Sprite> EnemySpawnTiles
     {
         get
@@ -53,9 +57,19 @@ public class Room
             return spawnTile;
         }
     }
-    
-    public Room(string pathToRoomFile, int tileSize, RenderWindow window)
+    public Sprite TeleporterTile
     {
+        get
+        {
+            return teleporterTile;
+        }
+    }
+    
+    public Room(string pathToRoomFile, int tileSize, RenderWindow window, bool hasSpawnTile, bool hasTeleporter)
+    {
+        this.hasSpawnTile = hasSpawnTile;
+        this.hasTeleporter = hasTeleporter;
+
         tileset = new Texture(AssetManager.Instance.Textures["map"]);
         LoadMap(pathToRoomFile);
 
@@ -70,7 +84,23 @@ public class Room
             }
         }
 
-        FindSpawnTile(window);
+        if(hasSpawnTile)
+        {
+            FindSpawnTile(window);
+        }
+        else
+        {
+            spawnTile = null;
+        }
+
+        if(hasTeleporter)
+        {
+            FindTeleporterTile(window);
+        }
+        else
+        {
+            teleporterTile = null;
+        }
     }
 
     public void Draw(RenderWindow window)
@@ -145,6 +175,23 @@ public class Room
                     Console.WriteLine("Tile Pos: " + enemySpawnTile.Position);
                     enemySpawnTiles.Add(enemySpawnTile);
                 }              
+            }
+        }
+    }
+
+    private void FindTeleporterTile(RenderWindow window)
+    {
+        
+        for(int y = 0; y < map.Count; y++)
+        {
+            for(int x = 0; x < map[y].Length; x++)
+            {
+                int tileIndex = map[y][x];
+                if(tileIndex == TELEPORTER_TILE_INDEX)
+                {
+                    teleporterTile = tiles[tileIndex];
+                    teleporterTile.Position = new Vector2f(-window.GetView().Size.X / 2 + x * tileSize, -window.GetView().Size.Y / 2 + y * tileSize);
+                }       
             }
         }
     }

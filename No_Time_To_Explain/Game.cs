@@ -129,7 +129,7 @@ public class Game
         hud = new Hud(window);
         hud.Initialize();
 
-        room1 = new Room("./Assets/Rooms/Room1.txt", TILE_SIZE, window);
+        room1 = new Room("./Assets/Rooms/Room1.txt", TILE_SIZE, window, true, false); //spawn Room
         currentRoom = room1;
         room1.Enemies = new List<Enemy>();
 
