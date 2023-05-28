@@ -1,9 +1,10 @@
+using SFML.Audio;
 using SFML.Graphics;
 using SFML.System;
 
 public static class Utils
 {
-    public const int OBSTACLE_TILE_INDEX = 8;
+    public const int OBSTACLE_TILE_INDEX = 10;
     public static float SqrMagnitude(this Vector2f input)
     {
         return (input.X * input.X + input.Y * input.Y);
@@ -81,6 +82,22 @@ public static class Utils
         }
                                                                                     
         return false;                                                               
+    }
+
+    internal static SoundBuffer TrimSound(SoundBuffer originalSound, float durationInSeconds)
+    {
+        int sampleCount = (int)(originalSound.SampleRate * durationInSeconds);
+        uint channelCount = originalSound.ChannelCount;
+
+        int sampleCountToKeep = Math.Min(sampleCount, originalSound.Samples.Length);
+
+        short[] trimmedSamples = new short[sampleCountToKeep * channelCount];
+
+        Array.Copy(originalSound.Samples, trimmedSamples, sampleCountToKeep * channelCount);
+
+        SoundBuffer trimmedSound = new SoundBuffer(trimmedSamples, channelCount, originalSound.SampleRate);
+
+        return trimmedSound;
     }
 
 }

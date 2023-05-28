@@ -3,6 +3,7 @@ using SFML.System;
 
 public class Room
 {
+    public string Name;
     private Texture tileset;
     private List<Sprite> tiles;
     private List<int[]> map;
@@ -10,10 +11,14 @@ public class Room
     private Sprite spawnTile;
     private List<Sprite> enemySpawnTiles = new();
     private Sprite teleporterTile;
-    private List<Enemy> enemies;
+    private Sprite nextRoomTile;
+    private Sprite previousRoomTile;
+    private List<Enemy> enemies = new List<Enemy>();
     public const int SPAWN_TILE_INDEX = 05;
     public const int ENEMY_SPAWN_TILE_INDEX = 06;
     public const int TELEPORTER_TILE_INDEX = 07;
+    public const int NEXT_ROOM_INDEX = 08;
+    public const int PREVIOUS_ROOM_INDEX = 09;
     private Sprite tile;
     private Color originalColor;
     public bool hasTeleporter;
@@ -64,9 +69,24 @@ public class Room
             return teleporterTile;
         }
     }
-    
-    public Room(string pathToRoomFile, int tileSize, RenderWindow window, bool hasSpawnTile, bool hasTeleporter)
+    public Sprite PreviousRoomTile
     {
+        get
+        {
+            return previousRoomTile;
+        }
+    }
+    public Sprite NextRoomTile
+    {
+        get
+        {
+            return nextRoomTile;
+        }
+    }
+    
+    public Room(string name, string pathToRoomFile, int tileSize, RenderWindow window, bool hasSpawnTile, bool hasTeleporter, bool hasNextRoom, bool hasPreviousRoom)
+    {
+        Name = name;
         this.hasSpawnTile = hasSpawnTile;
         this.hasTeleporter = hasTeleporter;
 
@@ -84,22 +104,43 @@ public class Room
             }
         }
 
+        FindEnemySpawnTiles(window);
+
         if(hasSpawnTile)
         {
             FindSpawnTile(window);
-        }
-        else
-        {
-            spawnTile = null;
         }
 
         if(hasTeleporter)
         {
             FindTeleporterTile(window);
         }
-        else
+
+        if(hasNextRoom)
         {
-            teleporterTile = null;
+            FindNextRoomTile(window);
+        }
+
+        if(hasPreviousRoom)
+        {
+            FindPreviousRoomTile(window);
+        }
+    }
+
+    private void FindEnemySpawnTiles(RenderWindow window)
+    {
+        for(int y = 0; y < map.Count; y++)
+        {
+            for(int x = 0; x < map[y].Length; x++)
+            {
+                int tileIndex = map[y][x];
+                if(tileIndex == ENEMY_SPAWN_TILE_INDEX)
+                {
+                    Sprite enemySpawnTile = new Sprite(tiles[tileIndex]);
+                    enemySpawnTile.Position = new Vector2f(-window.GetView().Size.X / 2 + x * tileSize, -window.GetView().Size.Y / 2 + y * tileSize);
+                    enemySpawnTiles.Add(enemySpawnTile);
+                }
+            }
         }
     }
 
@@ -156,8 +197,7 @@ public class Room
     }
 
     private void FindSpawnTile(RenderWindow window)
-    {
-        
+    {   
         for(int y = 0; y < map.Count; y++)
         {
             for(int x = 0; x < map[y].Length; x++)
@@ -167,14 +207,8 @@ public class Room
                 {
                     spawnTile = tiles[tileIndex];
                     spawnTile.Position = new Vector2f(-window.GetView().Size.X / 2 + x * tileSize, -window.GetView().Size.Y / 2 + y * tileSize);
+                    return;
                 }
-                if(tileIndex == ENEMY_SPAWN_TILE_INDEX)
-                {
-                    Sprite enemySpawnTile = new Sprite(tiles[tileIndex]);
-                    enemySpawnTile.Position = new Vector2f(-window.GetView().Size.X / 2 + x * tileSize, -window.GetView().Size.Y / 2 + y * tileSize);
-                    Console.WriteLine("Tile Pos: " + enemySpawnTile.Position);
-                    enemySpawnTiles.Add(enemySpawnTile);
-                }              
             }
         }
     }
@@ -191,6 +225,43 @@ public class Room
                 {
                     teleporterTile = tiles[tileIndex];
                     teleporterTile.Position = new Vector2f(-window.GetView().Size.X / 2 + x * tileSize, -window.GetView().Size.Y / 2 + y * tileSize);
+                    return;
+                }       
+            }
+        }
+    }
+
+    private void FindNextRoomTile(RenderWindow window)
+    {
+        
+        for(int y = 0; y < map.Count; y++)
+        {
+            for(int x = 0; x < map[y].Length; x++)
+            {
+                int tileIndex = map[y][x];
+                if(tileIndex == NEXT_ROOM_INDEX)
+                {
+                    nextRoomTile = tiles[tileIndex];
+                    nextRoomTile.Position = new Vector2f(-window.GetView().Size.X / 2 + x * tileSize, -window.GetView().Size.Y / 2 + y * tileSize);
+                    return;
+                }       
+            }
+        }
+    }
+
+    private void FindPreviousRoomTile(RenderWindow window)
+    {
+        
+        for(int y = 0; y < map.Count; y++)
+        {
+            for(int x = 0; x < map[y].Length; x++)
+            {
+                int tileIndex = map[y][x];
+                if(tileIndex == PREVIOUS_ROOM_INDEX)
+                {
+                    previousRoomTile = tiles[tileIndex];
+                    previousRoomTile.Position = new Vector2f(-window.GetView().Size.X / 2 + x * tileSize, -window.GetView().Size.Y / 2 + y * tileSize);
+                    return;
                 }       
             }
         }

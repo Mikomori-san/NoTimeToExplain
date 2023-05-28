@@ -14,6 +14,17 @@ public class EnemyHandler : GameObject
         this.tileSize = tileSize;
     }
 
+    public void UpdateEnemies(List<Enemy> enemies, List<Sprite> enemySpawn)
+    {
+        this.enemies = enemies;
+        this.enemySpawn = enemySpawn;
+        for(int i = 0; i < enemies.Count; i++)
+        {
+            enemies[i].SpriteInitializing(enemySpawn[i].Position + new Vector2f(tileSize / 2, 3*tileSize / 4));
+            enemies[i].Initialize();
+        }
+    }
+
     public override void Draw(RenderWindow window)
     {
         foreach(var enemy in enemies)

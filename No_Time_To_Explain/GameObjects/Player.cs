@@ -27,6 +27,7 @@ public class Player : GameObject
     private Sound obstacleHit;
     private Sound woosh;
     private Hud hud;
+    private bool turnLock = false;
 
     public Sprite PlayerSprite
     {
@@ -83,11 +84,9 @@ public class Player : GameObject
     private void Input_Handling(float deltaTime)
     {
         generalTime += deltaTime;
-        //Console.WriteLine("Current Position:" + player.Position);
-            
-        //Console.WriteLine("Current Index:" + tileIndex);
         if (TurnHandler.Instance.IsPlayerTurn())
         {
+            turnLock = false;
             if (InputManager.Instance.GetKeyDown(Keyboard.Key.D) && generalTime > MOVE_TIME)
             {
                 if(tileIndex.X + 1 < currentRoom.Map[tileIndex.Y].Length)
@@ -95,13 +94,11 @@ public class Player : GameObject
                     if (Utils.IsObstacle(tileIndex + new Vector2i(1, 0), currentRoom.Map))
                     {
                         obstacleHit.Play();
-                        Console.WriteLine("Is Obstacle: Yes");
                         AnimationHandling();
                     }
                     else
                     {
                         woosh.Play();
-                        Console.WriteLine("Is Obstalce: No");
                         currentAnimation = PlayerAnimationType.Move;
                         isMoving = true;
                         generalTime = 0;
@@ -122,13 +119,11 @@ public class Player : GameObject
                     if (Utils.IsObstacle(tileIndex - new Vector2i(1, 0), currentRoom.Map))
                     {
                         obstacleHit.Play();
-                        Console.WriteLine("Is Obstacle: Yes");
                         AnimationHandling();
                     }
                     else
                     {
                         woosh.Play();
-                        Console.WriteLine("Is Obstalce: No");
                         currentAnimation = PlayerAnimationType.Move;
                         isMoving = true;
                         generalTime = 0;
@@ -149,13 +144,11 @@ public class Player : GameObject
                     if (Utils.IsObstacle(tileIndex - new Vector2i(0, 1), currentRoom.Map))
                     {
                         obstacleHit.Play();
-                        Console.WriteLine("Is Obstacle: Yes");
                         AnimationHandling();
                     }
                     else
                     {
                         woosh.Play();
-                        Console.WriteLine("Is Obstalce: No");
                         currentAnimation = PlayerAnimationType.Move;
                         isMoving = true;
                         generalTime = 0;
@@ -175,13 +168,11 @@ public class Player : GameObject
                     if (Utils.IsObstacle(tileIndex + new Vector2i(0, 1), currentRoom.Map))
                     {
                         obstacleHit.Play();
-                        Console.WriteLine("Is Obstacle: Yes");
                         AnimationHandling();
                     }
                     else
                     {
                         woosh.Play();
-                        Console.WriteLine("Is Obstalce: No");
                         currentAnimation = PlayerAnimationType.Move;
                         isMoving = true;
                         generalTime = 0;
@@ -260,9 +251,33 @@ public class Player : GameObject
         currentRoom = room;
     }
 
-    public void RespawnPlayer()
+    public void SpawnPlayerFromPreviousRoomTile()
     {
-        player.Position = currentRoom.SpawnTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
+        player.Position = currentRoom.NextRoomTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
         tileIndex = Utils.ConvertToIndex(renderWindow, player.Position, player);
+    }
+
+    public void SpawnPlayerFromNextRoomTile()
+    {
+        if(currentRoom.hasSpawnTile)
+        {
+            player.Position = currentRoom.SpawnTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
+        }
+        else
+        {
+            player.Position = currentRoom.PreviousRoomTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
+        }
+
+        tileIndex = Utils.ConvertToIndex(renderWindow, player.Position, player);
+    }
+
+    public void SetTurnLock()
+    {
+        turnLock = true;
+    }
+
+    public bool GetTurnLock()
+    {
+        return turnLock;
     }
 }
