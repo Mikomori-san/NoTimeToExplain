@@ -29,13 +29,11 @@ public class KillHandler
                     hud.AddSoul();
                     enemy.RespawnEnemy();
                     killSound.Play();
-                    killSound.PlayingOffset = Time.FromSeconds(0.5f);
+                    killSound.PlayingOffset = Time.FromSeconds(0.5f); //if player stands on enemy respawn tile while enemy respawns, player dies
                     
                     if(enemy.tileIndex == player.tileIndex)
                     {
-                        player.SpawnPlayerFromNextRoomTile();
-                        killSound.Play();
-                        killSound.PlayingOffset = Time.FromSeconds(0.5f);
+                        KillPlayer();
                     }
                 }
             } 
@@ -47,12 +45,17 @@ public class KillHandler
             {
                 if(enemy.tileIndex == player.tileIndex)
                 {
-                    player.SpawnPlayerFromNextRoomTile();
-                    killSound.Play();
-                    killSound.PlayingOffset = Time.FromSeconds(0.5f);
+                    KillPlayer();
                 }
             }
         }
+    }
+
+    internal void KillPlayer()
+    {
+        player.KillPlayer();
+        killSound.Play();
+        killSound.PlayingOffset = Time.FromSeconds(0.5f);
     }
 
     public void UpdateEnemies(List<Enemy> enemies)

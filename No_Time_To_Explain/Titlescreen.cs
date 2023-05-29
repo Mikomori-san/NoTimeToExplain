@@ -25,7 +25,10 @@ public class Titlescreen
         devilTrigger.Volume *= 0.1f;
 
         startButtonSprite = new Sprite(new Texture(AssetManager.Instance.Textures["startbutton"]));
-        startButtonSprite.Origin = new Vector2f(startButtonSprite.GetGlobalBounds().Left + startButtonSprite.GetGlobalBounds().Width / 2, startButtonSprite.GetGlobalBounds().Top + startButtonSprite.GetGlobalBounds().Height / 2);
+        startButtonSprite.Origin = new Vector2f(
+            startButtonSprite.GetGlobalBounds().Left + startButtonSprite.GetGlobalBounds().Width / 2, 
+            startButtonSprite.GetGlobalBounds().Top + startButtonSprite.GetGlobalBounds().Height / 2
+        );
         startButtonSprite.Position = new Vector2f(window.Size.X / 2, window.Size.Y / 2);
         startButtonSprite.Scale *= 0.05f;
 
@@ -53,15 +56,26 @@ public class Titlescreen
         // Starte das Spiel, wenn der Startknopf gedrückt wurde
         if (startButtonPressed)
         {
-            devilTrigger.Stop();
-            Game game = new Game();
-            game.Run();
+            RunGame();
+        }
+    }
+
+    private void RunGame()
+    {
+        devilTrigger.Stop();
+        Game game = new Game();
+        window.Close();
+        game.Run();
+
+        if(game.Retry)
+        {
+            game.window.Close();
+            RunGame();
         }
     }
 
     private void OnMouseButtonPressed(object sender, MouseButtonEventArgs e)
     {
-        // Überprüfe, ob der Mausklick innerhalb des Startknopfs liegt
         if (startButtonSprite.GetGlobalBounds().Contains(e.X, e.Y))
         {
             startButtonPressed = true;

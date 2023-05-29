@@ -28,6 +28,9 @@ public class Player : GameObject
     private Sound woosh;
     private Hud hud;
     private bool turnLock = false;
+    private bool isDead = false;
+    private float deathTimer = 0;
+    private bool stopDeathTimer = false;
 
     public Sprite PlayerSprite
     {
@@ -47,6 +50,8 @@ public class Player : GameObject
         currDirection = Direction.Right;
         isMoving = false;
         
+        deathTimer = 0;
+
         obstacleHit = new Sound(AssetManager.Instance.Sounds["obstacleHit"]);
         obstacleHit.Pitch = 2.5f;
         obstacleHit.Volume = 5;
@@ -77,8 +82,46 @@ public class Player : GameObject
     public override void Update(float deltaTime)
     {
         animationTime += deltaTime * animationSpeed;   
+        if(!isDead)
+        {
+            Input_Handling(deltaTime);
+        }
+        else
+        {
+            //TODO: Death handling
+            Death_Handling(deltaTime);
+        }
+    }
 
-        Input_Handling(deltaTime);
+    private void Death_Handling(float deltaTime)
+    {
+        if(!stopDeathTimer)
+        {
+            deathTimer += deltaTime * 6;
+        }
+
+        player.Position = new Vector2f(0, 100);
+        player.Scale = new Vector2f(5, 5);
+        
+        currentAnimation = PlayerAnimationType.Death;
+
+        animationFrame = (int)(deathTimer % frameCountPerAnimation[(int)currentAnimation]);
+        
+        spriteXOffset = animationFrame * player.TextureRect.Width;
+        spriteYOffset = (int)currentAnimation * player.TextureRect.Height;
+            
+        player.TextureRect = new IntRect(
+            spriteXOffset,
+            spriteYOffset,
+            player.TextureRect.Width,
+            player.TextureRect.Height
+        );
+
+        if(animationFrame == 8 && !stopDeathTimer)
+        {
+            hud.DisplayDeathText();
+            stopDeathTimer = true;
+        }
     }
 
     private void Input_Handling(float deltaTime)
@@ -237,7 +280,7 @@ public class Player : GameObject
             spriteYOffset,
             player.TextureRect.Width,
             player.TextureRect.Height
-        );  
+        );
     }
 
     public Player(RenderWindow renderWindow, Hud hud)
@@ -279,5 +322,15 @@ public class Player : GameObject
     public bool GetTurnLock()
     {
         return turnLock;
+    }
+
+    public void KillPlayer()
+    {
+        isDead = true;
+    }
+
+    public bool IsDead()
+    {
+        return isDead;
     }
 }

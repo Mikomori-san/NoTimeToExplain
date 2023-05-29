@@ -75,7 +75,6 @@ public static class Utils
     internal static bool IsObstacle(Vector2i position, List<int[]> map)
     {
         int val = map[position.Y][position.X];
-        Console.WriteLine("Value of tile: " + val);
         if(val >= OBSTACLE_TILE_INDEX)
         {
             return true;

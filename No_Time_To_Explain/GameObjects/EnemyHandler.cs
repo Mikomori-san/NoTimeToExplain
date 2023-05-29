@@ -44,6 +44,10 @@ public class EnemyHandler : GameObject
 
     public override void Update(float deltaTime)
     {
+        if(enemies.Count == 0)
+        {
+            return;
+        }
         foreach(var enemy in enemies)
         {
             enemy.Update(deltaTime);
