@@ -9,7 +9,7 @@ public class Titlescreen
     private Sprite background;
     private Sprite startButtonSprite;
     private bool startButtonPressed;
-    private Music devilTrigger;
+    private Music titleBackgroundMusic;
 
     public Titlescreen()
     {
@@ -18,11 +18,11 @@ public class Titlescreen
         window = new RenderWindow(mode, title, Styles.Fullscreen); //Styles.Fullscreen
         AssetManager.Instance.LoadTexture("startbutton", "startButton.png");
         AssetManager.Instance.LoadTexture("titleScreenBackground", "title.jpg");
-        AssetManager.Instance.LoadMusic("devilTrigger", "DevilTrigger.ogg");
+        AssetManager.Instance.LoadMusic("titleBackground", "TheSacrifice.ogg");
         startButtonPressed = false;
 
-        devilTrigger = AssetManager.Instance.Music["devilTrigger"];
-        devilTrigger.Volume *= 0.1f;
+        titleBackgroundMusic = AssetManager.Instance.Music["titleBackground"];
+        titleBackgroundMusic.Volume *= 0.1f;
 
         startButtonSprite = new Sprite(new Texture(AssetManager.Instance.Textures["startbutton"]));
         startButtonSprite.Origin = new Vector2f(
@@ -39,7 +39,7 @@ public class Titlescreen
 
     public void Run()
     {
-        devilTrigger.Play();
+        titleBackgroundMusic.Play();
         window.SetFramerateLimit(144);
         while (window.IsOpen && !startButtonPressed)
         {
@@ -61,16 +61,10 @@ public class Titlescreen
 
     private void RunGame()
     {
-        devilTrigger.Stop();
+        titleBackgroundMusic.Stop();
         Game game = new Game();
         window.Close();
         game.Run();
-
-        if(game.Retry)
-        {
-            game.window.Close();
-            RunGame();
-        }
     }
 
     private void OnMouseButtonPressed(object sender, MouseButtonEventArgs e)

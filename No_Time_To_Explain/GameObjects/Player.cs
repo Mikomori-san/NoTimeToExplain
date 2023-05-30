@@ -32,8 +32,12 @@ public class Player : GameObject
     private float deathTimer = 0;
     private bool stopDeathTimer = false;
     private float deathAnimationDelayTimer = 0;
-    private float DEATH_ANIMATION_DELAY = 0.3f;
+    private float DEATH_ANIMATION_DELAY = 1;
     private const int LAST_DEATH_FRAME = 8;
+    private Sound demonLaugh;
+    public Music DeathMusic;
+    private bool hasLaughed = false;
+    private bool deathMusicPlaying = false;
 
     public Sprite PlayerSprite
     {
@@ -55,12 +59,23 @@ public class Player : GameObject
         
         deathTimer = 0;
 
+        AssetManager.Instance.LoadSound("obstacleHit", "obstacleHit.wav");
         obstacleHit = new Sound(AssetManager.Instance.Sounds["obstacleHit"]);
         obstacleHit.Pitch = 2.5f;
         obstacleHit.Volume = 5;
 
+        AssetManager.Instance.LoadSound("woosh", "woosh.wav");
         woosh = new Sound(AssetManager.Instance.Sounds["woosh"]);
         woosh.Volume = 10;
+
+        AssetManager.Instance.LoadSound("demonLaugh", "demonLaugh.wav");
+        demonLaugh = new Sound(AssetManager.Instance.Sounds["demonLaugh"]);
+        demonLaugh.Volume = 5;
+
+        AssetManager.Instance.LoadMusic("deathMusic", "deathMusic.ogg");
+        DeathMusic = AssetManager.Instance.Music["deathMusic"];
+        DeathMusic.Volume *= 0.1f;
+        DeathMusic.Loop = true;
 
         frameCountPerAnimation = new int[5];
         frameCountPerAnimation[(int)PlayerAnimationType.Idle] = 6; //0
@@ -98,6 +113,12 @@ public class Player : GameObject
 
     private void Death_Handling(float deltaTime)
     {
+        if(!hasLaughed)
+        {
+            demonLaugh.Play();
+            hasLaughed = true;
+        }
+
         if(deathAnimationDelayTimer < DEATH_ANIMATION_DELAY)
         {
             deathAnimationDelayTimer += deltaTime;
@@ -128,6 +149,13 @@ public class Player : GameObject
         {
             hud.DisplayDeathText();
             stopDeathTimer = true;
+
+            if(!deathMusicPlaying)
+            {
+                DeathMusic.Play();
+                deathMusicPlaying = true;
+            }
+            
         }
     }
 

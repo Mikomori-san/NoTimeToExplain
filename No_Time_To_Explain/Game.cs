@@ -13,6 +13,15 @@ public class Game
     private Player player;
     private Room startRoom;
     private Room randomRoom1;
+    private Room randomRoom2;
+    private Room randomRoom3;
+    private Room randomRoom4;
+    private Room randomRoom5;
+    private Room randomRoom6;
+    private Room randomRoom7;
+    private Room randomRoom8;
+    private Room randomRoom9;
+    private Room randomRoom10;
     private Room teleporterRoom;
     private Hud hud;
     private EnemyHandler enemyHandler;
@@ -84,11 +93,13 @@ public class Game
         else
         {
             killHandler.UpdateEnemies(new List<Enemy>());
+            backgroundMusic.Stop();
         }
         
         if(hud.Retry)
         {
             this.Retry = true;
+            player.DeathMusic.Stop();
         }
 
         if(hud.RemainingTime() <= 0 && !player.IsDead())
@@ -130,9 +141,7 @@ public class Game
         AssetManager.Instance.LoadTexture("background", "background.png");
         AssetManager.Instance.LoadFont("hud", "BrunoAce-Regular.ttf");
         AssetManager.Instance.LoadFont("death", "NightmarePills-BV2w.ttf");
-        AssetManager.Instance.LoadMusic("background", "Afterlife.ogg");
-        AssetManager.Instance.LoadSound("obstacleHit", "obstacleHit.wav");
-        AssetManager.Instance.LoadSound("woosh", "woosh.wav");
+        AssetManager.Instance.LoadMusic("background", "YourOwnPersonalHell.ogg");
         AssetManager.Instance.LoadSound("levelSwitch", "levelSwitch.wav");
         AssetManager.Instance.LoadSound("kill", "kill.wav");
         
@@ -154,12 +163,7 @@ public class Game
         maxRandomRoomsCounter = ran.Next(0, 4); //create between 0 and 4 random rooms, 2 are always created, first spawn and last teleporter 
         Console.WriteLine("Max Count of Rooms " + maxRandomRoomsCounter);
 
-        startRoom = new Room("Spawn Room", "./Assets/Rooms/SpawnRoom.txt", TILE_SIZE, window, true, false, true, false); //spawn Room
-        randomRoom1 = new Room("Room 2", "./Assets/Rooms/RandomRoom1.txt", TILE_SIZE, window, false, false, true, true); //middle Room
-        teleporterRoom = new Room("Teleporter Room", "./Assets/Rooms/TeleporterRoom.txt", TILE_SIZE, window, false, true, false, true); //teleporter Room
-
-        randomRoomsToGenerate = new List<Room>();
-        randomRoomsToGenerate.Add(randomRoom1);
+        RoomInitializing();
         
         RoomHandler.Instance.SetFirstRoom(startRoom);
         currentRoom = RoomHandler.Instance.GetCurrentRoom();
@@ -174,8 +178,20 @@ public class Game
 
         killHandler = new KillHandler(player, currentRoom.Enemies, hud);
 
-        //backgroundMusic.Play();
+        backgroundMusic.Play();
         backgroundMusic.Loop = true;
+    }
+
+    private void RoomInitializing()
+    {
+        startRoom = new Room("Spawn Room", "./Assets/Rooms/SpawnRoom.txt", TILE_SIZE, window, true, false, true, false); //spawn Room
+        randomRoom1 = new Room("Random Room 1", "./Assets/Rooms/RandomRoom1.txt", TILE_SIZE, window, false, false, true, true);
+        teleporterRoom = new Room("Teleporter Room", "./Assets/Rooms/TeleporterRoom.txt", TILE_SIZE, window, false, true, false, true); //teleporter Room
+        randomRoom2 = new Room("Random Room 2", "./Assets/Rooms/RandomRoom2.txt", TILE_SIZE, window, false, false, true, true);
+
+        randomRoomsToGenerate = new List<Room>();
+        randomRoomsToGenerate.Add(randomRoom1);
+        randomRoomsToGenerate.Add(randomRoom2);
     }
 
     private void SetSpawnRoomEnemies()
@@ -201,6 +217,14 @@ public class Game
         teleporterRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window, player.tileIndex, currentRoom));
         teleporterRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.tileIndex, currentRoom));
         teleporterRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window, player.tileIndex, currentRoom));
+    }
+
+    private void SetRandomRoom2Enemies()
+    {
+        randomRoom2.Enemies = new List<Enemy>();
+        randomRoom2.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.tileIndex, currentRoom));
+        randomRoom2.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.tileIndex, currentRoom));
+        randomRoom2.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.tileIndex, currentRoom));
     }
 
     private void RoomManagement()
@@ -270,9 +294,14 @@ public class Game
         if(currentRoom.Name == startRoom.Name)
         {
             SetSpawnRoomEnemies();
-        } else if(currentRoom.Name == randomRoom1.Name)
+        } 
+        else if(currentRoom.Name == randomRoom1.Name)
         {
             SetRandomRoom1Enemies();
+        }
+        else if(currentRoom.Name == randomRoom2.Name)
+        {
+            SetRandomRoom2Enemies();
         }
         else if(currentRoom.Name == teleporterRoom.Name)
         {
