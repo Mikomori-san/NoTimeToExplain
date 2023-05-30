@@ -33,6 +33,7 @@ public class Player : GameObject
     private bool stopDeathTimer = false;
     private float deathAnimationDelayTimer = 0;
     private float DEATH_ANIMATION_DELAY = 0.3f;
+    private const int LAST_DEATH_FRAME = 8;
 
     public Sprite PlayerSprite
     {
@@ -123,7 +124,7 @@ public class Player : GameObject
             player.TextureRect.Height
         );
 
-        if(animationFrame == 8 && !stopDeathTimer)
+        if(animationFrame == LAST_DEATH_FRAME && !stopDeathTimer)
         {
             hud.DisplayDeathText();
             stopDeathTimer = true;

@@ -53,7 +53,6 @@ public class Titlescreen
             window.Display();
         }
 
-        // Starte das Spiel, wenn der Startknopf gedrückt wurde
         if (startButtonPressed)
         {
             RunGame();
