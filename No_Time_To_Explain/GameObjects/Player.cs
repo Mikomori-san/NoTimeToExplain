@@ -31,6 +31,8 @@ public class Player : GameObject
     private bool isDead = false;
     private float deathTimer = 0;
     private bool stopDeathTimer = false;
+    private float deathAnimationDelayTimer = 0;
+    private float DEATH_ANIMATION_DELAY = 0.3f;
 
     public Sprite PlayerSprite
     {
@@ -95,7 +97,11 @@ public class Player : GameObject
 
     private void Death_Handling(float deltaTime)
     {
-        if(!stopDeathTimer)
+        if(deathAnimationDelayTimer < DEATH_ANIMATION_DELAY)
+        {
+            deathAnimationDelayTimer += deltaTime;
+        }
+        else if(!stopDeathTimer && deathAnimationDelayTimer >= DEATH_ANIMATION_DELAY)
         {
             deathTimer += deltaTime * 6;
         }
