@@ -39,6 +39,7 @@ public class Game
     private int maxRandomRoomsCounter = 0;
     private int currentCountOfRandomRooms = 0;
     public bool Retry;
+    public bool ReachedTeleporter = false;
 
     public Game()
     {
@@ -75,6 +76,11 @@ public class Game
             {
                 Run();
             }
+
+            if(this.ReachedTeleporter)
+            {
+                Run();
+            }
         }
     }
 
@@ -83,10 +89,9 @@ public class Game
         gameTime += deltaTime;
         player.Update(deltaTime);
         
-        if(!player.IsDead())
+        if(!player.IsDead() && !player.reachedTeleporter)
         {
             enemyHandler.Update(deltaTime);
-            hud.Update(deltaTime);
             killHandler.SearchForCollisions();
             RoomManagement();
         }
@@ -95,6 +100,7 @@ public class Game
             killHandler.UpdateEnemies(new List<Enemy>());
             backgroundMusic.Stop();
         }
+        hud.Update(deltaTime);
         
         if(hud.Retry)
         {
@@ -107,13 +113,18 @@ public class Game
             killHandler.KillPlayer();
         }
 
+        if(player.GameResetTeleporter)
+        {
+            ReachedTeleporter = true;
+        }
+
         InputManager.Instance.Update(deltaTime);
     } 
 
     private void Draw()
     {
         window.Clear();
-        if(!player.IsDead())
+        if(!player.IsDead() && !player.reachedTeleporter)
         {
             window.Draw(backgroundSprite);
             currentRoom.Draw(window);
@@ -156,11 +167,16 @@ public class Game
         levelSwitch = new Sound(Utils.TrimSound(AssetManager.Instance.Sounds["levelSwitch"], 1.5f));
         levelSwitch.Volume *= 0.7f;
 
-        hud = new Hud(window);
+        if(!ReachedTeleporter)
+        {
+            hud = new Hud(window);
+        }
         hud.Initialize();
 
+        ReachedTeleporter = false;
+
         Random ran = new Random();
-        maxRandomRoomsCounter = ran.Next(0, 4); //create between 0 and 4 random rooms, 2 are always created, first spawn and last teleporter 
+        maxRandomRoomsCounter = ran.Next(0, 0); //create between 0 and 4 random rooms, 2 are always created, first spawn and last teleporter 
         Console.WriteLine("Max Count of Rooms " + maxRandomRoomsCounter);
 
         RoomInitializing();
@@ -284,7 +300,8 @@ public class Game
         {
             if(player.tileIndex == Utils.ConvertToIndex(window, currentRoom.TeleporterTile.Position, currentRoom.TeleporterTile))
             {
-                //TODO: FINISH THE GAME
+                hud.ReachedTeleporter();
+                player.ReachedTeleporter();
             }
         }
     }

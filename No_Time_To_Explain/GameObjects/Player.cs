@@ -38,6 +38,11 @@ public class Player : GameObject
     public Music DeathMusic;
     private bool hasLaughed = false;
     private bool deathMusicPlaying = false;
+    public bool reachedTeleporter = false;
+    private float teleporterTimer;
+    private const float TIME_UNTIL_NEXT_SPAWN = 3;
+    public bool GameResetTeleporter = false;
+    private const int NEXT_LEVEL_ANIMATION_SPEED_MODIFIER = 6;
 
     public Sprite PlayerSprite
     {
@@ -58,6 +63,7 @@ public class Player : GameObject
         isMoving = false;
         
         deathTimer = 0;
+        teleporterTimer = 0;
 
         AssetManager.Instance.LoadSound("obstacleHit", "obstacleHit.wav");
         obstacleHit = new Sound(AssetManager.Instance.Sounds["obstacleHit"]);
@@ -100,15 +106,47 @@ public class Player : GameObject
     public override void Update(float deltaTime)
     {
         animationTime += deltaTime * animationSpeed;   
-        if(!isDead)
+        if(!isDead && !reachedTeleporter)
         {
             Input_Handling(deltaTime);
         }
-        else
+        else if(isDead)
         {
-            //TODO: Death handling
             Death_Handling(deltaTime);
         }
+        else if(reachedTeleporter)
+        {
+            Teleporter_Handling(deltaTime);
+        }
+    }
+
+    private void Teleporter_Handling(float deltaTime)
+    {
+        teleporterTimer += deltaTime * NEXT_LEVEL_ANIMATION_SPEED_MODIFIER;
+
+        if(teleporterTimer >= TIME_UNTIL_NEXT_SPAWN * NEXT_LEVEL_ANIMATION_SPEED_MODIFIER && hud.FinishedScoreAdding)
+        {
+            GameResetTeleporter = true;
+            hud.Reset();
+        }
+
+        player.Position = new Vector2f(0, 100);
+        player.Scale = new Vector2f(5, 5);
+
+        frameCountPerAnimation[(int)PlayerAnimationType.Move] = 8;
+        currentAnimation = PlayerAnimationType.Move;
+
+        animationFrame = (int)(teleporterTimer % frameCountPerAnimation[(int)currentAnimation]);
+        
+        spriteXOffset = animationFrame * player.TextureRect.Width;
+        spriteYOffset = (int)currentAnimation * player.TextureRect.Height;
+            
+        player.TextureRect = new IntRect(
+            spriteXOffset,
+            spriteYOffset,
+            player.TextureRect.Width,
+            player.TextureRect.Height
+        );
     }
 
     private void Death_Handling(float deltaTime)
@@ -367,5 +405,10 @@ public class Player : GameObject
     public bool IsDead()
     {
         return isDead;
+    }
+
+    public void ReachedTeleporter()
+    {
+        reachedTeleporter = true;
     }
 }
