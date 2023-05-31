@@ -36,7 +36,7 @@ public class Enemy : GameObject
     protected Vector2i? blockedEnemyTileIndex = null;
     protected bool posUpdated = false;
     protected const int MAX_TILES_SEARCHED = 50;
-    protected List<Vector2i> attackPattern = new();
+    public List<Vector2i> AttackPatternTiles {get; private set; } = new();
     protected Vector2i? lockedAttackTile = null;
     public bool readiedAttack = false;
     protected bool isAttacking = false;
@@ -47,13 +47,6 @@ public class Enemy : GameObject
     private bool blockedMovement = false;
     private Color originalColor;
     private const float MOVEMENT_TIME = 0.25f;
-    public List<Vector2i> AttackPatternTiles
-    {
-        get
-        {
-            return attackPattern;
-        }
-    }
 
     public Enemy(EnemyType enemyType, string spriteName, RenderWindow window, Vector2i playerIndex, Room currentRoom)
     {
@@ -113,7 +106,7 @@ public class Enemy : GameObject
         {
             if(endOfTurnLock)
             {
-                attackPattern = GetAttackTiles();
+                AttackPatternTiles = GetAttackTiles();
                 endOfTurnLock = false;
             }
 
@@ -222,9 +215,9 @@ public class Enemy : GameObject
     protected void CheckPlayerInAttackRange()
     {
 
-        attackPattern = GetAttackTiles();
+        AttackPatternTiles = GetAttackTiles();
 
-        foreach (var tile in attackPattern)
+        foreach (var tile in AttackPatternTiles)
         {
             if (playerIndex == tile)
             {
@@ -319,7 +312,7 @@ public class Enemy : GameObject
         lockedAttackTile = null;
         endOfTurnLock = true;
         blockedMovement = false;
-        attackPattern = GetAttackTiles();
+        AttackPatternTiles = GetAttackTiles();
         checkForPlayer = true;
     }
 

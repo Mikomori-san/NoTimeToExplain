@@ -5,51 +5,60 @@ using SFML.Window;
 
 public class Player : GameObject
 {
+    // Constants
     private const float MOVE_TIME = 0.25f;
-    private Sprite player;
-    private int[] frameCountPerAnimation;
-    private float movementLength = 185f;
     private const int PLAYER_TILING_X = 9;
     private const int PLAYER_TILING_Y = 5;
+    private const float PLAYER_SCALING = 2f;
+    private const float DEATH_ANIMATION_DELAY = 1;
+    private const int LAST_DEATH_FRAME = 8;
+    private const float TIME_UNTIL_NEXT_SPAWN = 3;
+    private const int NEXT_LEVEL_ANIMATION_SPEED_MODIFIER = 6;
+
+    // Dependencies
     private RenderWindow renderWindow;
+    private Hud hud;
+
+    // Sprites and animations
+    private Sprite player;
+    private int[] frameCountPerAnimation;
     private int animationFrame;
     private float animationTime = 0;
     private float animationSpeed = 5;
     private PlayerAnimationType currentAnimation = PlayerAnimationType.Idle;
     private int spriteXOffset;
     private int spriteYOffset;
+
+    // Movement and positioning
+    private float movementLength = 185f;
     private bool isMoving;
-    private float generalTime = MOVE_TIME + 1; //Has to be greater than MOVE_TIME, because we want to be able to move as soon as we load in
+    private float generalTime = MOVE_TIME + 1; // Has to be greater than MOVE_TIME, because we want to be able to move as soon as we load in
     private Direction currDirection;
-    private const float PLAYER_SCALING = 2f;
     public Vector2i tileIndex;
     private Room currentRoom;
+
+    // Sounds
     private Sound obstacleHit;
     private Sound woosh;
-    private Hud hud;
+    private Sound demonLaugh;
+    public Music DeathMusic;
+
+    // State variables
     private bool turnLock = false;
     private bool isDead = false;
     private float deathTimer = 0;
     private bool stopDeathTimer = false;
     private float deathAnimationDelayTimer = 0;
-    private float DEATH_ANIMATION_DELAY = 1;
-    private const int LAST_DEATH_FRAME = 8;
-    private Sound demonLaugh;
-    public Music DeathMusic;
     private bool hasLaughed = false;
     private bool deathMusicPlaying = false;
     public bool reachedTeleporter = false;
     private float teleporterTimer;
-    private const float TIME_UNTIL_NEXT_SPAWN = 3;
     public bool GameResetTeleporter = false;
-    private const int NEXT_LEVEL_ANIMATION_SPEED_MODIFIER = 6;
 
-    public Sprite PlayerSprite
+    public Player(RenderWindow renderWindow, Hud hud)
     {
-        get
-        {
-            return player;
-        }
+        this.renderWindow = renderWindow;
+        this.hud = hud;
     }
 
     public override void Draw(RenderWindow window)
@@ -354,12 +363,6 @@ public class Player : GameObject
             player.TextureRect.Width,
             player.TextureRect.Height
         );
-    }
-
-    public Player(RenderWindow renderWindow, Hud hud)
-    {
-        this.renderWindow = renderWindow;
-        this.hud = hud;
     }
 
     public void SetCurrentRoom(Room room)

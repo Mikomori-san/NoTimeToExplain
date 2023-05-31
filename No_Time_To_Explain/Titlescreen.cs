@@ -3,7 +3,7 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 
-public class Titlescreen
+public class Titlescreen : IDisposable
 {
     private RenderWindow window;
     private Sprite background;
@@ -15,9 +15,9 @@ public class Titlescreen
     {
         VideoMode mode = new VideoMode(1920, 1080);
         string title = "No Time To Explain";
-        window = new RenderWindow(mode, title, Styles.Fullscreen); //Styles.Fullscreen
-        AssetManager.Instance.LoadTexture("startbutton", "startButton.png");
-        AssetManager.Instance.LoadTexture("titleScreenBackground", "title.jpg");
+        window = new RenderWindow(mode, title, Styles.Fullscreen); // Styles.Fullscreen
+        AssetManager.Instance.LoadTexture("startbutton", "./TitleScreen/startButton.png");
+        AssetManager.Instance.LoadTexture("titleScreenBackground", "./TitleScreen/titleBackground3.png");
         AssetManager.Instance.LoadMusic("titleBackground", "TheSacrifice.ogg");
         startButtonPressed = false;
 
@@ -26,14 +26,16 @@ public class Titlescreen
 
         startButtonSprite = new Sprite(new Texture(AssetManager.Instance.Textures["startbutton"]));
         startButtonSprite.Origin = new Vector2f(
-            startButtonSprite.GetGlobalBounds().Left + startButtonSprite.GetGlobalBounds().Width / 2, 
+            startButtonSprite.GetGlobalBounds().Left + startButtonSprite.GetGlobalBounds().Width / 2,
             startButtonSprite.GetGlobalBounds().Top + startButtonSprite.GetGlobalBounds().Height / 2
         );
-        startButtonSprite.Position = new Vector2f(window.Size.X / 2, window.Size.Y / 2);
+
+        startButtonSprite.Position = new Vector2f(window.Size.X / 2, window.Size.Y / 2 + 100);
         startButtonSprite.Scale *= 0.05f;
 
         background = new Sprite(new Texture(AssetManager.Instance.Textures["titleScreenBackground"]));
-        
+        background.Scale *= 1.325f;
+
         window.MouseButtonPressed += OnMouseButtonPressed;
     }
 
@@ -62,8 +64,7 @@ public class Titlescreen
     private void RunGame()
     {
         titleBackgroundMusic.Stop();
-        Game game = new Game();
-        window.Close();
+        Game game = new Game(window);
         game.Run();
     }
 
@@ -73,5 +74,11 @@ public class Titlescreen
         {
             startButtonPressed = true;
         }
+    }
+
+    public void Dispose()
+    {
+        window.Dispose();
+        titleBackgroundMusic.Dispose();
     }
 }

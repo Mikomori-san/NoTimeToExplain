@@ -5,37 +5,43 @@ using SFML.Window;
 public class Hud : GameObject
 {
     private RenderWindow renderWindow;
+
+    // Fonts
     private Font font;
     private Font deathFont;
+
+    // Texts
     private Text time;
     private Text souls;
     private Text deathText;
-    private Text soulsText;
+    private Text soulsDeathText;
+    private Text nextLevelTimeText;
+    private Text nextLevelSoulsText;
     private Text scoreText;
+
+    // Buttons
     private Sprite retryButton;
     private Sprite leaveButton;
 
+    // Constants
     private const int MAX_TIME = 120;
+    private const float DISPLAY_SOULS_THRESHOLD = 1f;
+    private const int SOULS_SCORE_MODIFIER = 5;
+    private const int TIME_SCORE_MODIFIER = 3;
+
+    // Game state variables
     private float remainingTime = 0;
     private int currentSouls = 0;
     private bool playerDeath = false;
-    public bool Retry { get; private set; } = false;
-    private int score = 0;
     private bool reachedTeleporter = false;
+    private bool displayTimeNextLevel = false;
+    private bool displaySoulsNextLevel = false;
+    public bool FinishedScoreAdding {get; private set; } = false;
+    private float displayTimer = 0;
+    private int score = 0;
     private int scoreCount = 0;
-    public bool FinishedScoreAdding = false;
 
-    public int CurrentSouls
-    {
-        get 
-        { 
-            return currentSouls; 
-        }
-        set
-        {
-            currentSouls = value;
-        }
-    }
+    public bool Retry { get; private set; } = false;
 
     public Hud(RenderWindow renderWindow)
     {
@@ -52,13 +58,21 @@ public class Hud : GameObject
         else if(playerDeath)
         {
             window.Draw(deathText);
-            window.Draw(soulsText);
+            window.Draw(soulsDeathText);
             window.Draw(retryButton);
             window.Draw(leaveButton);
             window.Draw(scoreText);
         } else if(reachedTeleporter)
         {
             window.Draw(scoreText);
+            if(displayTimeNextLevel)
+            {
+                window.Draw(nextLevelTimeText);
+            }
+            else if(displaySoulsNextLevel)
+            {
+                window.Draw(nextLevelSoulsText);
+            }
         }
     }
 
@@ -88,13 +102,13 @@ public class Hud : GameObject
         );
         deathText.Position = new Vector2f(0, -100);
 
-        soulsText = new Text($"Your Souls this level: {currentSouls}", font, 20);
-        soulsText.FillColor = Color.Red;
-        soulsText.Origin = new Vector2f(
-            soulsText.GetGlobalBounds().Left + soulsText.GetGlobalBounds().Width / 2,
-            soulsText.GetGlobalBounds().Top + soulsText.GetGlobalBounds().Height / 2
+        soulsDeathText = new Text($"Your Souls this level: {currentSouls}", font, 20);
+        soulsDeathText.FillColor = Color.Red;
+        soulsDeathText.Origin = new Vector2f(
+            soulsDeathText.GetGlobalBounds().Left + soulsDeathText.GetGlobalBounds().Width / 2,
+            soulsDeathText.GetGlobalBounds().Top + soulsDeathText.GetGlobalBounds().Height / 2
         );
-        soulsText.Position = new Vector2f(0, 200);
+        soulsDeathText.Position = new Vector2f(0, 200);
 
         retryButton = new Sprite(AssetManager.Instance.Textures["startbutton"]);
         retryButton.Origin = new Vector2f(
@@ -120,6 +134,22 @@ public class Hud : GameObject
         );
         scoreText.Position = new Vector2f(0, 250);
 
+        nextLevelTimeText = new Text($"+Time", font, 20);
+        nextLevelTimeText.FillColor = Color.Blue;
+        nextLevelTimeText.Origin = new Vector2f(
+            nextLevelTimeText.GetGlobalBounds().Left + nextLevelTimeText.GetGlobalBounds().Width / 2,
+            nextLevelTimeText.GetGlobalBounds().Top + nextLevelTimeText.GetGlobalBounds().Height / 2
+        );
+        nextLevelTimeText.Position = new Vector2f(scoreText.GetGlobalBounds().Left + scoreText.GetGlobalBounds().Width + 100, 250);
+
+        nextLevelSoulsText = new Text($"+Souls", font, 20);
+        nextLevelSoulsText.FillColor = Color.Blue;
+        nextLevelSoulsText.Origin = new Vector2f(
+            nextLevelSoulsText.GetGlobalBounds().Left + nextLevelSoulsText.GetGlobalBounds().Width / 2,
+            nextLevelSoulsText.GetGlobalBounds().Top + nextLevelSoulsText.GetGlobalBounds().Height / 2
+        );
+        nextLevelSoulsText.Position = new Vector2f(scoreText.GetGlobalBounds().Left + scoreText.GetGlobalBounds().Width + 100, 250);
+
         renderWindow.MouseButtonPressed += OnMouseButtonPressed;        
     }
 
@@ -143,25 +173,41 @@ public class Hud : GameObject
 
         if(reachedTeleporter)
         {
-            ScoreUpCountAnimation();
+            ScoreUpCountAnimation(deltaTime);
         }
         else
         {
-            scoreCount = 0;
+            scoreCount = score;
         }
     }
 
-    private void ScoreUpCountAnimation()
+    private void ScoreUpCountAnimation(float deltaTime)
     {
         if(scoreCount < score)
         {
-            scoreCount++;
+            if(scoreCount < score - currentSouls * SOULS_SCORE_MODIFIER) //while the scoreCount is lower than the score with timeScore, add up and display time
+            {
+                scoreCount++;
+                displayTimeNextLevel = true;
+            }
+            else //then, take away time, and start countdown for soulsDisplay
+            {
+                displayTimeNextLevel = false;
+                displayTimer += deltaTime;
+                
+                if(displayTimer >= DISPLAY_SOULS_THRESHOLD)
+                {
+                    displaySoulsNextLevel = true;
+                    scoreCount++;
+                }
+            }
         }
         else
         {
+            displayTimer = 0;
+            displaySoulsNextLevel = false;
             FinishedScoreAdding = true;
         }
-        Console.WriteLine($"Your Score: {scoreCount}");
         scoreText.DisplayedString = $"Your Score: {scoreCount}";
     }
 
@@ -179,7 +225,7 @@ public class Hud : GameObject
     internal void DisplayDeathText()
     {
         playerDeath = true;
-        soulsText.DisplayedString = $"Your Souls this level: {currentSouls}";
+        soulsDeathText.DisplayedString = $"Your Souls this level: {currentSouls}";
     }
 
     internal void Add30Seconds()
@@ -205,7 +251,8 @@ public class Hud : GameObject
     public void ReachedTeleporter()
     {
         reachedTeleporter = true;
-        score += currentSouls * 5;
+        score += currentSouls * SOULS_SCORE_MODIFIER;
+        score += MAX_TIME - (int)remainingTime * TIME_SCORE_MODIFIER;
     }
 
     public void Reset()
