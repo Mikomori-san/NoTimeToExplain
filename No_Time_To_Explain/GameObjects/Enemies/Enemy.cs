@@ -67,7 +67,7 @@ public class Enemy : GameObject
         window.MouseButtonPressed += OnMouseButtonPressed;
 
 
-        tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
+        tileIndex = Utils.ConvertToIndex(window, sprite);
         currDirection = Direction.Right;
         frameCountPerAnimation = new int[4];
         frameCountPerAnimation[(int)EnemyAnimationType.Idle] = 4; 
@@ -376,7 +376,7 @@ public class Enemy : GameObject
     public void RespawnEnemy()
     {
         sprite.Position = SpawnPosition;
-        tileIndex = Utils.ConvertToIndex(window, sprite.Position, sprite);
+        tileIndex = Utils.ConvertToIndex(window, sprite);
         soulHarvested = true;
         soulHarvestCooldownTimer = 0;
         readiedAttack = false;

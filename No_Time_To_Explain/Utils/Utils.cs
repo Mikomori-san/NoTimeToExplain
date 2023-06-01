@@ -57,7 +57,7 @@ public static class Utils
         return (lhs.X * rhs.X + lhs.Y * rhs.Y);
     }
 
-    internal static Vector2i ConvertToIndex(RenderWindow window, Vector2f position, Sprite sprite)
+    internal static Vector2i ConvertToIndex(RenderWindow window, Sprite sprite)
     {
         int a = (int)Math.Floor(sprite.Position.X / Game.TILE_SIZE + window.GetView().Size.X/Game.TILE_SIZE / 2);
         int b = (int)Math.Floor(sprite.Position.Y / Game.TILE_SIZE + window.GetView().Size.Y/Game.TILE_SIZE / 2);

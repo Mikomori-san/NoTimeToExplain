@@ -40,7 +40,6 @@ public class Hud : GameObject
     private float displayTimer = 0;
     private int score = 0;
     private int scoreCount = 0;
-
     public bool Retry { get; private set; } = false;
 
     public Hud(RenderWindow renderWindow)
@@ -49,35 +48,56 @@ public class Hud : GameObject
     }
 
     public override void Draw(RenderWindow window)
+{
+    if (!playerDeath && !reachedTeleporter)
     {
-        if (!playerDeath && !reachedTeleporter)
+        DrawGameplayHUD(window);
+    }
+    else if (playerDeath)
+    {
+        DrawDeathScreen(window);
+    }
+    else if (reachedTeleporter)
+    {
+        DrawTeleporterScreen(window);
+    }
+}
+
+    private void DrawGameplayHUD(RenderWindow window)
+    {
+        window.Draw(time);
+        window.Draw(souls);
+    }
+
+    private void DrawDeathScreen(RenderWindow window)
+    {
+        window.Draw(deathText);
+        window.Draw(soulsDeathText);
+        window.Draw(retryButton);
+        window.Draw(leaveButton);
+        window.Draw(scoreText);
+    }
+
+    private void DrawTeleporterScreen(RenderWindow window)
+    {
+        window.Draw(scoreText);
+        if (displayTimeNextLevel)
         {
-            window.Draw(time);
-            window.Draw(souls);
+            window.Draw(nextLevelTimeText);
         }
-        else if(playerDeath)
+        else if (displaySoulsNextLevel)
         {
-            window.Draw(deathText);
-            window.Draw(soulsDeathText);
-            window.Draw(retryButton);
-            window.Draw(leaveButton);
-            window.Draw(scoreText);
-        } else if(reachedTeleporter)
-        {
-            window.Draw(scoreText);
-            if(displayTimeNextLevel)
-            {
-                window.Draw(nextLevelTimeText);
-            }
-            else if(displaySoulsNextLevel)
-            {
-                window.Draw(nextLevelSoulsText);
-            }
+            window.Draw(nextLevelSoulsText);
         }
     }
 
     public override void Initialize()
     {
+        AssetManager.Instance.LoadFont("hud", "BrunoAce-Regular.ttf");
+        AssetManager.Instance.LoadFont("death", "NightmarePills-BV2w.ttf");
+        AssetManager.Instance.LoadTexture("retry", "retryButton.png");
+        AssetManager.Instance.LoadTexture("leave", "leaveButton.png");
+
         font = AssetManager.Instance.Fonts["hud"];
         deathFont = AssetManager.Instance.Fonts["death"];
 
@@ -110,15 +130,15 @@ public class Hud : GameObject
         );
         soulsDeathText.Position = new Vector2f(0, 200);
 
-        retryButton = new Sprite(AssetManager.Instance.Textures["startbutton"]);
+        retryButton = new Sprite(AssetManager.Instance.Textures["retry"]);
         retryButton.Origin = new Vector2f(
             retryButton.GetGlobalBounds().Left + retryButton.GetGlobalBounds().Width / 2,
             retryButton.GetGlobalBounds().Top + retryButton.GetGlobalBounds().Height / 2
         );
         retryButton.Position = new Vector2f(0, 300);
-        retryButton.Scale *= 0.01f;
+        retryButton.Scale *= 0.25f;
 
-        leaveButton = new Sprite(AssetManager.Instance.Textures["startbutton"]);
+        leaveButton = new Sprite(AssetManager.Instance.Textures["leave"]);
         leaveButton.Origin = new Vector2f(
             leaveButton.GetGlobalBounds().Left + leaveButton.GetGlobalBounds().Width / 2,
             leaveButton.GetGlobalBounds().Top + leaveButton.GetGlobalBounds().Height / 2
@@ -127,7 +147,7 @@ public class Hud : GameObject
         leaveButton.Scale *= 0.01f;
 
         scoreText = new Text($"Your Score: 0", font, 20);
-        scoreText.FillColor = Color.Blue;
+        scoreText.FillColor = Color.Magenta;
         scoreText.Origin = new Vector2f(
             scoreText.GetGlobalBounds().Left + scoreText.GetGlobalBounds().Width / 2,
             scoreText.GetGlobalBounds().Top + scoreText.GetGlobalBounds().Height / 2
@@ -135,7 +155,7 @@ public class Hud : GameObject
         scoreText.Position = new Vector2f(0, 250);
 
         nextLevelTimeText = new Text($"+Time", font, 20);
-        nextLevelTimeText.FillColor = Color.Blue;
+        nextLevelTimeText.FillColor = Color.Magenta;
         nextLevelTimeText.Origin = new Vector2f(
             nextLevelTimeText.GetGlobalBounds().Left + nextLevelTimeText.GetGlobalBounds().Width / 2,
             nextLevelTimeText.GetGlobalBounds().Top + nextLevelTimeText.GetGlobalBounds().Height / 2
@@ -143,7 +163,7 @@ public class Hud : GameObject
         nextLevelTimeText.Position = new Vector2f(scoreText.GetGlobalBounds().Left + scoreText.GetGlobalBounds().Width + 100, 250);
 
         nextLevelSoulsText = new Text($"+Souls", font, 20);
-        nextLevelSoulsText.FillColor = Color.Blue;
+        nextLevelSoulsText.FillColor = Color.Magenta;
         nextLevelSoulsText.Origin = new Vector2f(
             nextLevelSoulsText.GetGlobalBounds().Left + nextLevelSoulsText.GetGlobalBounds().Width / 2,
             nextLevelSoulsText.GetGlobalBounds().Top + nextLevelSoulsText.GetGlobalBounds().Height / 2
@@ -252,7 +272,7 @@ public class Hud : GameObject
     {
         reachedTeleporter = true;
         score += currentSouls * SOULS_SCORE_MODIFIER;
-        score += MAX_TIME - (int)remainingTime * TIME_SCORE_MODIFIER;
+        score += (MAX_TIME - (int)remainingTime) * TIME_SCORE_MODIFIER;
     }
 
     public void Reset()

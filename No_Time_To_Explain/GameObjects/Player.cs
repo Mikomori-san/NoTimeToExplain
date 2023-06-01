@@ -109,7 +109,7 @@ public class Player : GameObject
         player.Origin = new Vector2f(player.GetGlobalBounds().Left + player.GetGlobalBounds().Width / 2 + 3, player.GetGlobalBounds().Top + player.GetGlobalBounds().Height - 4);
         player.Position = currentRoom.SpawnTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
         player.Scale *= PLAYER_SCALING;
-        tileIndex = Utils.ConvertToIndex(renderWindow, player.Position, player);
+        tileIndex = Utils.ConvertToIndex(renderWindow, player);
     }
 
     public override void Update(float deltaTime)
@@ -333,7 +333,7 @@ public class Player : GameObject
                 break;
             }
             
-            tileIndex = Utils.ConvertToIndex(renderWindow, player.Position, player);
+            tileIndex = Utils.ConvertToIndex(renderWindow, player);
             
             if(generalTime > MOVE_TIME)
             {
@@ -373,7 +373,7 @@ public class Player : GameObject
     public void SpawnPlayerFromPreviousRoomTile()
     {
         player.Position = currentRoom.NextRoomTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
-        tileIndex = Utils.ConvertToIndex(renderWindow, player.Position, player);
+        tileIndex = Utils.ConvertToIndex(renderWindow, player);
     }
 
     public void SpawnPlayerFromNextRoomTile()
@@ -387,7 +387,7 @@ public class Player : GameObject
             player.Position = currentRoom.PreviousRoomTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
         }
 
-        tileIndex = Utils.ConvertToIndex(renderWindow, player.Position, player);
+        tileIndex = Utils.ConvertToIndex(renderWindow, player);
     }
 
     public void SetTurnLock()
