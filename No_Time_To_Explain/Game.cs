@@ -256,7 +256,7 @@ public class Game
                 {
                     RoomHandler.Instance.NextRoom();
                 }
-                else if(currentCountOfRandomRooms != maxRandomRoomsCounter)
+                else if(currentCountOfRandomRooms < maxRandomRoomsCounter)
                 {
                     Random random = new Random();
                     RoomHandler.Instance.NextRoom(randomRoomsToGenerate[random.Next(0, randomRoomsToGenerate.Count)]);

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "A:\\.FH_Games\\MMP1\\Raffetseder_Kevin_mmp1\\No_Time_To_Explain\\No_Time_To_Explain.csproj": {}
+    "C:\\FH\\2Sem\\MMP1\\Raffetseder_Kevin_mmp1\\No_Time_To_Explain\\No_Time_To_Explain.csproj": {}
   },
   "projects": {
-    "A:\\.FH_Games\\MMP1\\Raffetseder_Kevin_mmp1\\No_Time_To_Explain\\No_Time_To_Explain.csproj": {
+    "C:\\FH\\2Sem\\MMP1\\Raffetseder_Kevin_mmp1\\No_Time_To_Explain\\No_Time_To_Explain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "A:\\.FH_Games\\MMP1\\Raffetseder_Kevin_mmp1\\No_Time_To_Explain\\No_Time_To_Explain.csproj",
+        "projectUniqueName": "C:\\FH\\2Sem\\MMP1\\Raffetseder_Kevin_mmp1\\No_Time_To_Explain\\No_Time_To_Explain.csproj",
         "projectName": "No_Time_To_Explain",
-        "projectPath": "A:\\.FH_Games\\MMP1\\Raffetseder_Kevin_mmp1\\No_Time_To_Explain\\No_Time_To_Explain.csproj",
-        "packagesPath": "C:\\Users\\Kevin\\.nuget\\packages\\",
-        "outputPath": "A:\\.FH_Games\\MMP1\\Raffetseder_Kevin_mmp1\\No_Time_To_Explain\\obj\\",
+        "projectPath": "C:\\FH\\2Sem\\MMP1\\Raffetseder_Kevin_mmp1\\No_Time_To_Explain\\No_Time_To_Explain.csproj",
+        "packagesPath": "C:\\Users\\kevin\\.nuget\\packages\\",
+        "outputPath": "C:\\FH\\2Sem\\MMP1\\Raffetseder_Kevin_mmp1\\No_Time_To_Explain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Kevin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\kevin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
