@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "VifvG9NZZiY08tL2qtR8jZzQPND5wubaFD25+g1NEDEJi2ROH6nsXP29Nwpf422dmYi4jelOBMEnwQJcpebz8w==",
+  "success": true,
+  "projectFilePath": "A:\\.FH_Games\\MMP1\\Raffetseder_Kevin_mmp1\\No_Time_To_Explain\\No_Time_To_Explain.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Kevin\\.nuget\\packages\\csfml\\2.5.0\\csfml.2.5.0.nupkg.sha512",
+    "C:\\Users\\Kevin\\.nuget\\packages\\sfml.audio\\2.5.0\\sfml.audio.2.5.0.nupkg.sha512",
+    "C:\\Users\\Kevin\\.nuget\\packages\\sfml.graphics\\2.5.0\\sfml.graphics.2.5.0.nupkg.sha512",
+    "C:\\Users\\Kevin\\.nuget\\packages\\sfml.net\\2.5.0\\sfml.net.2.5.0.nupkg.sha512",
+    "C:\\Users\\Kevin\\.nuget\\packages\\sfml.system\\2.5.0\\sfml.system.2.5.0.nupkg.sha512",
+    "C:\\Users\\Kevin\\.nuget\\packages\\sfml.window\\2.5.0\\sfml.window.2.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}
