@@ -27,11 +27,14 @@ public class Room
     public bool hasSpawnTile;
     public readonly int TileSize;
     
-    public Room(string name, string pathToRoomFile, int tileSize, RenderWindow window, bool hasSpawnTile, bool hasTeleporter, bool hasNextRoom, bool hasPreviousRoom)
+    public Room(string name, string pathToRoomFile, int tileSize, RenderWindow window, RoomFeatures features)
     {
         Name = name;
-        this.hasSpawnTile = hasSpawnTile;
-        this.hasTeleporter = hasTeleporter;
+
+        hasSpawnTile = features.HasFlag(RoomFeatures.HasSpawnTile);
+        hasTeleporter = features.HasFlag(RoomFeatures.HasTeleporter);
+        bool hasNextRoom = features.HasFlag(RoomFeatures.HasNextRoom);
+        bool hasPreviousRoom = features.HasFlag(RoomFeatures.HasPreviousRoom);
 
         tileset = new Texture(AssetManager.Instance.Textures["map"]);
         LoadMap(pathToRoomFile);
@@ -113,7 +116,7 @@ public class Room
     {
         foreach(var enemy in Enemies)
         {
-            if(enemy.readiedAttack || enemy.IsHighlighted)
+            if(enemy.ReadiedAttack || enemy.IsHighlighted)
             {
                 foreach(var attackTileIndex in enemy.AttackPatternTiles)
                 {
@@ -130,12 +133,15 @@ public class Room
     private void LoadMap(string pathToRoomFile)
     {
         Map = new List<int[]>();
-        StreamReader file = new StreamReader(pathToRoomFile);
-        while(!file.EndOfStream)
+
+        using (StreamReader file = new StreamReader(pathToRoomFile))
         {
-            string line = file.ReadLine();
-            int[] row = Array.ConvertAll(line.Split('.'), int.Parse);
-            Map.Add(row);
+            while(!file.EndOfStream)
+            {
+                string line = file.ReadLine();
+                int[] row = Array.ConvertAll(line.Split('.'), int.Parse);
+                Map.Add(row);
+            }
         }
     }
 

@@ -32,16 +32,16 @@ public class Player : GameObject
     // Movement and positioning
     private float movementLength = 185f;
     private bool isMoving;
-    private float generalTime = MOVE_TIME + 1; // Has to be greater than MOVE_TIME, because we want to be able to move as soon as we load in
+    private float generalTime = MOVE_TIME + 1; //has to be greater than MOVE_TIME, because we wanna move as soon as we load in
     private Direction currDirection;
-    public Vector2i tileIndex;
+    public Vector2i TileIndex { get; private set; }
     private Room currentRoom;
 
     // Sounds
     private Sound obstacleHit;
     private Sound woosh;
     private Sound demonLaugh;
-    public Music DeathMusic;
+    public Music DeathMusic { get; private set; }
 
     // State variables
     private bool turnLock = false;
@@ -51,9 +51,9 @@ public class Player : GameObject
     private float deathAnimationDelayTimer = 0;
     private bool hasLaughed = false;
     private bool deathMusicPlaying = false;
-    public bool reachedTeleporter = false;
+    public bool ReachedTeleporter { get; private set; }
     private float teleporterTimer;
-    public bool GameResetTeleporter = false;
+    public bool GameResetTeleporter { get; private set; }
 
     public Player(RenderWindow renderWindow, Hud hud)
     {
@@ -109,13 +109,13 @@ public class Player : GameObject
         player.Origin = new Vector2f(player.GetGlobalBounds().Left + player.GetGlobalBounds().Width / 2 + 3, player.GetGlobalBounds().Top + player.GetGlobalBounds().Height - 4);
         player.Position = currentRoom.SpawnTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
         player.Scale *= PLAYER_SCALING;
-        tileIndex = Utils.ConvertToIndex(renderWindow, player);
+        TileIndex = Utils.ConvertToIndex(renderWindow, player);
     }
 
     public override void Update(float deltaTime)
     {
         animationTime += deltaTime * animationSpeed;   
-        if(!isDead && !reachedTeleporter)
+        if(!isDead && !ReachedTeleporter)
         {
             Input_Handling(deltaTime);
         }
@@ -123,7 +123,7 @@ public class Player : GameObject
         {
             Death_Handling(deltaTime);
         }
-        else if(reachedTeleporter)
+        else if(ReachedTeleporter)
         {
             Teleporter_Handling(deltaTime);
         }
@@ -214,9 +214,9 @@ public class Player : GameObject
             turnLock = false;
             if (InputManager.Instance.GetKeyDown(Keyboard.Key.D) && generalTime > MOVE_TIME)
             {
-                if(tileIndex.X + 1 < currentRoom.Map[tileIndex.Y].Length)
+                if(TileIndex.X + 1 < currentRoom.Map[TileIndex.Y].Length)
                 {
-                    if (Utils.IsObstacle(tileIndex + new Vector2i(1, 0), currentRoom.Map))
+                    if (Utils.IsObstacle(TileIndex + new Vector2i(1, 0), currentRoom.Map))
                     {
                         obstacleHit.Play();
                         AnimationHandling();
@@ -239,9 +239,9 @@ public class Player : GameObject
             }
             else if (InputManager.Instance.GetKeyDown(Keyboard.Key.A) && generalTime > MOVE_TIME)
             {
-                if(tileIndex.X - 1 >= 0)
+                if(TileIndex.X - 1 >= 0)
                 {
-                    if (Utils.IsObstacle(tileIndex - new Vector2i(1, 0), currentRoom.Map))
+                    if (Utils.IsObstacle(TileIndex - new Vector2i(1, 0), currentRoom.Map))
                     {
                         obstacleHit.Play();
                         AnimationHandling();
@@ -264,9 +264,9 @@ public class Player : GameObject
             }
             else if (InputManager.Instance.GetKeyDown(Keyboard.Key.W) && generalTime > MOVE_TIME)
             {
-                if(tileIndex.Y - 1 >= 0)
+                if(TileIndex.Y - 1 >= 0)
                 {
-                    if (Utils.IsObstacle(tileIndex - new Vector2i(0, 1), currentRoom.Map))
+                    if (Utils.IsObstacle(TileIndex - new Vector2i(0, 1), currentRoom.Map))
                     {
                         obstacleHit.Play();
                         AnimationHandling();
@@ -288,9 +288,9 @@ public class Player : GameObject
             }
             else if (InputManager.Instance.GetKeyDown(Keyboard.Key.S) && generalTime > MOVE_TIME)
             {
-                if(tileIndex.Y + 1 < currentRoom.Map.Count)
+                if(TileIndex.Y + 1 < currentRoom.Map.Count)
                 {
-                    if (Utils.IsObstacle(tileIndex + new Vector2i(0, 1), currentRoom.Map))
+                    if (Utils.IsObstacle(TileIndex + new Vector2i(0, 1), currentRoom.Map))
                     {
                         obstacleHit.Play();
                         AnimationHandling();
@@ -333,7 +333,7 @@ public class Player : GameObject
                 break;
             }
             
-            tileIndex = Utils.ConvertToIndex(renderWindow, player);
+            TileIndex = Utils.ConvertToIndex(renderWindow, player);
             
             if(generalTime > MOVE_TIME)
             {
@@ -341,7 +341,7 @@ public class Player : GameObject
                 currentAnimation = PlayerAnimationType.Idle;
                 foreach(var enemy in currentRoom.Enemies)
                 {
-                    enemy.UpdatePlayerIndex(tileIndex);
+                    enemy.UpdatePlayerIndex(TileIndex);
                 }
                 TurnHandler.Instance.EnemyTurn();
             }
@@ -373,7 +373,7 @@ public class Player : GameObject
     public void SpawnPlayerFromPreviousRoomTile()
     {
         player.Position = currentRoom.NextRoomTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
-        tileIndex = Utils.ConvertToIndex(renderWindow, player);
+        TileIndex = Utils.ConvertToIndex(renderWindow, player);
     }
 
     public void SpawnPlayerFromNextRoomTile()
@@ -387,7 +387,7 @@ public class Player : GameObject
             player.Position = currentRoom.PreviousRoomTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
         }
 
-        tileIndex = Utils.ConvertToIndex(renderWindow, player);
+        TileIndex = Utils.ConvertToIndex(renderWindow, player);
     }
 
     public void SetTurnLock()
@@ -410,8 +410,8 @@ public class Player : GameObject
         return isDead;
     }
 
-    public void ReachedTeleporter()
+    public void HasReachedTeleporter()
     {
-        reachedTeleporter = true;
+        ReachedTeleporter = true;
     }
 }

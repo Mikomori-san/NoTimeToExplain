@@ -55,7 +55,7 @@ public class EnemyHandler : GameObject
         
         foreach(var enemy in enemies)
         {
-            if(enemy.hasTurn) //if all enemies are done, set the player's turn -- if only 1 enemy still has turn, don't set the Player's turn yet
+            if(enemy.HasTurn) //if all enemies are done, set the player's turn -- if only 1 enemy still has turn, don't set the Player's turn yet
             {
                 return;
             }

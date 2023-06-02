@@ -13,14 +13,14 @@ public class BrokenStoneGolem : Enemy
         List<Vector2i> surroundingTiles = new List<Vector2i>();
         for(int i = 1; i <= 2; i++)
         {
-            surroundingTiles.Add(new Vector2i(tileIndex.X, tileIndex.Y - i));
-            surroundingTiles.Add(new Vector2i(tileIndex.X, tileIndex.Y + i));
-            surroundingTiles.Add(new Vector2i(tileIndex.X - i, tileIndex.Y));
-            surroundingTiles.Add(new Vector2i(tileIndex.X + i, tileIndex.Y));
-            surroundingTiles.Add(new Vector2i(tileIndex.X + i, tileIndex.Y + i));
-            surroundingTiles.Add(new Vector2i(tileIndex.X - i, tileIndex.Y + i));
-            surroundingTiles.Add(new Vector2i(tileIndex.X - i, tileIndex.Y - i));
-            surroundingTiles.Add(new Vector2i(tileIndex.X + i, tileIndex.Y - i));
+            surroundingTiles.Add(new Vector2i(TileIndex.X, TileIndex.Y - i));
+            surroundingTiles.Add(new Vector2i(TileIndex.X, TileIndex.Y + i));
+            surroundingTiles.Add(new Vector2i(TileIndex.X - i, TileIndex.Y));
+            surroundingTiles.Add(new Vector2i(TileIndex.X + i, TileIndex.Y));
+            surroundingTiles.Add(new Vector2i(TileIndex.X + i, TileIndex.Y + i));
+            surroundingTiles.Add(new Vector2i(TileIndex.X - i, TileIndex.Y + i));
+            surroundingTiles.Add(new Vector2i(TileIndex.X - i, TileIndex.Y - i));
+            surroundingTiles.Add(new Vector2i(TileIndex.X + i, TileIndex.Y - i));
         }
         
         return surroundingTiles;

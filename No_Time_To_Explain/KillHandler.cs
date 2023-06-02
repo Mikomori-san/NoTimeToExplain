@@ -26,14 +26,14 @@ public class KillHandler
             //Player Turn
             foreach(var enemy in enemies)
             {
-                if(player.tileIndex == enemy.tileIndex && enemy.soulHarvested == false)
+                if(player.TileIndex == enemy.TileIndex && enemy.SoulHarvested == false)
                 {
                     hud.AddSoul();
                     enemy.RespawnEnemy();
                     killSound.Play();
                     killSound.PlayingOffset = Time.FromSeconds(0.5f); //if player stands on enemy respawn tile while enemy respawns, player dies
                     
-                    if(enemy.tileIndex == player.tileIndex)
+                    if(enemy.TileIndex == player.TileIndex)
                     {
                         KillPlayer();
                     }
@@ -45,7 +45,7 @@ public class KillHandler
             //Enemy Turn
             foreach(var enemy in enemies)
             {
-                if(enemy.tileIndex == player.tileIndex)
+                if(enemy.TileIndex == player.TileIndex)
                 {
                     KillPlayer();
                 }

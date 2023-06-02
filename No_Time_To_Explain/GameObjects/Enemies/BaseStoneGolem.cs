@@ -17,8 +17,8 @@ public class BaseStoneGolem : Enemy
             {
                 for(int x = -1; x <= 1; x++)
                 {
-                    surroundingTiles.Add(new Vector2i(tileIndex.X + x, tileIndex.Y - y));
-                    surroundingTiles.Add(new Vector2i(tileIndex.X + x, tileIndex.Y + y));
+                    surroundingTiles.Add(new Vector2i(TileIndex.X + x, TileIndex.Y - y));
+                    surroundingTiles.Add(new Vector2i(TileIndex.X + x, TileIndex.Y + y));
                 }
             }
         }
@@ -29,8 +29,8 @@ public class BaseStoneGolem : Enemy
             {
                 for(int y = -1; y <= 1; y++)
                 {
-                    surroundingTiles.Add(new Vector2i(tileIndex.X - x, tileIndex.Y + y));
-                    surroundingTiles.Add(new Vector2i(tileIndex.X + x, tileIndex.Y + y));
+                    surroundingTiles.Add(new Vector2i(TileIndex.X - x, TileIndex.Y + y));
+                    surroundingTiles.Add(new Vector2i(TileIndex.X + x, TileIndex.Y + y));
                 }
             }
         }

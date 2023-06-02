@@ -2,7 +2,7 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 
-public class Enemy : GameObject
+public class Enemy : GameObject, IDisposable
 {
     protected Sprite sprite;
     protected const int ENEMY_TILING_X = 6;
@@ -17,33 +17,31 @@ public class Enemy : GameObject
     protected Direction currDirection = Direction.Right;
     protected const float ENEMY_SCALING = 1.5f;
     protected float generalTime = 0;
-    protected float movementLength = 191.5f;
     protected bool alreadyIdle = true;
     protected EnemyType enemyType;
     protected string spriteName;
-    public bool hasTurn = false;
-    public Vector2i tileIndex;
-    public RenderWindow window;
+    public bool HasTurn { get; private set; } = false;
+    public Vector2i TileIndex { get; private set; }
+    private RenderWindow window;
     protected Vector2f SpawnPosition;
-    public bool soulHarvested = false;
+    public bool SoulHarvested { get; private set; } = false;
     protected float soulHarvestCooldownTimer = 0;
     protected const float SOUL_HARVEST_COOLDOWN = 5f;
     protected Vector2i playerIndex;
     protected Room currentRoom;
-    protected int tilesToGoal = 0;
     protected BreadthFirstSearch bds;
     protected bool pathFound = false;
     protected Vector2i? blockedEnemyTileIndex = null;
     protected bool posUpdated = false;
-    protected const int MAX_TILES_SEARCHED = 50;
+    protected const int MAX_TILES_SEARCHED = 60;
     public List<Vector2i> AttackPatternTiles {get; private set; } = new();
     protected Vector2i? lockedAttackTile = null;
-    public bool readiedAttack = false;
+    public bool ReadiedAttack { get; private set; } = false;
     protected bool isAttacking = false;
     protected bool endOfTurnLock = true;
     protected bool checkForPlayer = true;
     protected Vector2i goalTile = new();
-    public bool IsHighlighted = false;
+    public bool IsHighlighted { get; private set; } = false;
     private bool blockedMovement = false;
     private Color originalColor;
     private const float MOVEMENT_TIME = 0.25f;
@@ -67,7 +65,7 @@ public class Enemy : GameObject
         window.MouseButtonPressed += OnMouseButtonPressed;
 
 
-        tileIndex = Utils.ConvertToIndex(window, sprite);
+        TileIndex = Utils.ConvertToIndex(window, sprite);
         currDirection = Direction.Right;
         frameCountPerAnimation = new int[4];
         frameCountPerAnimation[(int)EnemyAnimationType.Idle] = 4; 
@@ -83,10 +81,10 @@ public class Enemy : GameObject
         soulHarvestCooldownTimer += deltaTime;
         if(soulHarvestCooldownTimer >= SOUL_HARVEST_COOLDOWN)
         {
-                soulHarvested = false;
+                SoulHarvested = false;
         }
         
-        if(soulHarvested)
+        if(SoulHarvested)
         {
             sprite.Color = new Color(255, 255, 255, 128);
         }
@@ -130,7 +128,7 @@ public class Enemy : GameObject
                     checkForPlayer = false;
                 }
 
-                if(!pathFound && playerIndex != tileIndex && !readiedAttack && !isAttacking)
+                if(!pathFound && playerIndex != TileIndex && !ReadiedAttack && !isAttacking)
                 {
                     BFSPathfinding();
                     foreach(var enemy in currentRoom.Enemies)
@@ -138,33 +136,33 @@ public class Enemy : GameObject
                         switch(currDirection)
                         {
                             case Direction.Right:
-                                if(enemy.tileIndex == tileIndex + new Vector2i(1, 0))
+                                if(enemy.TileIndex == TileIndex + new Vector2i(1, 0))
                                 {
-                                    blockedEnemyTileIndex = enemy.tileIndex;
+                                    blockedEnemyTileIndex = enemy.TileIndex;
                                     BFSPathfinding();
                                     blockedEnemyTileIndex = null;
                                 }
                                 break;
                             case Direction.Left:
-                                if(enemy.tileIndex == tileIndex - new Vector2i(1, 0))
+                                if(enemy.TileIndex == TileIndex - new Vector2i(1, 0))
                                 {
-                                    blockedEnemyTileIndex = enemy.tileIndex;
+                                    blockedEnemyTileIndex = enemy.TileIndex;
                                     BFSPathfinding();
                                     blockedEnemyTileIndex = null;
                                 }
                                 break;
                             case Direction.Down:
-                                if(enemy.tileIndex == tileIndex + new Vector2i(0, 1))
+                                if(enemy.TileIndex == TileIndex + new Vector2i(0, 1))
                                 {
-                                    blockedEnemyTileIndex = enemy.tileIndex;
+                                    blockedEnemyTileIndex = enemy.TileIndex;
                                     BFSPathfinding();
                                     blockedEnemyTileIndex = null;
                                 }
                                 break;
                             case Direction.Up:
-                                if(enemy.tileIndex == tileIndex - new Vector2i(0, 1))
+                                if(enemy.TileIndex == TileIndex - new Vector2i(0, 1))
                                 {
-                                    blockedEnemyTileIndex = enemy.tileIndex;
+                                    blockedEnemyTileIndex = enemy.TileIndex;
                                     BFSPathfinding();
                                     blockedEnemyTileIndex = null;
                                 }
@@ -173,13 +171,13 @@ public class Enemy : GameObject
                     }
                 }
 
-                if(!posUpdated && !readiedAttack)
+                if(!posUpdated && !ReadiedAttack)
                 {
-                    tileIndex = goalTile;
+                    TileIndex = goalTile;
                     posUpdated = true;
                 }
 
-                if(!readiedAttack)
+                if(!ReadiedAttack)
                 {
                     EnemyMovement(deltaTime);
                 }
@@ -221,7 +219,7 @@ public class Enemy : GameObject
         {
             if (playerIndex == tile)
             {
-                if (readiedAttack)
+                if (ReadiedAttack)
                 {
                     Attack(tile);
                     return;
@@ -235,7 +233,7 @@ public class Enemy : GameObject
             }
         }
 
-        if (readiedAttack)
+        if (ReadiedAttack)
         {
             Attack(null);
         }
@@ -258,9 +256,9 @@ public class Enemy : GameObject
         
         posUpdated = false;
         isAttacking = true;
-        readiedAttack = false;
+        ReadiedAttack = false;
 
-        if(pos.Value.X > tileIndex.X)
+        if(pos.Value.X > TileIndex.X)
         {
             currDirection = Direction.Right;
         }
@@ -283,7 +281,7 @@ public class Enemy : GameObject
         currDirection = Direction.None;
         posUpdated = true;
         pathFound = true;
-        readiedAttack = true;
+        ReadiedAttack = true;
     }
 
     protected void EnemyMovement(float deltaTime)
@@ -293,7 +291,7 @@ public class Enemy : GameObject
             currentAnimation = EnemyAnimationType.Move;
             DirectionMovement(deltaTime);
             
-            hasTurn = true; 
+            HasTurn = true; 
         }
         else
         {
@@ -304,11 +302,11 @@ public class Enemy : GameObject
 
     private void FinishedFunction()
     {
-        hasTurn = false;
+        HasTurn = false;
         alreadyIdle = false;
         pathFound = false;
         isAttacking = false;
-        readiedAttack = false;
+        ReadiedAttack = false;
         lockedAttackTile = null;
         endOfTurnLock = true;
         blockedMovement = false;
@@ -376,11 +374,11 @@ public class Enemy : GameObject
     public void RespawnEnemy()
     {
         sprite.Position = SpawnPosition;
-        tileIndex = Utils.ConvertToIndex(window, sprite);
-        soulHarvested = true;
+        TileIndex = Utils.ConvertToIndex(window, sprite);
+        SoulHarvested = true;
         soulHarvestCooldownTimer = 0;
-        readiedAttack = false;
-        goalTile = tileIndex;
+        ReadiedAttack = false;
+        goalTile = TileIndex;
         endOfTurnLock = true;
         blockedMovement = true;
     }
@@ -388,26 +386,26 @@ public class Enemy : GameObject
     protected void BFSPathfinding()
     {
         bds = new BreadthFirstSearch(currentRoom.Map[0].Length, currentRoom.Map.Count, currentRoom, blockedEnemyTileIndex, MAX_TILES_SEARCHED);
-        List<Vector2i> tilesInWay = bds.FindPath(tileIndex, playerIndex);
+        List<Vector2i> tilesInWay = bds.FindPath(TileIndex, playerIndex);
         if(tilesInWay.Count == 0)
         {
             currDirection = Direction.None;
         }
         else
         {
-            if(tilesInWay[0].X > tileIndex.X)
+            if(tilesInWay[0].X > TileIndex.X)
             {
                 currDirection = Direction.Right;
             }
-            else if(tilesInWay[0].X < tileIndex.X)
+            else if(tilesInWay[0].X < TileIndex.X)
             {
                 currDirection = Direction.Left;
             }
-            else if(tilesInWay[0].Y > tileIndex.Y)
+            else if(tilesInWay[0].Y > TileIndex.Y)
             {
                 currDirection = Direction.Down;
             }
-            else if(tilesInWay[0].Y < tileIndex.Y)
+            else if(tilesInWay[0].Y < TileIndex.Y)
             {
                 currDirection = Direction.Up;
             }
@@ -419,7 +417,7 @@ public class Enemy : GameObject
         }
         else
         {
-            goalTile = tileIndex;
+            goalTile = TileIndex;
         }
         pathFound = true;
 
@@ -446,5 +444,10 @@ public class Enemy : GameObject
                 IsHighlighted = false;
             }
         }
+    }
+
+    public new void Dispose()
+    {
+        window.MouseButtonPressed -= OnMouseButtonPressed; //in a nutshell: unsubscribe when Enemy is getting disposed of
     }
 }

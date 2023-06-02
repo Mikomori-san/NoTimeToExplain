@@ -12,9 +12,8 @@ public class Game
     public const int TILE_SIZE = 48;
 
     // Properties
-    public RenderWindow Window { get; set; }
+    public RenderWindow Window { get; private set; }
     private View view;
-    private VideoMode mode;
     private float gameTime = 0;
     private Player player;
     private Hud hud;
@@ -22,30 +21,15 @@ public class Game
     private Room currentRoom;
     private Music? backgroundMusic;
     private Sound levelSwitch;
-    private Vector2f ScalingFactor;
     private KillHandler killHandler;
-    private float aspectRatio = 1;
+    private float aspectRatio;
     private Sprite backgroundSprite;
     private List<Room> randomRoomsToGenerate;
     private int maxRandomRoomsCounter = 0;
     private int currentCountOfRandomRooms = 0;
     private List<Music> backgroundTracks;
-    public bool Retry { get; set; }
-    public bool ReachedTeleporter { get; set; }
-
-    //Rooms
-    private Room startRoom;
-    private Room randomRoom1;
-    private Room randomRoom2;
-    private Room randomRoom3;
-    private Room randomRoom4;
-    private Room randomRoom5;
-    private Room randomRoom6;
-    private Room randomRoom7;
-    private Room randomRoom8;
-    private Room randomRoom9;
-    private Room randomRoom10;
-    private Room teleporterRoom;
+    public bool Retry { get; private set; }
+    public bool ReachedTeleporter { get; private set; }
 
     public Game(RenderWindow window)
     {
@@ -59,63 +43,60 @@ public class Game
     }
 
     public void Run()
+{
+    Initialize();
+
+    Clock clock = new Clock();
+
+    while (Window.IsOpen)
     {
-        Initialize();
+        float deltaTime = clock.Restart().AsSeconds();
 
-        Clock clock = new Clock();
+        HandleEvents();
 
-        while (Window.IsOpen)
+        Update(deltaTime);
+
+        Draw();
+
+        if (this.Retry || this.ReachedTeleporter)
         {
-            float deltaTime = clock.Restart().AsSeconds();
-
-            HandleEvents();
-
-            Update(deltaTime);
-
-            Draw();
-
-            if(this.Retry)
-            {
-                Run();
-            }
-
-            if(this.ReachedTeleporter)
-            {
-                Run();
-            }
+            Initialize();
         }
     }
+}
+
 
     private void Update(float deltaTime)
     {
         gameTime += deltaTime;
         player.Update(deltaTime);
         
-        if(!player.IsDead() && !player.reachedTeleporter)
+        if(!player.IsDead() && !player.ReachedTeleporter) //basically if the game runs normally
         {
             enemyHandler.Update(deltaTime);
             killHandler.SearchForCollisions();
             RoomManagement();
         }
-        else
+        else //if the player is dead or reached the teleporter, delete the enemies and stop the backgroundMUsic
         {
             killHandler.UpdateEnemies(new List<Enemy>());
             backgroundMusic.Stop();
         }
+
         hud.Update(deltaTime);
         
-        if(hud.Retry)
+        if(hud.Retry) //if the retry button has been clicked
         {
             this.Retry = true;
             player.DeathMusic.Stop();
         }
 
-        if(hud.RemainingTime() <= 0 && !player.IsDead() && !player.reachedTeleporter)
+        if(hud.RemainingTime() <= 0 && !player.IsDead() && !player.ReachedTeleporter) //if the time runs out but the player is not already dead OR in teleporter sequence
         {
             killHandler.KillPlayer();
         }
 
-        if(player.GameResetTeleporter)
+        if(player.GameResetTeleporter) //if player reached the teleporter
         {
             ReachedTeleporter = true;
         }
@@ -126,7 +107,7 @@ public class Game
     private void Draw()
     {
         Window.Clear();
-        if(!player.IsDead() && !player.reachedTeleporter)
+        if(!player.IsDead() && !player.ReachedTeleporter) //only draw the player and the hud when the player is dead or in teleporter
         {
             Window.Draw(backgroundSprite);
             currentRoom.Draw(Window);
@@ -156,7 +137,7 @@ public class Game
         AssetManager.Instance.LoadMusic("background2", "DemonSlayer.ogg");
         AssetManager.Instance.LoadSound("levelSwitch", "levelSwitch.wav");
         
-        Retry = false;
+        Retry = false; // set retry to false if Initialize was called because of Retry
 
         currentCountOfRandomRooms = 0;
 
@@ -175,7 +156,7 @@ public class Game
         levelSwitch = new Sound(Utils.TrimSound(AssetManager.Instance.Sounds["levelSwitch"], 1.5f));
         levelSwitch.Volume *= 0.7f;
 
-        if(!ReachedTeleporter)
+        if(!ReachedTeleporter) //if the player reached the teleporter, do not set the hud new because it will delete the score
         {
             hud = new Hud(Window);
         }
@@ -187,15 +168,17 @@ public class Game
         maxRandomRoomsCounter = ran.Next(0, 4); //create between 0 and 4 random rooms between the spawn and teleporter room
         Console.WriteLine("Max Count of Rooms " + maxRandomRoomsCounter);
 
-        RoomInitializing();
+        RoomHandler.Instance.SetRooms(Window);
+
+        randomRoomsToGenerate = RoomHandler.Instance.GenerateRandomRooms(maxRandomRoomsCounter);
+        RoomHandler.Instance.SetFirstRoom();
         
-        RoomHandler.Instance.SetFirstRoom(startRoom);
         currentRoom = RoomHandler.Instance.GetCurrentRoom();
 
         player = new Player(Window, hud);
         player.SetCurrentRoom(currentRoom);
         player.Initialize();
-        EnemySetter();
+        RoomHandler.Instance.EnemySetter(player, Window);
 
         enemyHandler = new EnemyHandler(currentRoom.Enemies, currentRoom.EnemySpawnTiles, currentRoom.TileSize); 
         enemyHandler.Initialize();                            
@@ -211,7 +194,7 @@ public class Game
         if(currentRoom.NextRoomTile != null)
         {
             if(!TurnHandler.Instance.IsPlayerTurn() && 
-                player.tileIndex == Utils.ConvertToIndex(Window, currentRoom.NextRoomTile) &&
+                player.TileIndex == Utils.ConvertToIndex(Window, currentRoom.NextRoomTile) &&
                 !player.GetTurnLock()
             )
             {
@@ -236,11 +219,11 @@ public class Game
                 }
                 else
                 {
-                    RoomHandler.Instance.NextRoom(teleporterRoom);
+                    RoomHandler.Instance.NextTeleporterRoom();
                     hud.Add30Seconds();
                 }
                 currentRoom = RoomHandler.Instance.GetCurrentRoom();
-                EnemySetter();
+                RoomHandler.Instance.EnemySetter(player, Window);
                 player.SetCurrentRoom(currentRoom);
                 player.SpawnPlayerFromNextRoomTile();
                 enemyHandler.UpdateEnemies(currentRoom.Enemies, currentRoom.EnemySpawnTiles);
@@ -253,13 +236,13 @@ public class Game
         if(currentRoom.PreviousRoomTile != null)
         {
             if(!TurnHandler.Instance.IsPlayerTurn()  && 
-                player.tileIndex == Utils.ConvertToIndex(Window, currentRoom.PreviousRoomTile) &&
+                player.TileIndex == Utils.ConvertToIndex(Window, currentRoom.PreviousRoomTile) &&
                 !player.GetTurnLock()
             )
             {
                 RoomHandler.Instance.PreviousRoom();
                 currentRoom = RoomHandler.Instance.GetCurrentRoom();
-                EnemySetter();
+                RoomHandler.Instance.EnemySetter(player, Window);
                 player.SetCurrentRoom(currentRoom);
                 player.SpawnPlayerFromPreviousRoomTile();
                 enemyHandler.UpdateEnemies(currentRoom.Enemies, currentRoom.EnemySpawnTiles);
@@ -271,195 +254,15 @@ public class Game
 
         if(currentRoom.TeleporterTile != null)
         {
-            if(player.tileIndex == Utils.ConvertToIndex(Window, currentRoom.TeleporterTile))
+            if(player.TileIndex == Utils.ConvertToIndex(Window, currentRoom.TeleporterTile))
             {
                 hud.ReachedTeleporter();
-                player.ReachedTeleporter();
+                player.HasReachedTeleporter();
             }
         }
     }
 
-    private void RoomInitializing()
-    {
-        startRoom = new Room("Spawn Room", "./Assets/Rooms/SpawnRoom.txt", TILE_SIZE, Window, true, false, true, false); //spawn Room
-        randomRoom1 = new Room("Random Room 1", "./Assets/Rooms/RandomRoom1.txt", TILE_SIZE, Window, false, false, true, true);
-        randomRoom2 = new Room("Random Room 2", "./Assets/Rooms/RandomRoom2.txt", TILE_SIZE, Window, false, false, true, true);
-        randomRoom3 = new Room("Random Room 3", "./Assets/Rooms/RandomRoom3.txt", TILE_SIZE, Window, false, false, true, true);
-        randomRoom4 = new Room("Random Room 4", "./Assets/Rooms/RandomRoom4.txt", TILE_SIZE, Window, false, false, true, true);
-        randomRoom5 = new Room("Random Room 5", "./Assets/Rooms/RandomRoom5.txt", TILE_SIZE, Window, false, false, true, true);
-        randomRoom6 = new Room("Random Room 6", "./Assets/Rooms/RandomRoom6.txt", TILE_SIZE, Window, false, false, true, true);
-        randomRoom7 = new Room("Random Room 7", "./Assets/Rooms/RandomRoom7.txt", TILE_SIZE, Window, false, false, true, true);
-        randomRoom8 = new Room("Random Room 8", "./Assets/Rooms/RandomRoom8.txt", TILE_SIZE, Window, false, false, true, true);
-        randomRoom9 = new Room("Random Room 9", "./Assets/Rooms/RandomRoom9.txt", TILE_SIZE, Window, false, false, true, true);
-        randomRoom10 = new Room("Random Room 10", "./Assets/Rooms/RandomRoom10.txt", TILE_SIZE, Window, false, false, true, true);
-        teleporterRoom = new Room("Teleporter Room", "./Assets/Rooms/TeleporterRoom.txt", TILE_SIZE, Window, false, true, false, true); //teleporter Room
-
-        randomRoomsToGenerate = new List<Room>();
-        randomRoomsToGenerate.Add(randomRoom1);
-        randomRoomsToGenerate.Add(randomRoom2);
-        randomRoomsToGenerate.Add(randomRoom3);
-        randomRoomsToGenerate.Add(randomRoom4);
-        randomRoomsToGenerate.Add(randomRoom5);
-        randomRoomsToGenerate.Add(randomRoom6);
-        randomRoomsToGenerate.Add(randomRoom7);
-        randomRoomsToGenerate.Add(randomRoom8);
-        randomRoomsToGenerate.Add(randomRoom9);
-        randomRoomsToGenerate.Add(randomRoom10);
-    }
-
-    private void EnemySetter()
-    {
-        switch(currentRoom.Name)
-        {
-            case "Spawn Room":
-                SetSpawnRoomEnemies();
-                break;
-            case "Teleporter Room":
-                SetTeleporterRoomEnemies();
-                break;
-            case "Random Room 1":
-                SetRandomRoom1Enemies();
-                break;
-            case "Random Room 2":
-                SetRandomRoom2Enemies();
-                break;
-            case "Random Room 3":
-                SetRandomRoom3Enemies();
-                break;
-            case "Random Room 4":
-                SetRandomRoom4Enemies();
-                break;
-            case "Random Room 5":
-                SetRandomRoom5Enemies();
-                break;
-            case "Random Room 6":
-                SetRandomRoom6Enemies();
-                break;
-            case "Random Room 7":
-                SetRandomRoom7Enemies();
-                break;
-            case "Random Room 8":
-                SetRandomRoom8Enemies();
-                break;
-            case "Random Room 9":
-                SetRandomRoom9Enemies();
-                break;
-            case "Random Room 10":
-                SetRandomRoom10Enemies();
-                break;
-        }
-    }
-
-    private void SetSpawnRoomEnemies()
-    {
-        startRoom.Enemies = new List<Enemy>();
-        startRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", Window, player.tileIndex, currentRoom));
-        startRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", Window, player.tileIndex, currentRoom));
-    }
-
-    private void SetTeleporterRoomEnemies()
-    {
-        teleporterRoom.Enemies = new List<Enemy>();
-        teleporterRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", Window, player.tileIndex, currentRoom));
-        teleporterRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", Window, player.tileIndex, currentRoom));
-        teleporterRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-        teleporterRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", Window, player.tileIndex, currentRoom));
-    }
-
-    private void SetRandomRoom1Enemies()
-    {
-        randomRoom1.Enemies = new List<Enemy>();
-        randomRoom1.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", Window, player.tileIndex, currentRoom));
-        randomRoom1.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom1.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom1.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", Window, player.tileIndex, currentRoom));
-    }
-
-    private void SetRandomRoom2Enemies()
-    {
-        randomRoom2.Enemies = new List<Enemy>();
-        randomRoom2.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom2.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom2.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", Window, player.tileIndex, currentRoom));  
-        randomRoom2.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom2.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", Window, player.tileIndex, currentRoom));  
-        randomRoom2.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", Window, player.tileIndex, currentRoom));
-    }
-
-    private void SetRandomRoom3Enemies()
-    {
-        randomRoom3.Enemies = new List<Enemy>();
-        randomRoom3.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", Window, player.tileIndex, currentRoom));
-        randomRoom3.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom3.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom3.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom3.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", Window, player.tileIndex, currentRoom));
-        randomRoom3.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom3.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom3.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", Window, player.tileIndex, currentRoom));
-    }
-
-    private void SetRandomRoom4Enemies()
-    {
-        randomRoom4.Enemies = new List<Enemy>();
-        randomRoom4.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", Window, player.tileIndex, currentRoom));
-        randomRoom4.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", Window, player.tileIndex, currentRoom));
-        randomRoom4.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom4.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", Window, player.tileIndex, currentRoom));
-    }
-
-    private void SetRandomRoom5Enemies()
-    {
-        randomRoom5.Enemies = new List<Enemy>();
-        randomRoom5.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom5.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom5.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-    }
-
-    private void SetRandomRoom6Enemies()
-    {
-        randomRoom6.Enemies = new List<Enemy>();
-        randomRoom6.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom6.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom6.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom6.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-    }
-
-    private void SetRandomRoom7Enemies()
-    {
-        randomRoom7.Enemies = new List<Enemy>();
-        randomRoom7.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom7.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom7.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", Window, player.tileIndex, currentRoom));
-        randomRoom7.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", Window, player.tileIndex, currentRoom));
-    }
-
-    private void SetRandomRoom8Enemies()
-    {
-        randomRoom8.Enemies = new List<Enemy>();
-        randomRoom8.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom8.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom8.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom8.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", Window, player.tileIndex, currentRoom));
-    }
-
-    private void SetRandomRoom9Enemies()
-    {
-        randomRoom9.Enemies = new List<Enemy>();
-        randomRoom9.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom9.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom9.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom9.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", Window, player.tileIndex, currentRoom));
-    }
-
-    private void SetRandomRoom10Enemies()
-    {
-        randomRoom10.Enemies = new List<Enemy>();
-        randomRoom10.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", Window, player.tileIndex, currentRoom));
-        randomRoom10.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", Window, player.tileIndex, currentRoom));
-        randomRoom10.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", Window, player.tileIndex, currentRoom));
-        randomRoom10.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", Window, player.tileIndex, currentRoom));
-    }
+    
 
     private void OnResizeWindow(object? sender, SizeEventArgs e)
     {
