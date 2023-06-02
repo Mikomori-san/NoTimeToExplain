@@ -16,8 +16,8 @@ public class Titlescreen : IDisposable
         VideoMode mode = new VideoMode(1920, 1080);
         string title = "No Time To Explain";
         window = new RenderWindow(mode, title, Styles.Fullscreen); // Styles.Fullscreen
-        AssetManager.Instance.LoadTexture("startbutton", "./TitleScreen/startButton.png");
-        AssetManager.Instance.LoadTexture("titleScreenBackground", "./TitleScreen/titleBackground3.png");
+        AssetManager.Instance.LoadTexture("startbutton", "/TitleScreen/startButton.png");
+        AssetManager.Instance.LoadTexture("titleScreenBackground", "/TitleScreen/titleBackground3.png");
         AssetManager.Instance.LoadMusic("titleBackground", "TheSacrifice.ogg");
         startButtonPressed = false;
 

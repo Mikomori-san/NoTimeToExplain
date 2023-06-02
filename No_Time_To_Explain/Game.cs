@@ -43,27 +43,27 @@ public class Game
     }
 
     public void Run()
-{
-    Initialize();
-
-    Clock clock = new Clock();
-
-    while (Window.IsOpen)
     {
-        float deltaTime = clock.Restart().AsSeconds();
+        Initialize();
 
-        HandleEvents();
+        Clock clock = new Clock();
 
-        Update(deltaTime);
-
-        Draw();
-
-        if (this.Retry || this.ReachedTeleporter)
+        while (Window.IsOpen)
         {
-            Initialize();
+            float deltaTime = clock.Restart().AsSeconds();
+
+            HandleEvents();
+
+            Update(deltaTime);
+
+            Draw();
+
+            if (this.Retry || this.ReachedTeleporter)
+            {
+                Initialize();
+            }
         }
     }
-}
 
 
     private void Update(float deltaTime)
@@ -166,7 +166,6 @@ public class Game
 
         Random ran = new Random();
         maxRandomRoomsCounter = ran.Next(0, 4); //create between 0 and 4 random rooms between the spawn and teleporter room
-        Console.WriteLine("Max Count of Rooms " + maxRandomRoomsCounter);
 
         RoomHandler.Instance.SetRooms(Window);
 
@@ -204,7 +203,6 @@ public class Game
                 }
                 else if(currentCountOfRandomRooms < maxRandomRoomsCounter)
                 {
-                    Console.WriteLine("Current Count of Random Rooms" + currentCountOfRandomRooms);
                     Random random = new Random();
                     int randomRoom = random.Next(0, randomRoomsToGenerate.Count);
 

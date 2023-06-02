@@ -460,7 +460,8 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Kevin\\.nuget\\packages\\": {}
+    "C:\\Users\\Kevin\\.nuget\\packages\\": {},
+    "H:\\Schule\\VSShared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
@@ -471,8 +472,12 @@
       "packagesPath": "C:\\Users\\Kevin\\.nuget\\packages\\",
       "outputPath": "A:\\.FH_Games\\MMP1\\Raffetseder_Kevin_mmp1\\No_Time_To_Explain\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "H:\\Schule\\VSShared\\NuGetPackages"
+      ],
       "configFilePaths": [
         "C:\\Users\\Kevin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -519,7 +524,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.302\\RuntimeIdentifierGraph.json"
       }
     }
   }
