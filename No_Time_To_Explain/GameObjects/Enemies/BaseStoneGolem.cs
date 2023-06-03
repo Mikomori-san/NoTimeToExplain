@@ -17,6 +17,16 @@ public class BaseStoneGolem : Enemy
     protected override List<Vector2i> GetAttackTiles()
     {
         List<Vector2i> surroundingTiles = new List<Vector2i>();
+
+        surroundingTiles.Add(new Vector2i(TileIndex.X, TileIndex.Y - 1));
+        surroundingTiles.Add(new Vector2i(TileIndex.X, TileIndex.Y + 1));
+        surroundingTiles.Add(new Vector2i(TileIndex.X - 1, TileIndex.Y));
+        surroundingTiles.Add(new Vector2i(TileIndex.X + 1, TileIndex.Y));
+        surroundingTiles.Add(new Vector2i(TileIndex.X + 1, TileIndex.Y + 1));
+        surroundingTiles.Add(new Vector2i(TileIndex.X - 1, TileIndex.Y + 1));
+        surroundingTiles.Add(new Vector2i(TileIndex.X - 1, TileIndex.Y - 1));
+        surroundingTiles.Add(new Vector2i(TileIndex.X + 1, TileIndex.Y - 1));
+
         for(int a = 0; a < 2; a++)
         {
             for(int y = 2; y <= 4; y += 2)
