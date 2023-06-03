@@ -67,13 +67,10 @@ public class RoomHandler
 
         for (int i = 0; i < count; i++)
         {
-            // Generate a random room index
             int randomIndex = random.Next(0, availableRandomRooms.Count);
 
-            // Add the randomly selected room to the list
             randomRooms.Add(availableRandomRooms[randomIndex]);
 
-            // Remove the selected room from the available random rooms
             availableRandomRooms.RemoveAt(randomIndex);
         }
 

@@ -26,21 +26,21 @@ public class AssetManager
 
     public void LoadTexture(string name, string fileName)
     {
-        Textures[name] = new Texture($"./Assets/Textures{fileName}");
+        Textures[name] = new Texture($"./Assets/Textures/{fileName}");
     }
 
     public void LoadSound(string name, string fileName)
     {
-        Sounds[name] = new SoundBuffer($"./Assets/Sounds{fileName}");
+        Sounds[name] = new SoundBuffer($"./Assets/Sounds/{fileName}");
     }
 
     public void LoadMusic(string name, string fileName)
     {
-        Music[name] = new Music($"./Assets/Music{fileName}");
+        Music[name] = new Music($"./Assets/Music/{fileName}");
     }
 
     public void LoadFont(string name, string fileName)
     {
-        Fonts[name] = new Font($"./Assets/Fonts{fileName}");
+        Fonts[name] = new Font($"./Assets/Fonts/{fileName}");
     }
 }
