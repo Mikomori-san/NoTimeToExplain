@@ -26,7 +26,7 @@ public class Hud : GameObject
     // Constants
     private const int MAX_TIME = 120;
     private const float DISPLAY_SOULS_THRESHOLD = 1f;
-    private const int SOULS_SCORE_MODIFIER = 5;
+    private const int SOULS_SCORE_MODIFIER = 10;
     private const int TIME_SCORE_MODIFIER = 3;
 
     // Game state variables
