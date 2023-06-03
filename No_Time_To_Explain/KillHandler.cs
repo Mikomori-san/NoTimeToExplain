@@ -32,9 +32,13 @@ public class KillHandler
             //Player Turn
             foreach(var enemy in enemies)
             {
-                if(player.TileIndex == enemy.TileIndex && enemy.SoulHarvested == false)
+                if(player.TileIndex == enemy.TileIndex)
                 {
-                    hud.AddSoul();
+                    if(enemy.SoulHarvested == false)
+                    {
+                        hud.AddSoul();
+                    }
+                    
                     enemy.RespawnEnemy();
                     killSound.Play();
                     killSound.PlayingOffset = Time.FromSeconds(0.5f); //if player stands on enemy respawn tile while enemy respawns, player dies
