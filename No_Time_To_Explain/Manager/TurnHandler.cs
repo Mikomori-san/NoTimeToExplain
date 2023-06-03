@@ -1,3 +1,9 @@
+/*
+MultiMediaTechnology / FH Salzburg
+MultiMediaProject 1
+Author: Kevin Raffetseder
+*/
+
 public class TurnHandler
 {
     private static TurnHandler? instance;

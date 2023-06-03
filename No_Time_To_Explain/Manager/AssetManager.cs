@@ -1,6 +1,11 @@
+/*
+MultiMediaTechnology / FH Salzburg
+MultiMediaProject 1
+Author: Kevin Raffetseder
+*/
+
 using SFML.Audio;
 using SFML.Graphics;
-using SFML.Window;
 
 public class AssetManager
 {

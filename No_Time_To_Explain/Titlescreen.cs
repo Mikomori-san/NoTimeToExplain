@@ -1,3 +1,9 @@
+/*
+MultiMediaTechnology / FH Salzburg
+MultiMediaProject 1
+Author: Kevin Raffetseder
+*/
+
 using SFML.Audio;
 using SFML.Graphics;
 using SFML.System;
@@ -15,7 +21,7 @@ public class Titlescreen : IDisposable
     {
         VideoMode mode = new VideoMode(1920, 1080);
         string title = "No Time To Explain";
-        window = new RenderWindow(mode, title, Styles.Fullscreen); // Styles.Fullscreen
+        window = new RenderWindow(mode, title, Styles.Fullscreen);
         AssetManager.Instance.LoadTexture("startbutton", "/TitleScreen/startButton.png");
         AssetManager.Instance.LoadTexture("titleScreenBackground", "/TitleScreen/titleBackground3.png");
         AssetManager.Instance.LoadMusic("titleBackground", "TheSacrifice.ogg");
@@ -79,6 +85,8 @@ public class Titlescreen : IDisposable
     public void Dispose()
     {
         window.Dispose();
+        startButtonSprite.Dispose();
+        background.Dispose();
         titleBackgroundMusic.Dispose();
     }
 }

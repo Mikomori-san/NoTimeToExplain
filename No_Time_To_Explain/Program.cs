@@ -1,6 +1,8 @@
-﻿using SFML.Graphics;
-using SFML.System;
-using SFML.Window;
+﻿/*
+MultiMediaTechnology / FH Salzburg
+MultiMediaProject 1
+Author: Kevin Raffetseder
+*/
 
 public static class Program
 {

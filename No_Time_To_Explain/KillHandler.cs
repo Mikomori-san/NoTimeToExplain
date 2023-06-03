@@ -1,3 +1,9 @@
+/*
+MultiMediaTechnology / FH Salzburg
+MultiMediaProject 1
+Author: Kevin Raffetseder
+*/
+
 using SFML.Audio;
 using SFML.System;
 

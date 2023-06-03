@@ -1,12 +1,34 @@
+/*
+MultiMediaTechnology / FH Salzburg
+MultiMediaProject 1
+Author: Kevin Raffetseder
+*/
+
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 
 public class Enemy : GameObject, IDisposable
 {
+    // Sprites
     protected Sprite sprite;
+    private RenderWindow window;
+    protected Vector2f SpawnPosition;
+    protected Color originalColor;
+
+    // Constants
     protected const int ENEMY_TILING_X = 6;
     protected const int ENEMY_TILING_Y = 4;
+    protected const float ENEMY_SCALING = 1.5f;
+    protected const float SOUL_HARVEST_COOLDOWN = 5f;
+    protected const int MAX_TILES_SEARCHED = 60;
+    private const float MOVEMENT_TIME = 0.25f;
+    private const int MAX_TIME = 120;
+    private const float DISPLAY_SOULS_THRESHOLD = 1f;
+    private const int SOULS_SCORE_MODIFIER = 10;
+    private const int TIME_SCORE_MODIFIER = 3;
+
+    // Animation
     protected int[] frameCountPerAnimation;
     protected int animationFrame;
     protected float animationTime = 0;
@@ -15,36 +37,34 @@ public class Enemy : GameObject, IDisposable
     protected int spriteXOffset;
     protected int spriteYOffset;
     protected Direction currDirection = Direction.Right;
-    protected const float ENEMY_SCALING = 1.5f;
     protected float generalTime = 0;
     protected bool alreadyIdle = true;
-    protected EnemyType enemyType;
-    protected string spriteName;
-    public bool HasTurn { get; private set; } = false;
-    public Vector2i TileIndex { get; private set; }
-    private RenderWindow window;
-    protected Vector2f SpawnPosition;
-    public bool SoulHarvested { get; private set; } = false;
-    protected float soulHarvestCooldownTimer = 0;
-    protected const float SOUL_HARVEST_COOLDOWN = 5f;
-    protected Vector2i playerIndex;
-    protected Room currentRoom;
-    protected BreadthFirstSearch bds;
-    protected bool pathFound = false;
-    protected Vector2i? blockedEnemyTileIndex = null;
-    protected bool posUpdated = false;
-    protected const int MAX_TILES_SEARCHED = 60;
-    public List<Vector2i> AttackPatternTiles {get; private set; } = new();
-    protected Vector2i? lockedAttackTile = null;
-    public bool ReadiedAttack { get; private set; } = false;
     protected bool isAttacking = false;
     protected bool endOfTurnLock = true;
     protected bool checkForPlayer = true;
+    protected bool posUpdated = false;
+    protected bool blockedMovement = false;
+
+    // Enemy Type
+    protected EnemyType enemyType;
+    protected string spriteName;
+    protected bool pathFound = false;
+    protected Vector2i? blockedEnemyTileIndex = null;
+    protected Vector2i? lockedAttackTile = null;
     protected Vector2i goalTile = new();
+
+    // Gameplay
+    public bool HasTurn { get; private set; } = false;
+    public Vector2i TileIndex { get; private set; }
+    public bool SoulHarvested { get; private set; } = false;
+    protected float soulHarvestCooldownTimer = 0;
+    protected Vector2i playerIndex;
+    protected Room currentRoom;
+    protected BreadthFirstSearch bds;
+    public List<Vector2i> AttackPatternTiles {get; private set; } = new();
+    public bool ReadiedAttack { get; private set; } = false;
     public bool IsHighlighted { get; private set; } = false;
-    private bool blockedMovement = false;
-    private Color originalColor;
-    private const float MOVEMENT_TIME = 0.25f;
+
 
     public Enemy(EnemyType enemyType, string spriteName, RenderWindow window, Vector2i playerIndex, Room currentRoom)
     {
