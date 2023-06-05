@@ -20,7 +20,7 @@
 
 ## Herausforderungen und Lösungen
 
--   **Herausforderungen**: Turn-Based Movement, Level & Room Administration, Pathfinding (A* oder BDS)
+-   **Herausforderungen**: Turn-Based Movement, Level & Room Administration, Pathfinding (A* oder BFS)
 -   **Lösungen**: Singleton TurnHandler & RoomHandler Klassen, Algorithmus: Angepasste Breitensuche
 
 ## Erreichte Ziele
