@@ -218,6 +218,7 @@ public class Game
 
     private void RoomManagement()
     {
+        bool spawnPlayerFromNext = true;
         if(currentRoom.NextRoomTile != null)
         {
             if(!TurnHandler.Instance.IsPlayerTurn() && 
@@ -248,14 +249,8 @@ public class Game
                     RoomHandler.Instance.NextTeleporterRoom();
                     hud.Add30Seconds();
                 }
-                currentRoom = RoomHandler.Instance.GetCurrentRoom();
-                RoomHandler.Instance.EnemySetter(player, Window);
-                player.SetCurrentRoom(currentRoom);
-                player.SpawnPlayerFromNextRoomTile();
-                enemyHandler.UpdateEnemies(currentRoom.Enemies, currentRoom.EnemySpawnTiles);
-                killHandler.UpdateEnemies(currentRoom.Enemies);
-                player.SetTurnLock();
-                levelSwitch.Play();
+                
+                RoomConfig(spawnPlayerFromNext);
             }
         }
         
@@ -267,14 +262,7 @@ public class Game
             )
             {
                 RoomHandler.Instance.PreviousRoom();
-                currentRoom = RoomHandler.Instance.GetCurrentRoom();
-                RoomHandler.Instance.EnemySetter(player, Window);
-                player.SetCurrentRoom(currentRoom);
-                player.SpawnPlayerFromPreviousRoomTile();
-                enemyHandler.UpdateEnemies(currentRoom.Enemies, currentRoom.EnemySpawnTiles);
-                killHandler.UpdateEnemies(currentRoom.Enemies);
-                player.SetTurnLock();
-                levelSwitch.Play();
+                RoomConfig(!spawnPlayerFromNext);
             }
         }
 
@@ -288,7 +276,26 @@ public class Game
         }
     }
 
-    
+    private void RoomConfig(bool spawnPlayerFromNext)
+    {
+        currentRoom = RoomHandler.Instance.GetCurrentRoom();
+        RoomHandler.Instance.EnemySetter(player, Window);
+        player.SetCurrentRoom(currentRoom);
+        
+        if(spawnPlayerFromNext)
+        {
+            player.SpawnPlayerFromNextRoomTile();
+        }
+        else
+        {
+            player.SpawnPlayerFromPreviousRoomTile();
+        }
+        
+        enemyHandler.UpdateEnemies(currentRoom.Enemies, currentRoom.EnemySpawnTiles);
+        killHandler.UpdateEnemies(currentRoom.Enemies);
+        player.SetTurnLock();
+        levelSwitch.Play();
+    }
 
     private void OnResizeWindow(object? sender, SizeEventArgs e)
     {
