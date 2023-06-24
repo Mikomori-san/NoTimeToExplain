@@ -10,7 +10,15 @@ using SFML.Window;
 
 public class Hud : GameObject
 {
+    // Constants
+    private const int MAX_TIME = 120;
+    private const float DISPLAY_SOULS_THRESHOLD = 1f;
+    private const int SOULS_SCORE_MODIFIER = 10;
+    private const int TIME_SCORE_MODIFIER = 3;
+
     private RenderWindow renderWindow;
+
+    public event Action RetryButtonPressed;
 
     // Fonts
     private Font font;
@@ -29,16 +37,10 @@ public class Hud : GameObject
     private Sprite retryButton;
     private Sprite leaveButton;
 
-    // Constants
-    private const int MAX_TIME = 120;
-    private const float DISPLAY_SOULS_THRESHOLD = 1f;
-    private const int SOULS_SCORE_MODIFIER = 10;
-    private const int TIME_SCORE_MODIFIER = 3;
-
     // Game state variables
     private float remainingTime = 0;
     private int currentSouls = 0;
-    private bool playerDeath = false;
+    public bool playerDeath{get; set;} = false;
     private bool reachedTeleporter = false;
     private bool displayTimeNextLevel = false;
     private bool displaySoulsNextLevel = false;
@@ -46,7 +48,6 @@ public class Hud : GameObject
     private float displayTimer = 0;
     private int score = 0;
     private int scoreCount = 0;
-    public bool Retry { get; private set; } = false;
 
     public Hud(RenderWindow renderWindow)
     {
@@ -259,13 +260,18 @@ public class Hud : GameObject
         remainingTime -= 30;
     }
 
+    private void OnRetryButtonPressed()
+    {
+        RetryButtonPressed?.Invoke();
+    }
+
     private void OnMouseButtonPressed(object sender, MouseButtonEventArgs e)
     {
         if(playerDeath)
         {
             if (retryButton.GetGlobalBounds().Contains(e.X - renderWindow.Size.X / 2, e.Y - renderWindow.Size.Y / 2))
             {
-                Retry = true;
+                OnRetryButtonPressed();
             }
             if(leaveButton.GetGlobalBounds().Contains(e.X - renderWindow.Size.X / 2, e.Y - renderWindow.Size.Y / 2))
             {

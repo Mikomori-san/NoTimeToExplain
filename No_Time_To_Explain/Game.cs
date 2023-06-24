@@ -51,6 +51,7 @@ public class Game
     public void Run()
     {
         Initialize();
+        AddEvents();
 
         Clock clock = new Clock();
 
@@ -66,11 +67,12 @@ public class Game
 
             if (this.Retry || this.ReachedTeleporter)
             {
+                RemoveEvents();
                 Initialize();
+                AddEvents();
             }
         }
     }
-
 
     private void Update(float deltaTime)
     {
@@ -90,12 +92,6 @@ public class Game
         }
 
         hud.Update(deltaTime);
-        
-        if(hud.Retry) //if the retry button has been clicked
-        {
-            this.Retry = true;
-            player.DeathMusic.Stop();
-        }
 
         if(hud.RemainingTime() <= 0 && !player.IsDead() && !player.ReachedTeleporter) //if the time runs out but the player is not already dead OR in teleporter sequence
         {
@@ -192,6 +188,22 @@ public class Game
 
         backgroundMusic.Play();
         backgroundMusic.Loop = true;
+    }
+
+    private void AddEvents()
+    {
+        hud.RetryButtonPressed += RetryButtonPressedHandler;
+    }
+
+    private void RemoveEvents()
+    {
+        hud.RetryButtonPressed -= RetryButtonPressedHandler;
+    }
+
+    private void RetryButtonPressedHandler()
+    {
+        Retry = true;
+        player.DeathMusic.Stop();
     }
 
     private void RoomManagement()
