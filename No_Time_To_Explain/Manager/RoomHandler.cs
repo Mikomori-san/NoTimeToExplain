@@ -145,111 +145,111 @@ public class RoomHandler
     private void SetSpawnRoomEnemies(Player player, RenderWindow window)
     {
         startRoom.Enemies = new List<Enemy>();
-        startRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.TileIndex, currentRoom));
-        startRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window, player.TileIndex, currentRoom));
+        startRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, TextureName.LavaGolem, window, player.TileIndex, currentRoom));
+        startRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, TextureName.StoneGolem, window, player.TileIndex, currentRoom));
     }
 
     private void SetTeleporterRoomEnemies(Player player, RenderWindow window)
     {
         teleporterRoom.Enemies = new List<Enemy>();
-        teleporterRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.TileIndex, currentRoom));
-        teleporterRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window, player.TileIndex, currentRoom));
-        teleporterRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
-        teleporterRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window, player.TileIndex, currentRoom));
+        teleporterRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, TextureName.LavaGolem, window, player.TileIndex, currentRoom));
+        teleporterRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, TextureName.StoneGolem, window, player.TileIndex, currentRoom));
+        teleporterRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
+        teleporterRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, TextureName.BrokenStoneGolem, window, player.TileIndex, currentRoom));
     }
 
     private void SetRandomRoom1Enemies(Player player, RenderWindow window)
     {
         currentRoom.Enemies = new List<Enemy>();
-        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, TextureName.LavaGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, TextureName.StoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, TextureName.BrokenStoneGolem, window, player.TileIndex, currentRoom));
     }
 
     private void SetRandomRoom2Enemies(Player player, RenderWindow window)
     {
         currentRoom.Enemies = new List<Enemy>();
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window, player.TileIndex, currentRoom));  
-        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window, player.TileIndex, currentRoom));  
-        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, TextureName.BrokenStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, TextureName.StoneGolem, window, player.TileIndex, currentRoom));  
+        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, TextureName.BrokenStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, TextureName.StoneGolem, window, player.TileIndex, currentRoom));  
+        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, TextureName.BrokenStoneGolem, window, player.TileIndex, currentRoom));
     }
 
     private void SetRandomRoom3Enemies(Player player, RenderWindow window)
     {
         currentRoom.Enemies = new List<Enemy>();
-        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, TextureName.LavaGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, TextureName.StoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, TextureName.BrokenStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, TextureName.LavaGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, TextureName.StoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, TextureName.BrokenStoneGolem, window, player.TileIndex, currentRoom));
     }
 
     private void SetRandomRoom4Enemies(Player player, RenderWindow window)
     {
         currentRoom.Enemies = new List<Enemy>();
-        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, TextureName.LavaGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, TextureName.LavaGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, TextureName.BrokenStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, TextureName.BrokenStoneGolem, window, player.TileIndex, currentRoom));
     }
 
     private void SetRandomRoom5Enemies(Player player, RenderWindow window)
     {
         currentRoom.Enemies = new List<Enemy>();
-        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, TextureName.BrokenStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, TextureName.BrokenStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
     }
 
     private void SetRandomRoom6Enemies(Player player, RenderWindow window)
     {
         currentRoom.Enemies = new List<Enemy>();
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
     }
 
     private void SetRandomRoom7Enemies(Player player, RenderWindow window)
     {
         currentRoom.Enemies = new List<Enemy>();
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, TextureName.LavaGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, TextureName.LavaGolem, window, player.TileIndex, currentRoom));
     }
 
     private void SetRandomRoom8Enemies(Player player, RenderWindow window)
     {
         currentRoom.Enemies = new List<Enemy>();
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, TextureName.StoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, TextureName.StoneGolem, window, player.TileIndex, currentRoom));
     }
 
     private void SetRandomRoom9Enemies(Player player, RenderWindow window)
     {
         currentRoom.Enemies = new List<Enemy>();
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, "baseStoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, "brokenStoneGolem", window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BaseStoneGolem(EnemyType.BaseStoneGolem, TextureName.BaseStoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, TextureName.StoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new BrokenStoneGolem(EnemyType.BrokenStoneGolem, TextureName.BrokenStoneGolem, window, player.TileIndex, currentRoom));
     }
 
     private void SetRandomRoom10Enemies(Player player, RenderWindow window)
     {
         currentRoom.Enemies = new List<Enemy>();
-        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, "lavaGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window, player.TileIndex, currentRoom));
-        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, "stoneGolem", window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, TextureName.LavaGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new LavaGolem(EnemyType.LavaGolem, TextureName.LavaGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, TextureName.StoneGolem, window, player.TileIndex, currentRoom));
+        currentRoom.Enemies.Add(new StoneGolem(EnemyType.StoneGolem, TextureName.StoneGolem, window, player.TileIndex, currentRoom));
     }
 }

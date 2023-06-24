@@ -42,7 +42,7 @@ public class Room
         bool hasNextRoom = features.HasFlag(RoomFeatures.HasNextRoom);
         bool hasPreviousRoom = features.HasFlag(RoomFeatures.HasPreviousRoom);
 
-        tileset = new Texture(AssetManager.Instance.Textures["map"]);
+        tileset = new Texture(AssetManager.Instance.Textures[TextureName.Map]);
         LoadMap(pathToRoomFile);
 
         this.TileSize = tileSize;

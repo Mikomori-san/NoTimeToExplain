@@ -9,6 +9,7 @@ using SFML.System;
 
 public class KillHandler
 {
+    private const string KILL_SOUND_NAME = "kill.wav";
     private Player player;
     private List<Enemy> enemies;
     private Hud hud;
@@ -19,8 +20,8 @@ public class KillHandler
         this.enemies = enemies;
         this.hud = hud;
         
-        AssetManager.Instance.LoadSound("kill", "kill.wav");
-        killSound = new Sound(AssetManager.Instance.Sounds["kill"]);
+        AssetManager.Instance.LoadSound(SoundName.Kill, KILL_SOUND_NAME);
+        killSound = new Sound(AssetManager.Instance.Sounds[SoundName.Kill]);
         killSound.Volume *= 0.5f;
         killSound.PlayingOffset = Time.FromSeconds(0.5f);
     }

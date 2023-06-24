@@ -48,3 +48,41 @@ public enum RoomFeatures
     HasNextRoom = 4,
     HasPreviousRoom = 8
 }
+
+public enum TextureName
+{
+    Player,
+    Map,
+    LavaGolem,
+    StoneGolem,
+    BrokenStoneGolem,
+    BaseStoneGolem,
+    Background,
+    Retry,
+    Leave,
+    StartButton,
+    TitlescreenBackground
+}
+
+public enum MusicName
+{
+    Background1,
+    Background2,
+    DeathMusic,
+    TitleBackground
+}
+
+public enum SoundName
+{
+    LevelSwitch,
+    ObstacleHit,
+    Woosh,
+    DemonLaugh,
+    Kill
+}
+
+public enum FontName
+{
+    Hud,
+    Death
+}

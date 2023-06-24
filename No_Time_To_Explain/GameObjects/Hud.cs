@@ -15,6 +15,10 @@ public class Hud : GameObject
     private const float DISPLAY_SOULS_THRESHOLD = 1f;
     private const int SOULS_SCORE_MODIFIER = 10;
     private const int TIME_SCORE_MODIFIER = 3;
+    private const string HUD_FONT_NAME = "BrunoAce-Regular.ttf";
+    private const string DEATH_FONT_NAME = "NightmarePills-BV2w.ttf";
+    private const string RETRY_TEXTURE_NAME = "retryButton.png";
+    private const string LEAVE_TEXTURE_NAME = "leaveButton.png";
 
     private RenderWindow renderWindow;
 
@@ -100,13 +104,13 @@ public class Hud : GameObject
 
     public override void Initialize()
     {
-        AssetManager.Instance.LoadFont("hud", "BrunoAce-Regular.ttf");
-        AssetManager.Instance.LoadFont("death", "NightmarePills-BV2w.ttf");
-        AssetManager.Instance.LoadTexture("retry", "retryButton.png");
-        AssetManager.Instance.LoadTexture("leave", "leaveButton.png");
+        AssetManager.Instance.LoadFont(FontName.Hud, HUD_FONT_NAME);
+        AssetManager.Instance.LoadFont(FontName.Death, DEATH_FONT_NAME);
+        AssetManager.Instance.LoadTexture(TextureName.Retry, RETRY_TEXTURE_NAME);
+        AssetManager.Instance.LoadTexture(TextureName.Leave, LEAVE_TEXTURE_NAME);
 
-        font = AssetManager.Instance.Fonts["hud"];
-        deathFont = AssetManager.Instance.Fonts["death"];
+        font = AssetManager.Instance.Fonts[FontName.Hud];
+        deathFont = AssetManager.Instance.Fonts[FontName.Death];
 
         time = new Text($"Time's ticking: {MAX_TIME - (int)remainingTime}", font, 12);
         time.FillColor = Color.White;
@@ -137,7 +141,7 @@ public class Hud : GameObject
         );
         soulsDeathText.Position = new Vector2f(0, 200);
 
-        retryButton = new Sprite(AssetManager.Instance.Textures["retry"]);
+        retryButton = new Sprite(AssetManager.Instance.Textures[TextureName.Retry]);
         retryButton.Origin = new Vector2f(
             retryButton.GetGlobalBounds().Left + retryButton.GetGlobalBounds().Width / 2,
             retryButton.GetGlobalBounds().Top + retryButton.GetGlobalBounds().Height / 2
@@ -145,7 +149,7 @@ public class Hud : GameObject
         retryButton.Position = new Vector2f(0, 300);
         retryButton.Scale *= 0.25f;
 
-        leaveButton = new Sprite(AssetManager.Instance.Textures["leave"]);
+        leaveButton = new Sprite(AssetManager.Instance.Textures[TextureName.Leave]);
         leaveButton.Origin = new Vector2f(
             leaveButton.GetGlobalBounds().Left + leaveButton.GetGlobalBounds().Width / 2,
             leaveButton.GetGlobalBounds().Top + leaveButton.GetGlobalBounds().Height / 2

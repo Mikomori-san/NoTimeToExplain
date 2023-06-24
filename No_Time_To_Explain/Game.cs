@@ -16,6 +16,16 @@ public class Game
     private const uint ORIGINAL_WIDTH = 1920;
     private const uint ORIGINAL_HEIGHT = 1080;
     public const int TILE_SIZE = 48;
+    private const string PLAYER_TEXTURE_NAME = "Player/player.png";
+    private const string MAP_TEXTURE_NAME = "Tiles/Tileset.png";
+    private const string LAVAGOLEM_TEXTURE_NAME = "Enemy/LavaGolem/LavaGolemSpriteSheet.png";
+    private const string STONEGOLEM_TEXTURE_NAME = "Enemy/StoneGolem/StoneGolemSpriteSheet.png";
+    private const string BROKENSTONEGOLEM_TEXTURE_NAME = "Enemy/BrokenStoneGolem/BrokenStoneGolemSpriteSheet.png";
+    private const string BASESTONEGOLEM_TEXTURE_NAME = "Enemy/BaseStoneGolem/BaseStoneGolemSpriteSheet.png";
+    private const string BACKGROUND_TEXTURE_NAME = "background.png";
+    private const string BACKGROUND1_MUSIC_NAME = "YourOwnPersonalHell.ogg";
+    private const string BACKGROUND2_MUSIC_NAME = "DemonSlayer.ogg";
+    private const string LEVELSWITCH_SOUND_NAME = "levelSwitch.wav";
 
     // Properties
     public RenderWindow Window { get; private set; }
@@ -65,7 +75,7 @@ public class Game
 
             Draw();
 
-            if (this.Retry || this.ReachedTeleporter)
+            if (Retry || ReachedTeleporter)
             {
                 RemoveEvents();
                 Initialize();
@@ -128,34 +138,34 @@ public class Game
     private void Initialize()
     {
         InputManager.Instance.Initialize(Window);
-        AssetManager.Instance.LoadTexture("player", "Player/player.png");
-        AssetManager.Instance.LoadTexture("map", "Tiles/Tileset.png");
-        AssetManager.Instance.LoadTexture("lavaGolem", "Enemy/LavaGolem/LavaGolemSpriteSheet.png");
-        AssetManager.Instance.LoadTexture("stoneGolem", "Enemy/StoneGolem/StoneGolemSpriteSheet.png");
-        AssetManager.Instance.LoadTexture("brokenStoneGolem", "Enemy/BrokenStoneGolem/BrokenStoneGolemSpriteSheet.png");
-        AssetManager.Instance.LoadTexture("baseStoneGolem", "Enemy/BaseStoneGolem/BaseStoneGolemSpriteSheet.png");
-        AssetManager.Instance.LoadTexture("background", "background.png");
-        AssetManager.Instance.LoadMusic("background1", "YourOwnPersonalHell.ogg");
-        AssetManager.Instance.LoadMusic("background2", "DemonSlayer.ogg");
-        AssetManager.Instance.LoadSound("levelSwitch", "levelSwitch.wav");
+        AssetManager.Instance.LoadTexture(TextureName.Player, PLAYER_TEXTURE_NAME);
+        AssetManager.Instance.LoadTexture(TextureName.Map, MAP_TEXTURE_NAME);
+        AssetManager.Instance.LoadTexture(TextureName.LavaGolem, LAVAGOLEM_TEXTURE_NAME);
+        AssetManager.Instance.LoadTexture(TextureName.StoneGolem, STONEGOLEM_TEXTURE_NAME);
+        AssetManager.Instance.LoadTexture(TextureName.BrokenStoneGolem, BROKENSTONEGOLEM_TEXTURE_NAME);
+        AssetManager.Instance.LoadTexture(TextureName.BaseStoneGolem, BASESTONEGOLEM_TEXTURE_NAME);
+        AssetManager.Instance.LoadTexture(TextureName.Background, BACKGROUND_TEXTURE_NAME);
+        AssetManager.Instance.LoadMusic(MusicName.Background1, BACKGROUND1_MUSIC_NAME);
+        AssetManager.Instance.LoadMusic(MusicName.Background2, BACKGROUND2_MUSIC_NAME);
+        AssetManager.Instance.LoadSound(SoundName.LevelSwitch, LEVELSWITCH_SOUND_NAME);
         
         Retry = false; // set retry to false if Initialize was called because of Retry
 
         currentCountOfRandomRooms = 0;
 
-        backgroundSprite = new Sprite(AssetManager.Instance.Textures["background"]);
+        backgroundSprite = new Sprite(AssetManager.Instance.Textures[TextureName.Background]);
         backgroundSprite.Position = new Vector2f(-Window.GetView().Size.X / 2, -Window.GetView().Size.Y / 2);
         backgroundSprite.Scale *= 3;
 
         backgroundTracks = new List<Music>();
-        backgroundTracks.Add(AssetManager.Instance.Music["background1"]);
-        backgroundTracks.Add(AssetManager.Instance.Music["background2"]);
+        backgroundTracks.Add(AssetManager.Instance.Music[MusicName.Background1]);
+        backgroundTracks.Add(AssetManager.Instance.Music[MusicName.Background2]);
         Random randomTracks = new Random();
         backgroundMusic = backgroundTracks[randomTracks.Next(0, backgroundTracks.Count)];
         backgroundMusic.Volume *= 0.1f;
 
 
-        levelSwitch = new Sound(Utils.TrimSound(AssetManager.Instance.Sounds["levelSwitch"], 1.5f));
+        levelSwitch = new Sound(Utils.TrimSound(AssetManager.Instance.Sounds[SoundName.LevelSwitch], 1.5f));
         levelSwitch.Volume *= 0.7f;
 
         if(!ReachedTeleporter) //if the player reached the teleporter, do not set the hud new because it will delete the score

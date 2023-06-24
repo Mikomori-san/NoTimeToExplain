@@ -47,7 +47,7 @@ public class Enemy : GameObject, IDisposable
 
     // Enemy Type
     protected EnemyType enemyType;
-    protected string spriteName;
+    protected TextureName spriteName;
     protected bool pathFound = false;
     protected Vector2i? blockedEnemyTileIndex = null;
     protected Vector2i? lockedAttackTile = null;
@@ -66,7 +66,7 @@ public class Enemy : GameObject, IDisposable
     public bool IsHighlighted { get; private set; } = false;
 
 
-    public Enemy(EnemyType enemyType, string spriteName, RenderWindow window, Vector2i playerIndex, Room currentRoom)
+    public Enemy(EnemyType enemyType, TextureName spriteName, RenderWindow window, Vector2i playerIndex, Room currentRoom)
     {
         this.window = window;
         this.enemyType = enemyType;
@@ -339,32 +339,20 @@ public class Enemy : GameObject, IDisposable
         switch (currDirection)
         {
             case Direction.Right:
+            case Direction.RightDown:
+            case Direction.RightUp:
                 sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);      
                 break;
 
             case Direction.Left:
+            case Direction.LeftDown:
+            case Direction.LeftUp:
                 sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
                 break;
 
             case Direction.None:
                 // Do nothing
                 currentAnimation = EnemyAnimationType.Idle;
-                break;
-
-            case Direction.RightDown:
-                sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);
-                break;
-
-            case Direction.RightUp:
-                sprite.Scale = new Vector2f(ENEMY_SCALING, ENEMY_SCALING);
-                break;
-
-            case Direction.LeftDown:
-                sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
-                break;
-
-            case Direction.LeftUp:
-                sprite.Scale = new Vector2f(-ENEMY_SCALING, ENEMY_SCALING);
                 break;
         }
 

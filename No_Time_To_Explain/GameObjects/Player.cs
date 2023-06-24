@@ -20,6 +20,10 @@ public class Player : GameObject
     private const int LAST_DEATH_FRAME = 8;
     private const float TIME_UNTIL_NEXT_SPAWN = 3;
     private const int NEXT_LEVEL_ANIMATION_SPEED_MODIFIER = 6;
+    private const string OBSTACLEHIT_SOUND_NAME = "obstacleHit.wav";
+    private const string WOOSH_SOUND_NAME = "woosh.wav";
+    private const string DEMONLAUGH_SOUND_NAME = "demonLaugh.wav";
+    private const string DEATH_MUSIC_NAME = "deathMusic.ogg";
 
     // Dependencies
     private RenderWindow renderWindow;
@@ -80,21 +84,21 @@ public class Player : GameObject
         deathTimer = 0;
         teleporterTimer = 0;
 
-        AssetManager.Instance.LoadSound("obstacleHit", "obstacleHit.wav");
-        obstacleHit = new Sound(AssetManager.Instance.Sounds["obstacleHit"]);
+        AssetManager.Instance.LoadSound(SoundName.ObstacleHit, OBSTACLEHIT_SOUND_NAME);
+        obstacleHit = new Sound(AssetManager.Instance.Sounds[SoundName.ObstacleHit]);
         obstacleHit.Pitch = 2.5f;
         obstacleHit.Volume = 5;
 
-        AssetManager.Instance.LoadSound("woosh", "woosh.wav");
-        woosh = new Sound(AssetManager.Instance.Sounds["woosh"]);
+        AssetManager.Instance.LoadSound(SoundName.Woosh, WOOSH_SOUND_NAME);
+        woosh = new Sound(AssetManager.Instance.Sounds[SoundName.Woosh]);
         woosh.Volume = 10;
 
-        AssetManager.Instance.LoadSound("demonLaugh", "demonLaugh.wav");
-        demonLaugh = new Sound(AssetManager.Instance.Sounds["demonLaugh"]);
+        AssetManager.Instance.LoadSound(SoundName.DemonLaugh, DEMONLAUGH_SOUND_NAME);
+        demonLaugh = new Sound(AssetManager.Instance.Sounds[SoundName.DemonLaugh]);
         demonLaugh.Volume = 5;
 
-        AssetManager.Instance.LoadMusic("deathMusic", "deathMusic.ogg");
-        DeathMusic = AssetManager.Instance.Music["deathMusic"];
+        AssetManager.Instance.LoadMusic(MusicName.DeathMusic, DEATH_MUSIC_NAME);
+        DeathMusic = AssetManager.Instance.Music[MusicName.DeathMusic];
         DeathMusic.Volume *= 0.1f;
         DeathMusic.Loop = true;
 
@@ -103,7 +107,7 @@ public class Player : GameObject
         frameCountPerAnimation[(int)PlayerAnimationType.Move] = 4; //1
         frameCountPerAnimation[(int)PlayerAnimationType.Death] = 9; //3
 
-        player = new Sprite(AssetManager.Instance.Textures["player"]);
+        player = new Sprite(AssetManager.Instance.Textures[TextureName.Player]);
         
         player.TextureRect = new IntRect(
             0,
