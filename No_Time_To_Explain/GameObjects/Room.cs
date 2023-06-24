@@ -17,7 +17,7 @@ public class Room
     public const int PREVIOUS_ROOM_INDEX = 9;
 
     // Properties
-    public string Name { get; set; }
+    public RoomName Name { get; set; }
     private Texture tileset;
     private List<Sprite> tiles;
     public List<int[]> Map { get; private set; }
@@ -33,7 +33,7 @@ public class Room
     public bool hasSpawnTile;
     public readonly int TileSize;
     
-    public Room(string name, string pathToRoomFile, int tileSize, RenderWindow window, RoomFeatures features)
+    public Room(RoomName name, string pathToRoomFile, int tileSize, RenderWindow window, RoomFeatures features)
     {
         Name = name;
 

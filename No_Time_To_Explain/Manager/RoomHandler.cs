@@ -8,6 +8,7 @@ using SFML.Graphics;
 
 public class RoomHandler
 {
+    private const int COUNT_OF_MIDDLE_ROOM_LEVELS = 10;
     private static RoomHandler? instance;
     private Room currentRoom;
     private Stack<Room> previousRooms = new Stack<Room>();
@@ -85,58 +86,53 @@ public class RoomHandler
     
     public void SetRooms(RenderWindow window)
     {
-        startRoom = new Room("Spawn Room", "./Assets/Rooms/SpawnRoom.txt", Game.TILE_SIZE, window, RoomFeatures.HasSpawnTile | RoomFeatures.HasNextRoom); //spawn Room
-        teleporterRoom = new Room("Teleporter Room", "./Assets/Rooms/TeleporterRoom.txt", Game.TILE_SIZE, window, RoomFeatures.HasTeleporter | RoomFeatures.HasPreviousRoom); //teleporter Room
-        availableRandomRooms.Add(new Room("Random Room 1", "./Assets/Rooms/RandomRoom1.txt", Game.TILE_SIZE, window, RoomFeatures.HasNextRoom | RoomFeatures.HasPreviousRoom));
-        availableRandomRooms.Add(new Room("Random Room 2", "./Assets/Rooms/RandomRoom2.txt", Game.TILE_SIZE, window, RoomFeatures.HasNextRoom | RoomFeatures.HasPreviousRoom));
-        availableRandomRooms.Add(new Room("Random Room 3", "./Assets/Rooms/RandomRoom3.txt", Game.TILE_SIZE, window, RoomFeatures.HasNextRoom | RoomFeatures.HasPreviousRoom));
-        availableRandomRooms.Add(new Room("Random Room 4", "./Assets/Rooms/RandomRoom4.txt", Game.TILE_SIZE, window, RoomFeatures.HasNextRoom | RoomFeatures.HasPreviousRoom));
-        availableRandomRooms.Add(new Room("Random Room 5", "./Assets/Rooms/RandomRoom5.txt", Game.TILE_SIZE, window, RoomFeatures.HasNextRoom | RoomFeatures.HasPreviousRoom));
-        availableRandomRooms.Add(new Room("Random Room 6", "./Assets/Rooms/RandomRoom6.txt", Game.TILE_SIZE, window, RoomFeatures.HasNextRoom | RoomFeatures.HasPreviousRoom));
-        availableRandomRooms.Add(new Room("Random Room 7", "./Assets/Rooms/RandomRoom7.txt", Game.TILE_SIZE, window, RoomFeatures.HasNextRoom | RoomFeatures.HasPreviousRoom));
-        availableRandomRooms.Add(new Room("Random Room 8", "./Assets/Rooms/RandomRoom8.txt", Game.TILE_SIZE, window, RoomFeatures.HasNextRoom | RoomFeatures.HasPreviousRoom));
-        availableRandomRooms.Add(new Room("Random Room 9", "./Assets/Rooms/RandomRoom9.txt", Game.TILE_SIZE, window, RoomFeatures.HasNextRoom | RoomFeatures.HasPreviousRoom));
-        availableRandomRooms.Add(new Room("Random Room 10", "./Assets/Rooms/RandomRoom10.txt", Game.TILE_SIZE, window, RoomFeatures.HasNextRoom | RoomFeatures.HasPreviousRoom));     
+        startRoom = new Room(RoomName.SpawnRoom, "./Assets/Rooms/SpawnRoom.txt", Game.TILE_SIZE, window, RoomFeatures.HasSpawnTile | RoomFeatures.HasNextRoom); //spawn Room
+        teleporterRoom = new Room(RoomName.TeleporterRoom, "./Assets/Rooms/TeleporterRoom.txt", Game.TILE_SIZE, window, RoomFeatures.HasTeleporter | RoomFeatures.HasPreviousRoom); //teleporter Room
+        
+        for(int i = 1; i <= COUNT_OF_MIDDLE_ROOM_LEVELS; i++)
+        {
+            availableRandomRooms.Add(new Room((RoomName)Enum.GetValues(typeof(RoomName)).GetValue(i), $"./Assets/Rooms/RandomRoom{i}.txt", Game.TILE_SIZE, window, RoomFeatures.HasNextRoom | RoomFeatures.HasPreviousRoom));
+        }
     }
 
     public void EnemySetter(Player player, RenderWindow window)
     {
         switch(currentRoom.Name)
         {
-            case "Spawn Room":
+            case RoomName.SpawnRoom:
                 SetSpawnRoomEnemies(player, window);
                 break;
-            case "Teleporter Room":
+            case RoomName.TeleporterRoom:
                 SetTeleporterRoomEnemies(player, window);
                 break;
-            case "Random Room 1":
+            case RoomName.RandomRoom1:
                 SetRandomRoom1Enemies(player, window);
                 break;
-            case "Random Room 2":
+            case RoomName.RandomRoom2:
                 SetRandomRoom2Enemies(player, window);
                 break;
-            case "Random Room 3":
+            case RoomName.RandomRoom3:
                 SetRandomRoom3Enemies(player, window);
                 break;
-            case "Random Room 4":
+            case RoomName.RandomRoom4:
                 SetRandomRoom4Enemies(player, window);
                 break;
-            case "Random Room 5":
+            case RoomName.RandomRoom5:
                 SetRandomRoom5Enemies(player, window);
                 break;
-            case "Random Room 6":
+            case RoomName.RandomRoom6:
                 SetRandomRoom6Enemies(player, window);
                 break;
-            case "Random Room 7":
+            case RoomName.RandomRoom7:
                 SetRandomRoom7Enemies(player, window);
                 break;
-            case "Random Room 8":
+            case RoomName.RandomRoom8:
                 SetRandomRoom8Enemies(player, window);
                 break;
-            case "Random Room 9":
+            case RoomName.RandomRoom9:
                 SetRandomRoom9Enemies(player, window);
                 break;
-            case "Random Room 10":
+            case RoomName.RandomRoom10:
                 SetRandomRoom10Enemies(player, window);
                 break;
         }

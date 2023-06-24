@@ -86,3 +86,19 @@ public enum FontName
     Hud,
     Death
 }
+
+public enum RoomName
+{
+    SpawnRoom = 0,
+    RandomRoom1 = 1,
+    RandomRoom2 = 2,
+    RandomRoom3 = 3,
+    RandomRoom4 = 4,
+    RandomRoom5 = 5,
+    RandomRoom6 = 6,
+    RandomRoom7 = 7,
+    RandomRoom8 = 8,
+    RandomRoom9 = 9,
+    RandomRoom10 = 10,
+    TeleporterRoom = 11
+}
