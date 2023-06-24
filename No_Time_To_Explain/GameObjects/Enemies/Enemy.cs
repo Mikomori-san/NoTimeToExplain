@@ -259,8 +259,6 @@ public class Enemy : GameObject, IDisposable
         }
     }
 
-
-
     private void Attack(Vector2i? tile)
     {
         Vector2i? pos = new();
@@ -393,7 +391,7 @@ public class Enemy : GameObject, IDisposable
 
     protected void BFSPathfinding()
     {
-        bds = new BreadthFirstSearch(currentRoom.Map[0].Length, currentRoom.Map.Count, currentRoom, blockedEnemyTileIndex, MAX_TILES_SEARCHED);
+        bds = new BreadthFirstSearch(currentRoom.Map[0].Length, currentRoom.Map.Count, currentRoom.Map, blockedEnemyTileIndex, MAX_TILES_SEARCHED);
         List<Vector2i> tilesInWay = bds.FindPath(TileIndex, playerIndex);
         if(tilesInWay.Count == 0)
         {

@@ -7,16 +7,14 @@ public class BreadthFirstSearch
     private int width;
     private int height;
     private List<int[]> tiles;
-    private Room currentRoom;
     private Vector2i? blockedEnemyTileIndex; 
     private int maxDepth;
 
-    public BreadthFirstSearch(int width, int height, Room currentRoom, Vector2i? blockedEnemyTileIndex, int maxDepth)
+    public BreadthFirstSearch(int width, int height, List<int[]> tiles, Vector2i? blockedEnemyTileIndex, int maxDepth)
     {
         this.width = width;
         this.height = height;
-        this.currentRoom = currentRoom;
-        tiles = currentRoom.Map;
+        this.tiles = tiles;
         this.blockedEnemyTileIndex = blockedEnemyTileIndex;
         this.maxDepth = maxDepth;
     }
