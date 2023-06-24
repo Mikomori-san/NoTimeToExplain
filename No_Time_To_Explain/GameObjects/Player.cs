@@ -27,7 +27,7 @@ public class Player : GameObject
 
     // Dependencies
     private RenderWindow renderWindow;
-    private Hud hud;
+    private UI_Handler hud;
 
     // Sprites and animations
     private Sprite player;
@@ -65,7 +65,7 @@ public class Player : GameObject
     private float teleporterTimer;
     public bool GameResetTeleporter { get; private set; }
 
-    public Player(RenderWindow renderWindow, Hud hud)
+    public Player(RenderWindow renderWindow, UI_Handler hud)
     {
         this.renderWindow = renderWindow;
         this.hud = hud;

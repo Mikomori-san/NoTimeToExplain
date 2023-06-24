@@ -12,9 +12,9 @@ public class KillHandler
     private const string KILL_SOUND_NAME = "kill.wav";
     private Player player;
     private List<Enemy> enemies;
-    private Hud hud;
+    private UI_Handler hud;
     private Sound killSound;
-    public KillHandler(Player player, List<Enemy> enemies, Hud hud)
+    public KillHandler(Player player, List<Enemy> enemies, UI_Handler hud)
     {
         this.player = player;
         this.enemies = enemies;

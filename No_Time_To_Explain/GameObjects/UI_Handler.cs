@@ -8,7 +8,7 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 
-public class Hud : GameObject
+public class UI_Handler : GameObject
 {
     // Constants
     private const int MAX_TIME = 120;
@@ -19,9 +19,13 @@ public class Hud : GameObject
     private const string DEATH_FONT_NAME = "NightmarePills-BV2w.ttf";
     private const string RETRY_TEXTURE_NAME = "retryButton.png";
     private const string LEAVE_TEXTURE_NAME = "leaveButton.png";
+    private const float RETRYBUTTON_SCALE_MULTIPLIER = 0.25f;
+    private const float LEAVEBUTTON_SCALE_MULTIPLIER = 0.01f;
+    private const int SMALL_FONT_SIZE = 12;
+    private const int MIDDLE_FONT_SIZE = 20;
+    private const int BIG_FONT_SIZE = 30;
 
     private RenderWindow renderWindow;
-
     public event Action RetryButtonPressed;
 
     // Fonts
@@ -53,7 +57,7 @@ public class Hud : GameObject
     private int score = 0;
     private int scoreCount = 0;
 
-    public Hud(RenderWindow renderWindow)
+    public UI_Handler(RenderWindow renderWindow)
     {
         this.renderWindow = renderWindow;
     }
@@ -112,74 +116,18 @@ public class Hud : GameObject
         font = AssetManager.Instance.Fonts[FontName.Hud];
         deathFont = AssetManager.Instance.Fonts[FontName.Death];
 
-        time = new Text($"Time's ticking: {MAX_TIME - (int)remainingTime}", font, 12);
-        time.FillColor = Color.White;
-        time.Position = new Vector2f(
-            renderWindow.Size.X / 2 - (time.GetGlobalBounds().Left + time.GetGlobalBounds().Width + 10),
-            -renderWindow.Size.Y / 2 + 10
-        );
-
         currentSouls = 0;
 
-        souls = new Text($"Souls harvested: {currentSouls}", font, 12);
-        souls.FillColor = Color.White;
-        souls.Position = new Vector2f(-renderWindow.Size.X / 2 + 10, -renderWindow.Size.Y / 2 + 10);
+        time = TextCreator($"Time's ticking: {MAX_TIME - (int)remainingTime}", font, SMALL_FONT_SIZE, Color.White, new Vector2f(renderWindow.Size.X / 2 - 75.5f, -renderWindow.Size.Y / 2 + 15));
+        souls = TextCreator($"Souls harvested: {currentSouls}", font, SMALL_FONT_SIZE, Color.White, new Vector2f(-renderWindow.Size.X / 2 + 85, -renderWindow.Size.Y / 2 + 15));
+        deathText = TextCreator("YOUR SOUL HAS VANQUISHED FROM EXISTENCE", deathFont, BIG_FONT_SIZE, Color.Red, new Vector2f(0, -100));
+        soulsDeathText = TextCreator($"Your Souls this level: {currentSouls}", font, MIDDLE_FONT_SIZE, Color.Red, new Vector2f(0, 200));
+        scoreText = TextCreator($"Your Score: 0", font, MIDDLE_FONT_SIZE, Color.Magenta, new Vector2f(0, 250));
+        nextLevelTimeText = TextCreator($"+Time", font, MIDDLE_FONT_SIZE, Color.Magenta, new Vector2f(scoreText.GetGlobalBounds().Left + scoreText.GetGlobalBounds().Width + 100, 250));
+        nextLevelSoulsText = TextCreator($"+Souls", font, MIDDLE_FONT_SIZE, Color.Magenta, new Vector2f(scoreText.GetGlobalBounds().Left + scoreText.GetGlobalBounds().Width + 100, 250));
 
-        deathText = new Text("YOUR SOUL HAS VANQUISHED FROM EXISTENCE", deathFont, 30);
-        deathText.FillColor = Color.Red;
-        deathText.Origin = new Vector2f(
-            deathText.GetGlobalBounds().Left + deathText.GetGlobalBounds().Width / 2,
-            deathText.GetGlobalBounds().Top + deathText.GetGlobalBounds().Height / 2
-        );
-        deathText.Position = new Vector2f(0, -100);
-
-        soulsDeathText = new Text($"Your Souls this level: {currentSouls}", font, 20);
-        soulsDeathText.FillColor = Color.Red;
-        soulsDeathText.Origin = new Vector2f(
-            soulsDeathText.GetGlobalBounds().Left + soulsDeathText.GetGlobalBounds().Width / 2,
-            soulsDeathText.GetGlobalBounds().Top + soulsDeathText.GetGlobalBounds().Height / 2
-        );
-        soulsDeathText.Position = new Vector2f(0, 200);
-
-        retryButton = new Sprite(AssetManager.Instance.Textures[TextureName.Retry]);
-        retryButton.Origin = new Vector2f(
-            retryButton.GetGlobalBounds().Left + retryButton.GetGlobalBounds().Width / 2,
-            retryButton.GetGlobalBounds().Top + retryButton.GetGlobalBounds().Height / 2
-        );
-        retryButton.Position = new Vector2f(0, 300);
-        retryButton.Scale *= 0.25f;
-
-        leaveButton = new Sprite(AssetManager.Instance.Textures[TextureName.Leave]);
-        leaveButton.Origin = new Vector2f(
-            leaveButton.GetGlobalBounds().Left + leaveButton.GetGlobalBounds().Width / 2,
-            leaveButton.GetGlobalBounds().Top + leaveButton.GetGlobalBounds().Height / 2
-        );
-        leaveButton.Position = new Vector2f(0, 350);
-        leaveButton.Scale *= 0.01f;
-
-        scoreText = new Text($"Your Score: 0", font, 20);
-        scoreText.FillColor = Color.Magenta;
-        scoreText.Origin = new Vector2f(
-            scoreText.GetGlobalBounds().Left + scoreText.GetGlobalBounds().Width / 2,
-            scoreText.GetGlobalBounds().Top + scoreText.GetGlobalBounds().Height / 2
-        );
-        scoreText.Position = new Vector2f(0, 250);
-
-        nextLevelTimeText = new Text($"+Time", font, 20);
-        nextLevelTimeText.FillColor = Color.Magenta;
-        nextLevelTimeText.Origin = new Vector2f(
-            nextLevelTimeText.GetGlobalBounds().Left + nextLevelTimeText.GetGlobalBounds().Width / 2,
-            nextLevelTimeText.GetGlobalBounds().Top + nextLevelTimeText.GetGlobalBounds().Height / 2
-        );
-        nextLevelTimeText.Position = new Vector2f(scoreText.GetGlobalBounds().Left + scoreText.GetGlobalBounds().Width + 100, 250);
-
-        nextLevelSoulsText = new Text($"+Souls", font, 20);
-        nextLevelSoulsText.FillColor = Color.Magenta;
-        nextLevelSoulsText.Origin = new Vector2f(
-            nextLevelSoulsText.GetGlobalBounds().Left + nextLevelSoulsText.GetGlobalBounds().Width / 2,
-            nextLevelSoulsText.GetGlobalBounds().Top + nextLevelSoulsText.GetGlobalBounds().Height / 2
-        );
-        nextLevelSoulsText.Position = new Vector2f(scoreText.GetGlobalBounds().Left + scoreText.GetGlobalBounds().Width + 100, 250);
+        retryButton = ButtonCreator(AssetManager.Instance.Textures[TextureName.Retry], new Vector2f(0, 300), RETRYBUTTON_SCALE_MULTIPLIER);
+        leaveButton = ButtonCreator(AssetManager.Instance.Textures[TextureName.Leave], new Vector2f(0, 350), LEAVEBUTTON_SCALE_MULTIPLIER);
 
         renderWindow.MouseButtonPressed += OnMouseButtonPressed;        
     }
@@ -210,6 +158,31 @@ public class Hud : GameObject
         {
             scoreCount = score;
         }
+    }
+
+    private Text TextCreator(string textString, Font usedFont, uint charSize, Color fillColor, Vector2f pos)
+    {
+        Text text = new Text(textString, usedFont, charSize);
+        text.FillColor = fillColor;
+        text.Origin = new Vector2f(
+            text.GetGlobalBounds().Left + text.GetGlobalBounds().Width / 2,
+            text.GetGlobalBounds().Top + text.GetGlobalBounds().Height / 2
+        );
+        text.Position = pos;
+        return text;
+    }
+
+    private Sprite ButtonCreator(Texture texture, Vector2f pos, float scaleMultiplier)
+    {
+        Sprite button = new Sprite(texture);
+        button.Origin = new Vector2f(
+            button.GetGlobalBounds().Left + button.GetGlobalBounds().Width / 2,
+            button.GetGlobalBounds().Top + button.GetGlobalBounds().Height / 2
+        );
+        button.Position = pos;
+        button.Scale *= scaleMultiplier;
+
+        return button;
     }
 
     private void ScoreUpCountAnimation(float deltaTime)

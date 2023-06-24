@@ -32,7 +32,7 @@ public class Game
     private View view;
     private float gameTime = 0;
     private Player player;
-    private Hud hud;
+    private UI_Handler ui_handler;
     private EnemyHandler enemyHandler;
     private Room currentRoom;
     private Music? backgroundMusic;
@@ -101,9 +101,9 @@ public class Game
             backgroundMusic.Stop();
         }
 
-        hud.Update(deltaTime);
+        ui_handler.Update(deltaTime);
 
-        if(hud.RemainingTime() <= 0 && !player.IsDead() && !player.ReachedTeleporter) //if the time runs out but the player is not already dead OR in teleporter sequence
+        if(ui_handler.RemainingTime() <= 0 && !player.IsDead() && !player.ReachedTeleporter) //if the time runs out but the player is not already dead OR in teleporter sequence
         {
             killHandler.KillPlayer();
         }
@@ -126,7 +126,7 @@ public class Game
             enemyHandler.Draw(Window);
         }
         player.Draw(Window);
-        hud.Draw(Window);
+        ui_handler.Draw(Window);
         Window.Display();
     }
 
@@ -170,9 +170,9 @@ public class Game
 
         if(!ReachedTeleporter) //if the player reached the teleporter, do not set the hud new because it will delete the score
         {
-            hud = new Hud(Window);
+            ui_handler = new UI_Handler(Window);
         }
-        hud.Initialize();
+        ui_handler.Initialize();
 
         ReachedTeleporter = false;
 
@@ -186,7 +186,7 @@ public class Game
         
         currentRoom = RoomHandler.Instance.GetCurrentRoom();
 
-        player = new Player(Window, hud);
+        player = new Player(Window, ui_handler);
         player.SetCurrentRoom(currentRoom);
         player.Initialize();
         RoomHandler.Instance.EnemySetter(player, Window);
@@ -194,7 +194,7 @@ public class Game
         enemyHandler = new EnemyHandler(currentRoom.Enemies, currentRoom.EnemySpawnTiles, currentRoom.TileSize); 
         enemyHandler.Initialize();                            
 
-        killHandler = new KillHandler(player, currentRoom.Enemies, hud);
+        killHandler = new KillHandler(player, currentRoom.Enemies, ui_handler);
 
         backgroundMusic.Play();
         backgroundMusic.Loop = true;
@@ -202,12 +202,12 @@ public class Game
 
     private void AddEvents()
     {
-        hud.RetryButtonPressed += RetryButtonPressedHandler;
+        ui_handler.RetryButtonPressed += RetryButtonPressedHandler;
     }
 
     private void RemoveEvents()
     {
-        hud.RetryButtonPressed -= RetryButtonPressedHandler;
+        ui_handler.RetryButtonPressed -= RetryButtonPressedHandler;
     }
 
     private void RetryButtonPressedHandler()
@@ -241,13 +241,13 @@ public class Game
                     }
 
                     RoomHandler.Instance.NextRoom(randomRoomsToGenerate[randomRoom]);
-                    hud.Add30Seconds();
+                    ui_handler.Add30Seconds();
                     currentCountOfRandomRooms++;
                 }
                 else
                 {
                     RoomHandler.Instance.NextTeleporterRoom();
-                    hud.Add30Seconds();
+                    ui_handler.Add30Seconds();
                 }
                 
                 RoomConfig(spawnPlayerFromNext);
@@ -270,7 +270,7 @@ public class Game
         {
             if(player.TileIndex == Utils.ConvertToIndex(Window, currentRoom.TeleporterTile))
             {
-                hud.ReachedTeleporter();
+                ui_handler.ReachedTeleporter();
                 player.HasReachedTeleporter();
             }
         }
