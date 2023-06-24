@@ -30,8 +30,8 @@ public class Player : GameObject
     private UI_Handler hud;
 
     // Sprites and animations
-    private Sprite player;
-    private int[] frameCountPerAnimation;
+    private Sprite playerSprite;
+    private Dictionary<PlayerAnimationType, int> frameCountPerAnimation;
     private int animationFrame;
     private float animationTime = 0;
     private float animationSpeed = 5;
@@ -73,7 +73,7 @@ public class Player : GameObject
 
     public override void Draw(RenderWindow window)
     {
-        window.Draw(player);   
+        window.Draw(playerSprite);   
     }
 
     public override void Initialize()
@@ -102,24 +102,24 @@ public class Player : GameObject
         DeathMusic.Volume *= 0.1f;
         DeathMusic.Loop = true;
 
-        frameCountPerAnimation = new int[5];
-        frameCountPerAnimation[(int)PlayerAnimationType.Idle] = 6; //0
-        frameCountPerAnimation[(int)PlayerAnimationType.Move] = 4; //1
-        frameCountPerAnimation[(int)PlayerAnimationType.Death] = 9; //3
+        frameCountPerAnimation = new();
+        frameCountPerAnimation[PlayerAnimationType.Idle] = 6; //0
+        frameCountPerAnimation[PlayerAnimationType.Move] = 4; //1
+        frameCountPerAnimation[PlayerAnimationType.Death] = 9; //3
 
-        player = new Sprite(AssetManager.Instance.Textures[TextureName.Player]);
+        playerSprite = new Sprite(AssetManager.Instance.Textures[TextureName.Player]);
         
-        player.TextureRect = new IntRect(
+        playerSprite.TextureRect = new IntRect(
             0,
             0,
-            (int)(player.Texture.Size.X / PLAYER_TILING_X),
-            (int)(player.Texture.Size.Y / PLAYER_TILING_Y)
+            (int)(playerSprite.Texture.Size.X / PLAYER_TILING_X),
+            (int)(playerSprite.Texture.Size.Y / PLAYER_TILING_Y)
         );
 
-        player.Origin = new Vector2f(player.GetGlobalBounds().Left + player.GetGlobalBounds().Width / 2 + 3, player.GetGlobalBounds().Top + player.GetGlobalBounds().Height - 4);
-        player.Position = currentRoom.SpawnTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
-        player.Scale *= PLAYER_SCALING;
-        TileIndex = Utils.ConvertToIndex(renderWindow, player);
+        playerSprite.Origin = new Vector2f(playerSprite.GetGlobalBounds().Left + playerSprite.GetGlobalBounds().Width / 2 + 3, playerSprite.GetGlobalBounds().Top + playerSprite.GetGlobalBounds().Height - 4);
+        playerSprite.Position = currentRoom.SpawnTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
+        playerSprite.Scale *= PLAYER_SCALING;
+        TileIndex = Utils.ConvertToIndex(renderWindow, playerSprite);
     }
 
     public override void Update(float deltaTime)
@@ -149,22 +149,22 @@ public class Player : GameObject
             hud.Reset();
         }
 
-        player.Position = new Vector2f(0, 100);
-        player.Scale = new Vector2f(5, 5);
+        playerSprite.Position = new Vector2f(0, 100);
+        playerSprite.Scale = new Vector2f(5, 5);
 
-        frameCountPerAnimation[(int)PlayerAnimationType.Move] = 8;
+        frameCountPerAnimation[PlayerAnimationType.Move] = 8;
         currentAnimation = PlayerAnimationType.Move;
 
-        animationFrame = (int)(teleporterTimer % frameCountPerAnimation[(int)currentAnimation]);
+        animationFrame = (int)(teleporterTimer % frameCountPerAnimation[currentAnimation]);
         
-        spriteXOffset = animationFrame * player.TextureRect.Width;
-        spriteYOffset = (int)currentAnimation * player.TextureRect.Height;
+        spriteXOffset = animationFrame * playerSprite.TextureRect.Width;
+        spriteYOffset = (int)currentAnimation * playerSprite.TextureRect.Height;
             
-        player.TextureRect = new IntRect(
+        playerSprite.TextureRect = new IntRect(
             spriteXOffset,
             spriteYOffset,
-            player.TextureRect.Width,
-            player.TextureRect.Height
+            playerSprite.TextureRect.Width,
+            playerSprite.TextureRect.Height
         );
     }
 
@@ -185,21 +185,21 @@ public class Player : GameObject
             deathTimer += deltaTime * 6;
         }
 
-        player.Position = new Vector2f(0, 100);
-        player.Scale = new Vector2f(5, 5);
+        playerSprite.Position = new Vector2f(0, 100);
+        playerSprite.Scale = new Vector2f(5, 5);
         
         currentAnimation = PlayerAnimationType.Death;
 
-        animationFrame = (int)(deathTimer % frameCountPerAnimation[(int)currentAnimation]);
+        animationFrame = (int)(deathTimer % frameCountPerAnimation[currentAnimation]);
         
-        spriteXOffset = animationFrame * player.TextureRect.Width;
-        spriteYOffset = (int)currentAnimation * player.TextureRect.Height;
+        spriteXOffset = animationFrame * playerSprite.TextureRect.Width;
+        spriteYOffset = (int)currentAnimation * playerSprite.TextureRect.Height;
             
-        player.TextureRect = new IntRect(
+        playerSprite.TextureRect = new IntRect(
             spriteXOffset,
             spriteYOffset,
-            player.TextureRect.Width,
-            player.TextureRect.Height
+            playerSprite.TextureRect.Width,
+            playerSprite.TextureRect.Height
         );
 
         if(animationFrame == LAST_DEATH_FRAME && !stopDeathTimer)
@@ -238,7 +238,7 @@ public class Player : GameObject
                         isMoving = true;
                         generalTime = 0;
                         currDirection = Direction.Right;
-                        player.Scale = new Vector2f(PLAYER_SCALING, PLAYER_SCALING);
+                        playerSprite.Scale = new Vector2f(PLAYER_SCALING, PLAYER_SCALING);
                     }
                 }
                 else
@@ -263,7 +263,7 @@ public class Player : GameObject
                         isMoving = true;
                         generalTime = 0;
                         currDirection = Direction.Left;
-                        player.Scale = new Vector2f(-PLAYER_SCALING, PLAYER_SCALING);
+                        playerSprite.Scale = new Vector2f(-PLAYER_SCALING, PLAYER_SCALING);
                     }
                 }
                 else
@@ -330,20 +330,20 @@ public class Player : GameObject
             switch(currDirection)
             {
                 case Direction.Right:
-                    player.Position += new Vector2f(1, 0) * deltaTime * movementLength;
+                    playerSprite.Position += new Vector2f(1, 0) * deltaTime * movementLength;
                 break;
                 case Direction.Left:
-                    player.Position -= new Vector2f(1, 0) * deltaTime * movementLength;
+                    playerSprite.Position -= new Vector2f(1, 0) * deltaTime * movementLength;
                 break;
                 case Direction.Down:
-                    player.Position += new Vector2f(0, 1) * deltaTime * movementLength;
+                    playerSprite.Position += new Vector2f(0, 1) * deltaTime * movementLength;
                 break;
                 case Direction.Up:
-                    player.Position -= new Vector2f(0, 1) * deltaTime * movementLength;
+                    playerSprite.Position -= new Vector2f(0, 1) * deltaTime * movementLength;
                 break;
             }
             
-            TileIndex = Utils.ConvertToIndex(renderWindow, player);
+            TileIndex = Utils.ConvertToIndex(renderWindow, playerSprite);
             
             if(generalTime > MOVE_TIME)
             {
@@ -362,16 +362,16 @@ public class Player : GameObject
 
     private void AnimationHandling()
     {
-        animationFrame = (int)(animationTime % frameCountPerAnimation[(int)currentAnimation]);
+        animationFrame = (int)(animationTime % frameCountPerAnimation[currentAnimation]);
         
-        spriteXOffset = animationFrame * player.TextureRect.Width;
-        spriteYOffset = (int)currentAnimation * player.TextureRect.Height;
+        spriteXOffset = animationFrame * playerSprite.TextureRect.Width;
+        spriteYOffset = (int)currentAnimation * playerSprite.TextureRect.Height;
             
-        player.TextureRect = new IntRect(
+        playerSprite.TextureRect = new IntRect(
             spriteXOffset,
             spriteYOffset,
-            player.TextureRect.Width,
-            player.TextureRect.Height
+            playerSprite.TextureRect.Width,
+            playerSprite.TextureRect.Height
         );
     }
 
@@ -382,22 +382,22 @@ public class Player : GameObject
 
     public void SpawnPlayerFromPreviousRoomTile()
     {
-        player.Position = currentRoom.NextRoomTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
-        TileIndex = Utils.ConvertToIndex(renderWindow, player);
+        playerSprite.Position = currentRoom.NextRoomTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
+        TileIndex = Utils.ConvertToIndex(renderWindow, playerSprite);
     }
 
     public void SpawnPlayerFromNextRoomTile()
     {
         if(currentRoom.hasSpawnTile)
         {
-            player.Position = currentRoom.SpawnTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
+            playerSprite.Position = currentRoom.SpawnTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
         }
         else
         {
-            player.Position = currentRoom.PreviousRoomTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
+            playerSprite.Position = currentRoom.PreviousRoomTile.Position + new Vector2f(currentRoom.TileSize / 2, currentRoom.TileSize / 2);
         }
 
-        TileIndex = Utils.ConvertToIndex(renderWindow, player);
+        TileIndex = Utils.ConvertToIndex(renderWindow, playerSprite);
     }
 
     public void SetTurnLock()
