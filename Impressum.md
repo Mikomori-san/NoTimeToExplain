@@ -1,3 +1,3 @@
-MultiMediaTechnology / FH Salzburg
-MultiMediaProject 1
+MultiMediaTechnology / FH Salzburg <br>
+MultiMediaProject 1 <br>
 Author: Kev (Miko)
