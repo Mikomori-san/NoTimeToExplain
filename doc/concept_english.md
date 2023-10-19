@@ -10,7 +10,7 @@ Move using WASD in one-tile increments in each direction.
 - **W = Up**
 - **A = Down**
 - **S = Left**
-- **D = Right**
+- **D = Right** <br>
 What's special here: Every time you move, the enemies also move. Movement is divided into turns. If you manage to jump onto an enemy during your turn, you'll defeat them.
 
 ## Enemies
@@ -18,7 +18,7 @@ There are four different types of enemies:
 - **Stone Golem**
 - **Broken Stone Golem**
 - **Base Stone Golem**
-- **Lava Golem**
+- **Lava Golem** <br>
 Each enemy has its attack pattern. When you're in an enemy's attack range, the enemy prepares to strike. If you don't manage to move out of the range, the enemy jumps at you, resulting in a game over. If you do succeed in moving out of range, the enemy jumps to the tile where you last stood.
 
 ## Levels
