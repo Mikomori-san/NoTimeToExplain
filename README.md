@@ -1,2 +1,2 @@
-My first game project!
-Done in my own engine (SFML C#)
+My first game project, done in my own engine (SFML C#)
+This repository got copied from the internal one in my college!
